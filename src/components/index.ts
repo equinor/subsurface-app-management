@@ -1,1 +1,1 @@
-export { Feature } from 'src/components/Feature';
+export { Feature } from './Feature/Feature';

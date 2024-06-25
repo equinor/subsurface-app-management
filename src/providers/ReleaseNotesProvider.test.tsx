@@ -115,6 +115,21 @@ describe('Release notes provider', () => {
     expect(result.current.filteredData).toStrictEqual(releaseNotes);
   });
 
+  test('calling toggle should change open', async () => {
+    const { result } = renderHook(() => useReleaseNotes(), {
+      wrapper: Wrappers,
+    });
+
+    result.current.toggle();
+
+    await waitFor(
+      () => {
+        return expect(result.current.open).toBe(true);
+      },
+      { timeout: 550 }
+    );
+  });
+
   test('should use setSearch to populate search variable', async () => {
     const { result } = renderHook(() => useReleaseNotes(), {
       wrapper: Wrappers,
