@@ -1,8 +1,8 @@
 import { addons } from '@storybook/addons';
-import amplifyTheme from '.storybook/samTheme';
+import samTheme from './samTheme';
 
 addons.setConfig({
-  theme: amplifyTheme,
+  theme: samTheme,
   panelPosition: 'right',
   selectedPanel: 'STORYBOOK_ADDON_DESIGNS/panel',
 });
