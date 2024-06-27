@@ -1,0 +1,23 @@
+apiVersion: radix.equinor.com/v1
+kind: RadixApplication
+metadata:
+  name: storybook-amplify-sam
+spec:
+  environments:
+    - name: production
+      build:
+        from: main
+
+  components:
+    - name: client
+      src: ./
+      ports:
+        - name: https
+          port: 8080
+      publicPort: https
+      secrets:
+        - GITHUB_PAT_SEARCH_TOKEN
+
+  dnsAppAlias:
+    environment: production
+    component: client
