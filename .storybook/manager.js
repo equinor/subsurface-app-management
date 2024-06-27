@@ -1,5 +1,5 @@
 import { addons } from '@storybook/addons';
-import amplifyTheme from './amplifyTheme';
+import amplifyTheme from '.storybook/samTheme';
 
 addons.setConfig({
   theme: amplifyTheme,
