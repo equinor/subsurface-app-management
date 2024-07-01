@@ -69,7 +69,7 @@ async function runTasks() {
     }
     const answer = await rl.question(
       chalk.greenBright(
-        'Write name of project you want to copy local amplify-components into:'
+        'Write name of project you want to copy local subsurface-app-management into:'
       ) + `\n> `
     );
     selectedDir = dirs.find(
@@ -106,16 +106,16 @@ async function runTasks() {
   });
 
   await runTask({
-    command: `rm -rf ../${selectedDir}/client/node_modules/@equinor/amplify-sam/dist`,
+    command: `rm -rf ../${selectedDir}/client/node_modules/@equinor/subsurface-app-management/dist`,
     name: `Removing old ${chalk.bold.greenBright(
-      'amplify-components/dist'
+      'subsurface-app-management/dist'
     )} folder from ${chalk.bold.greenBright(
       `${selectedDir}/client/node_modules`
     )}`,
   });
 
   await runTask({
-    command: `cp -r ./dist ../${selectedDir}/client/node_modules/@equinor/amplify-sam/dist`,
+    command: `cp -r ./dist ../${selectedDir}/client/node_modules/@equinor/subsurface-app-management/dist`,
     name: `Copying newly built ${chalk.bold.greenBright(
       'dist'
     )} folder into ${chalk.bold.greenBright(

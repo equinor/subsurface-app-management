@@ -6,9 +6,9 @@
   "types": "dist/types/index.d.ts",
   "author": "Amplify Team",
   "license": "ISC",
-  "homepage": "https://github.com/equinor/amplify-sam#readme",
+  "homepage": "https://github.com/equinor/subsurface-app-management#readme",
   "bugs": {
-    "url": "https://github.com/equinor/amplify-sam/issues"
+    "url": "https://github.com/equinor/subsurface-app-management/issues"
   },
   "files": [
     "dist/*"
