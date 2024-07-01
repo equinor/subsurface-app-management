@@ -6,9 +6,9 @@ This package contains components, utils, providers and hooks that are used to co
 
 // TODO: Setup storybook
 # Quick links
-- [Storybook](https://storybook-amplify-components.app.radix.equinor.com/)
+- [Storybook](https://storybook-subsurface-app-management.app.radix.equinor.com/)
 
-# Building and publishing amplify-sam
+# Building and publishing 
 
 Build and publish is done automatically when code is merged into `main` branch, if the package.json version number is higher.
 

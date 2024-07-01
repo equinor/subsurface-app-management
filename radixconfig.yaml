@@ -1,7 +1,7 @@
 apiVersion: radix.equinor.com/v1
 kind: RadixApplication
 metadata:
-  name: storybook-amplify-sam
+  name: storybook-subsurface-app-management
 spec:
   environments:
     - name: production
