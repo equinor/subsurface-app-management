@@ -1,7 +1,7 @@
 apiVersion: radix.equinor.com/v1
 kind: RadixApplication
 metadata:
-  name: storybook-subsurface-app-management
+  name: subsurface-management-storybook
 spec:
   environments:
     - name: production
