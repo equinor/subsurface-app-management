@@ -12,4 +12,4 @@ This package contains components, utils, providers and hooks that are used to co
 Build and publish is done automatically when code is merged into `main` branch, if the package.json version number is higher.
 
 # Latest version
-[![main](https://img.shields.io/npm/v/@equinor/subsurface-app-management?color=%23c3f3d2&label=%40equinor%2Fsubsurface-app-management&logo=npm&)](https://www.npmjs.com/package/@equinor/amplify-components)
+[![main](https://img.shields.io/npm/v/@equinor/subsurface-app-management?color=%23c3f3d2&label=%40equinor%2Fsubsurface-app-management&logo=npm&)](https://www.npmjs.com/package/@equinor/subsurface-app-management)
