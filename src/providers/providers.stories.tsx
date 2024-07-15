@@ -14,18 +14,18 @@ const providersList = [
 </AuthProvider>`,
   },
   {
-    name: 'ReleaseNotesProvider',
-    body: 'Provider to make ReleaseNotes work',
-    code: `<ReleaseNotesProvider>
-    {children}
-</ReleaseNotesProvider>`,
-  },
-  {
     name: 'TutorialStepsProvider',
     body: 'Provider needed to use tutorial hook',
     code: `<TutorialStepsProvider>
     {children}
 </TutorialStepsProvider>`,
+  },
+  {
+    name: 'FeatureToggleProvider',
+    body: 'Provider needed to use feature toggle hook',
+    code: `<FeatureToggleProvider>
+    {children}
+</FeatureToggleProvider>`,
   },
 ];
 
