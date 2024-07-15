@@ -8,4 +8,4 @@ export * from './types';
 
 export * from './utils';
 
-export { PortalService } from 'src/api/services/PortalService';
+export * from './api';
