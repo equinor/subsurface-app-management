@@ -4,7 +4,7 @@
 
 import type { GraphUser } from './GraphUser';
 
-export type Feature = {
+export type FeatureAPIType = {
   uuid: string;
   featureKey: string;
   description: string;

@@ -3,9 +3,9 @@ import { createContext, FC, ReactNode, useContext } from 'react';
 import { FullPageSpinner } from '@equinor/amplify-components';
 import { useQuery } from '@tanstack/react-query';
 
-import { Feature, FeatureToggleDto, GraphUser } from '../api';
-import { PortalService } from '../api/services/PortalService';
 import { environment } from '../utils';
+import { FeatureAPIType, FeatureToggleDto, GraphUser } from 'src/api';
+import { PortalService } from 'src/api/services/PortalService';
 
 const { getAppName } = environment;
 
@@ -24,7 +24,7 @@ export const isUserInActiveUserArray = (
 interface FeatureToggleContextType {
   isLoading: boolean;
   isError: boolean;
-  features?: Feature[] | null;
+  features?: FeatureAPIType[] | null;
 }
 
 const FeatureToggleContext = createContext<

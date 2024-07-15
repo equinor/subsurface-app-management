@@ -1,7 +1,7 @@
 export type * from './AccessRole';
 export type * from './Applications';
 export type * from './CustomTutorialStep';
-export type * from './Feature';
+export type * from './FeatureAPIType';
 export type * from './FeatureToggleDto';
 export type * from './GenericTutorialStep';
 export type * from './GraphUser';

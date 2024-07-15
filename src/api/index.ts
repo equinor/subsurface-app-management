@@ -7,7 +7,7 @@ export { OpenAPI } from './core/OpenAPI';
 export { request } from './core/request';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
-export type { Feature } from './models/Feature';
+export type { FeatureAPIType } from './models/FeatureAPIType';
 export type { CustomTutorialStep } from './models/CustomTutorialStep';
 export type { GenericTutorialStep } from './models/GenericTutorialStep';
 export type { Tutorial } from './models/Tutorial';

@@ -3,7 +3,7 @@
 /* eslint-disable */
 import type { ApiRequestOptions } from './ApiRequestOptions';
 import { auth, environment } from 'src/utils';
-import { CancelablePromise } from 'src/api/core/CancelablePromise';
+import { CancelablePromise } from 'src/api';
 import { request as __request } from 'src/api/core/request';
 import { getLocalStorage, updateLocalStorage } from 'src/utils/localStorage';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
