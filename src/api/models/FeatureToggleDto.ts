@@ -2,9 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Feature } from './Feature';
+import type { FeatureAPIType } from './FeatureAPIType';
 
 export type FeatureToggleDto = {
   applicationName: string;
-  features: Array<Feature>;
+  features: Array<FeatureAPIType>;
 };
