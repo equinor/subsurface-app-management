@@ -51,7 +51,7 @@
     "jwt-decode": "^4.0.0"
   },
   "devDependencies": {
-    "@equinor/amplify-components": "^7.10.5",
+    "@equinor/amplify-components": "^7.12.11",
     "@equinor/eds-icons": "^0.21.0",
     "@faker-js/faker": "^8.4.1",
     "@rollup/plugin-commonjs": "^25.0.7",
