@@ -28,7 +28,6 @@ const getAppName = (appName: string | undefined): string => {
 const getEnvironmentName = (
   environmentName: string | EnvironmentType | undefined
 ): EnvironmentType => {
-  console.log('envname', environmentName);
   if (!environmentName) {
     return getConfig('ENVIRONMENT_NAME') as EnvironmentType;
   }
