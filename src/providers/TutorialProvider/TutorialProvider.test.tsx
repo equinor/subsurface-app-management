@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
 
 import { render, renderHook, screen, userEvent } from '../../tests/test-utils';
-import { TutorialProvider } from '../index';
+import { TutorialProvider } from './TutorialProvider';
 import {
   DIALOG_EDGE_MARGIN,
   TUTORIAL_HIGHLIGHTER_DATATEST_ID,
@@ -19,6 +19,7 @@ import {
   TutorialPosition,
 } from 'src/api';
 import { useTutorial } from 'src/providers/TutorialProvider/TutorialProvider.hooks';
+import { EnvironmentType } from 'src/types';
 
 import { beforeEach, describe, expect, test } from 'vitest';
 
@@ -138,6 +139,7 @@ interface GetMemoryRouterProps {
   withWrongCustomComponentKeyString?: boolean;
   withNoTutorialsOnPath?: boolean;
   withPathForTutorialFromHook?: boolean;
+  forceInProd?: boolean;
 }
 
 const getMemoryRouter = (props: GetMemoryRouterProps) => {
@@ -149,6 +151,7 @@ const getMemoryRouter = (props: GetMemoryRouterProps) => {
     withWrongCustomComponentKeyString,
     withNoTutorialsOnPath,
     withPathForTutorialFromHook,
+    forceInProd,
   } = props;
   const queryClient = new QueryClient();
 
@@ -164,6 +167,10 @@ const getMemoryRouter = (props: GetMemoryRouterProps) => {
         element: (
           <QueryClientProvider client={queryClient}>
             <TutorialProvider
+              overrideAppName={forceInProd ? faker.animal.dog() : undefined}
+              overrideEnvironmentName={
+                forceInProd ? EnvironmentType.PRODUCTION : undefined
+              }
               tutorials={tutorial ? [tutorial] : []}
               customStepComponents={
                 withMissingCustomComponent
@@ -361,9 +368,8 @@ describe('TutorialProvider', () => {
   });
 
   test('does not show active tutorial in prod if "showInProd" is false', () => {
-    import.meta.env.VITE_ENVIRONMENT_NAME = 'production';
     const tutorial = fakeTutorial();
-    const router = getMemoryRouter({ tutorial });
+    const router = getMemoryRouter({ tutorial, forceInProd: true });
     render(<RouterProvider router={router} />);
 
     const highlighterElement = screen.queryByTestId(
@@ -519,6 +525,23 @@ describe('TutorialProvider', () => {
   });
 
   test('shows nothing if there are no tutorials for app', async () => {
+    requestsHaveError = true;
+    render(<RouterProvider router={getMemoryRouter({})} />);
+
+    await waitForBackendCall();
+
+    const errorDialogText = screen.queryByText(
+      /there was a problem starting this tutorial./i
+    );
+    expect(errorDialogText).not.toBeInTheDocument();
+
+    const highlighterElement = screen.queryByTestId(
+      TUTORIAL_HIGHLIGHTER_DATATEST_ID
+    );
+    expect(highlighterElement).not.toBeInTheDocument();
+  });
+
+  test('shows nothing if show in prod = false', async () => {
     requestsHaveError = true;
     render(<RouterProvider router={getMemoryRouter({})} />);
 

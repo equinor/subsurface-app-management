@@ -37,7 +37,7 @@ export default defineConfig({
         'src/components/Inputs/TextField.tsx',
         'src/components/Feature/*',
         'src/components/Feedback/Skeleton/**',
-        'src/utils/auth_environment.ts',
+        'src/utils/environment.ts',
         'src/utils/export.ts',
         'src/utils/UtilStory.tsx',
         'src/providers/AuthProvider/**',

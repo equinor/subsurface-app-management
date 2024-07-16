@@ -4,38 +4,47 @@ import {
   isUserInActiveUserArray,
   useFeatureToggleContext,
 } from '../providers/FeatureToggleProvider';
-import { useAuth } from 'src/providers/AuthProvider/AuthProvider';
-import { environment } from 'src/utils';
 
-const { getEnvironmentName } = environment;
+interface UseFeatureTogglingOptions {
+  featureKey: string;
+  username?: string;
+  showIfKeyIsMissing?: boolean;
+}
 
-export function useFeatureToggling(
-  featureKey: string,
-  showIfKeyMissing?: boolean
-) {
-  const fallback = showIfKeyMissing ?? true;
-  const { account } = useAuth();
-  const username = `${account?.username}`;
+export function useFeatureToggling({
+  featureKey,
+  username,
+  showIfKeyIsMissing,
+}: UseFeatureTogglingOptions) {
+  const fallback = showIfKeyIsMissing ?? true;
 
-  const environment = getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME);
-  const { features, isError } = useFeatureToggleContext();
+  const { features, isError, environmentName } = useFeatureToggleContext();
 
   const feature = features?.find(
     (feature) => feature.featureKey === featureKey
   );
   const showContent = useMemo(() => {
     if (feature) {
+      if (
+        username === undefined &&
+        feature.activeUsers &&
+        feature.activeUsers.length > 0
+      ) {
+        console.warn(
+          `[FeatureToggle] Feature ${feature.featureKey} has activeUsers set but username wasn't provided! Was this intentional?`
+        );
+      }
       if (isUserInActiveUserArray(username, feature.activeUsers)) {
         return true;
       }
-      return feature.activeEnvironments.includes(environment);
+      return feature.activeEnvironments.includes(environmentName);
     }
     if (isError) {
       return false;
     }
 
     return fallback;
-  }, [fallback, environment, feature, isError, username]);
+  }, [environmentName, fallback, feature, isError, username]);
 
   return { showContent };
 }

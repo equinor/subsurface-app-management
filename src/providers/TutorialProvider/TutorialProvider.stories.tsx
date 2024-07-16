@@ -5,7 +5,7 @@ import { Button, Typography } from '@equinor/eds-core-react';
 import { StoryFn } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import TutorialProvider from './TutorialProvider';
+import { TutorialProvider } from './TutorialProvider';
 import { CustomTutorialComponent } from './TutorialProvider.types';
 import { Tutorial } from 'src/api';
 
@@ -65,11 +65,13 @@ const RedSquare = styled.div`
   align-items: center;
   justify-content: center;
 `;
+
 const BlueSquare = styled.div`
   width: 40%;
   height: 180px;
   background-color: cornflowerblue;
 `;
+
 const GreenCircle = styled.div`
   width: 80%;
   height: 250px;

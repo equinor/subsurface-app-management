@@ -13,9 +13,6 @@ import { Highlighter, TutorialErrorDialog } from './TutorialProvider.styles';
 import { HighlightingInfo } from './TutorialProvider.types';
 import { Tutorial } from 'src/api';
 import { EnvironmentType } from 'src/types/Environment';
-import { environment } from 'src/utils/auth_environment';
-
-const { getEnvironmentName } = environment;
 
 const TutorialProviderInner: FC = () => {
   const { pathname } = useLocation();
@@ -31,10 +28,12 @@ const TutorialProviderInner: FC = () => {
     viewportWidth,
     setTutorialError,
     clearSearchParam,
+    appName,
+    environmentName,
   } = useTutorial();
 
   const hasStartedTutorial = useRef(false);
-  const { data: tutorialsFromBackend } = useGetTutorialsForApp();
+  const { data: tutorialsFromBackend } = useGetTutorialsForApp(appName);
 
   const appTutorials = useMemo(() => {
     if (
@@ -114,8 +113,7 @@ const TutorialProviderInner: FC = () => {
 
   if (
     !activeTutorial?.showInProd &&
-    getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME) ===
-      EnvironmentType.PRODUCTION
+    environmentName === EnvironmentType.PRODUCTION
   )
     return null;
 

@@ -20,13 +20,6 @@ export const GetAppName: StoryFn = () => {
   return <UtilStory name="getAppName" codeText={codeText} />;
 };
 
-export const GetClientId: StoryFn = () => {
-  const codeText = `
-  getClientId() => gets CLIENT_ID env variable
-  `;
-  return <UtilStory name="getClientId" codeText={codeText} />;
-};
-
 export const GetApiUrl: StoryFn = () => {
   const codeText = `
   getApiUrl() => gets API_URL env variable
@@ -34,23 +27,9 @@ export const GetApiUrl: StoryFn = () => {
   return <UtilStory name="getApiUrl" codeText={codeText} />;
 };
 
-export const GetApiScope: StoryFn = () => {
-  const codeText = `
-  getApiScope() => gets API_SCOPE env variable
-  `;
-  return <UtilStory name="getApiScope" codeText={codeText} />;
-};
-
 export const GetEnvironmentName: StoryFn = () => {
   const codeText = `
   getEnvironmentName() => gets ENVIRONMENT_NAME env variable
   `;
   return <UtilStory name="getEnvironmentName" codeText={codeText} />;
-};
-
-export const GetIsMock: StoryFn = () => {
-  const codeText = `
-  getIsMock() => gets IS_MOCK env variable
-  `;
-  return <UtilStory name="getIsMock" codeText={codeText} />;
 };

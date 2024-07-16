@@ -3,9 +3,9 @@
 /* eslint-disable */
 export { ApiError } from './core/ApiError';
 export { CancelablePromise, CancelError } from './core/CancelablePromise';
-export { OpenAPI, getPortalToken } from './core/OpenAPI';
+export { OpenAPI_SAM, getPortalToken } from 'src/api/core/OpenAPI';
 export { request } from './core/request';
-export type { OpenAPIConfig } from './core/OpenAPI';
+export type { OpenAPIConfig } from 'src/api/core/OpenAPI';
 
 export type { CustomTutorialStep } from './models/CustomTutorialStep';
 export type { AccessRoles } from './models/AccessRole';

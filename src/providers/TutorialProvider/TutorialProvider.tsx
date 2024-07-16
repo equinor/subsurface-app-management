@@ -18,6 +18,8 @@ import { CustomTutorialComponent } from './TutorialProvider.types';
 import { getAllElementsToHighlight } from './TutorialProvider.utils';
 import TutorialProviderInner from './TutorialProviderInner';
 import { CustomTutorialStep, GenericTutorialStep, Tutorial } from 'src/api';
+import { EnvironmentType } from 'src/types';
+import { getAppName, getEnvironmentName } from 'src/utils/environment';
 
 export interface TutorialContextType {
   activeTutorial: Tutorial | undefined;
@@ -39,6 +41,8 @@ export interface TutorialContextType {
   tutorialError: boolean;
   setTutorialError: Dispatch<SetStateAction<boolean>>;
   viewportWidth: number;
+  appName: string;
+  environmentName: EnvironmentType;
 }
 
 export const TutorialContext = createContext<TutorialContextType | undefined>(
@@ -47,12 +51,16 @@ export const TutorialContext = createContext<TutorialContextType | undefined>(
 
 interface TutorialProviderProps {
   children: ReactNode;
+  overrideAppName?: string;
+  overrideEnvironmentName?: EnvironmentType;
   customStepComponents?: CustomTutorialComponent[];
   tutorials?: Tutorial[];
 }
 
-const TutorialProvider: FC<TutorialProviderProps> = ({
+export const TutorialProvider: FC<TutorialProviderProps> = ({
   children,
+  overrideAppName,
+  overrideEnvironmentName,
   customStepComponents,
   tutorials,
 }) => {
@@ -70,6 +78,10 @@ const TutorialProvider: FC<TutorialProviderProps> = ({
   >(undefined);
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
   const dialogRef = useRef<HTMLDialogElement | null>(null);
+  const appName = overrideAppName ?? getAppName(import.meta.env.VITE_NAME);
+  const environmentName =
+    overrideEnvironmentName ??
+    getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME);
   const currentStepObject = useMemo(() => {
     if (!activeTutorial) return;
     return activeTutorial.steps.at(currentStep);
@@ -206,6 +218,8 @@ const TutorialProvider: FC<TutorialProviderProps> = ({
         tutorialError,
         setTutorialError,
         viewportWidth,
+        appName,
+        environmentName,
       }}
     >
       <TutorialProviderInner />
@@ -214,4 +228,3 @@ const TutorialProvider: FC<TutorialProviderProps> = ({
     </TutorialContext.Provider>
   );
 };
-export default TutorialProvider;

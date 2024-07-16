@@ -1,6 +1,6 @@
 {
   "name": "@equinor/subsurface-app-management",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "React Typescript components/hooks to communicate with equinor/sam",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -51,7 +51,6 @@
     "jwt-decode": "^4.0.0"
   },
   "devDependencies": {
-    "@equinor/amplify-components": "^7.10.5",
     "@equinor/eds-icons": "^0.21.0",
     "@faker-js/faker": "^8.4.1",
     "@rollup/plugin-commonjs": "^25.0.7",
@@ -114,7 +113,6 @@
     "vitest": "^1.2.2"
   },
   "peerDependencies": {
-    "@equinor/amplify-components": "*",
     "@equinor/eds-core-react": "*",
     "@equinor/eds-icons": "*",
     "@tanstack/react-query": "*",
