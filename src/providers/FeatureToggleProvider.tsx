@@ -54,12 +54,11 @@ export const FeatureToggleProvider: FC<FeatureToggleProviderProps> = ({
   overrideAppName,
   overrideEnvironment,
 }) => {
-  const applicationName = overrideAppName
-    ? overrideAppName
-    : getAppName(import.meta.env.VITE_NAME);
-  const environmentName = overrideEnvironment
-    ? overrideEnvironment
-    : getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME);
+  const applicationName =
+    overrideAppName ?? getAppName(import.meta.env.VITE_NAME);
+  const environmentName =
+    overrideEnvironment ??
+    getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME);
 
   const {
     data: featureToggle,

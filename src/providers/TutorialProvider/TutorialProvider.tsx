@@ -78,12 +78,10 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({
   >(undefined);
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
   const dialogRef = useRef<HTMLDialogElement | null>(null);
-  const appName = overrideAppName
-    ? overrideAppName
-    : getAppName(import.meta.env.VITE_NAME);
-  const environmentName = overrideEnvironmentName
-    ? overrideEnvironmentName
-    : getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME);
+  const appName = overrideAppName ?? getAppName(import.meta.env.VITE_NAME);
+  const environmentName =
+    overrideEnvironmentName ??
+    getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME);
   const currentStepObject = useMemo(() => {
     if (!activeTutorial) return;
     return activeTutorial.steps.at(currentStep);
