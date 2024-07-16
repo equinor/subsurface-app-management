@@ -8,10 +8,13 @@ const { getAppName } = environment;
 
 interface ReleaseNotesQueryProps {
   enabled?: boolean;
+  overrideAppName?: string;
 }
 
 export function useReleaseNotesQuery(options?: ReleaseNotesQueryProps) {
-  const applicationName = getAppName(import.meta.env.VITE_NAME);
+  const applicationName = options?.overrideAppName
+    ? options?.overrideAppName
+    : getAppName(import.meta.env.VITE_NAME);
 
   return useQuery<ReleaseNote[]>({
     queryKey: ['get-all-release-notes'],

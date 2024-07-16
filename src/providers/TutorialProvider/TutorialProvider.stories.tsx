@@ -65,11 +65,13 @@ const RedSquare = styled.div`
   align-items: center;
   justify-content: center;
 `;
+
 const BlueSquare = styled.div`
   width: 40%;
   height: 180px;
   background-color: cornflowerblue;
 `;
+
 const GreenCircle = styled.div`
   width: 80%;
   height: 250px;

@@ -3,10 +3,7 @@ import { tokens } from '@equinor/eds-tokens';
 
 import styled, { keyframes } from 'styled-components';
 
-const { elevation, shape } = tokens;
-import { style } from '@equinor/amplify-components';
-
-const { spacings } = style;
+const { elevation, shape, spacings } = tokens;
 
 const fadeinBoxShadowAnimation = keyframes`
   from {
@@ -15,7 +12,6 @@ const fadeinBoxShadowAnimation = keyframes`
   to {
     box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3);
   }
-
 `;
 
 export const Highlighter = styled.div`
@@ -43,8 +39,8 @@ const fadeinOpacityAnimation = keyframes`
   to {
     opacity: 1;
   }
-
 `;
+
 export const StyledTutorialDialog = styled.dialog`
   border: none;
   box-shadow: ${elevation.above_scrim};
@@ -57,10 +53,11 @@ export const StyledTutorialDialog = styled.dialog`
     background: transparent;
   }
 `;
+
 export const DialogContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${spacings.large};
+  gap: ${spacings.comfortable.large};
   width: 300px;
 `;
 
@@ -74,9 +71,10 @@ export const DialogActions = styled.div`
   display: flex;
   justify-content: space-between;
 `;
+
 export const NavigateSteps = styled.div`
   display: flex;
-  gap: ${spacings.medium};
+  gap: ${spacings.comfortable.medium};
 `;
 
 export const TutorialErrorDialog = styled(Dialog)`
@@ -84,8 +82,8 @@ export const TutorialErrorDialog = styled(Dialog)`
   height: fit-content;
   display: flex;
   flex-direction: column;
-  padding: ${spacings.medium};
-  gap: ${spacings.large};
+  padding: ${spacings.comfortable.medium};
+  gap: ${spacings.comfortable.large};
   button {
     align-self: flex-end;
   }

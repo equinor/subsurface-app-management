@@ -1,19 +1,20 @@
-import { createContext, FC, ReactNode, useContext } from 'react';
+import { createContext, FC, ReactElement, ReactNode, useContext } from 'react';
 
-import { FullPageSpinner } from '@equinor/amplify-components';
 import { useQuery } from '@tanstack/react-query';
 
-import { environment } from '../utils';
 import { FeatureAPIType, FeatureToggleDto, GraphUser } from 'src/api';
 import { PortalService } from 'src/api/services/PortalService';
+import { EnvironmentType } from 'src/types';
+import { environment } from 'src/utils';
+import { getEnvironmentName } from 'src/utils/environment';
 
 const { getAppName } = environment;
 
 export const isUserInActiveUserArray = (
-  username: string,
+  username: string | undefined,
   activeUsers: GraphUser[] | undefined | null
 ) => {
-  if (activeUsers && activeUsers.length > 0) {
+  if (username && activeUsers && activeUsers.length > 0) {
     return activeUsers
       .map((user) => user.mail.toLowerCase())
       .includes(username.toLowerCase());
@@ -24,6 +25,7 @@ export const isUserInActiveUserArray = (
 interface FeatureToggleContextType {
   isLoading: boolean;
   isError: boolean;
+  environmentName: EnvironmentType;
   features?: FeatureAPIType[] | null;
 }
 
@@ -41,11 +43,23 @@ export function useFeatureToggleContext() {
 
 interface FeatureToggleProviderProps {
   children: ReactNode;
+  loadingComponent?: ReactElement;
+  overrideAppName?: string;
+  overrideEnvironment?: EnvironmentType;
 }
-const FeatureToggleProvider: FC<FeatureToggleProviderProps> = ({
+
+export const FeatureToggleProvider: FC<FeatureToggleProviderProps> = ({
   children,
+  loadingComponent,
+  overrideAppName,
+  overrideEnvironment,
 }) => {
-  const applicationName = getAppName(import.meta.env.VITE_NAME);
+  const applicationName = overrideAppName
+    ? overrideAppName
+    : getAppName(import.meta.env.VITE_NAME);
+  const environmentName = overrideEnvironment
+    ? overrideEnvironment
+    : getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME);
 
   const {
     data: featureToggle,
@@ -57,15 +71,18 @@ const FeatureToggleProvider: FC<FeatureToggleProviderProps> = ({
       PortalService.getFeatureToggleFromApplicationName(applicationName),
   });
 
-  if (isLoading) return <FullPageSpinner variant="equinor" withoutScrim />;
+  if (isLoading && loadingComponent) return loadingComponent;
 
   return (
     <FeatureToggleContext.Provider
-      value={{ features: featureToggle?.features, isLoading, isError }}
+      value={{
+        features: featureToggle?.features,
+        isLoading,
+        isError,
+        environmentName,
+      }}
     >
       {children}
     </FeatureToggleContext.Provider>
   );
 };
-
-export default FeatureToggleProvider;

@@ -8,12 +8,8 @@ import {
 } from './TutorialProvider.const';
 import { TutorialService } from 'src/api/services/TutorialService';
 import { TutorialContext } from 'src/providers/TutorialProvider/TutorialProvider';
-import { environment } from 'src/utils';
 
-const { getAppName } = environment;
-
-export const useGetTutorialsForApp = () => {
-  const appName = getAppName(import.meta.env.VITE_NAME);
+export const useGetTutorialsForApp = (appName: string) => {
   return useQuery({
     queryKey: [GET_TUTORIALS_FOR_APP, appName],
     queryFn: () => TutorialService.getTutorialsForApplication(appName),

@@ -6,7 +6,7 @@ import { waitFor } from '@testing-library/react';
 
 import { CancelablePromise } from 'src/api';
 import { Feature } from 'src/components/Feature/Feature';
-import { AuthProvider, FeatureToggleProvider } from 'src/providers';
+import { FeatureToggleProvider } from 'src/providers';
 import { render, screen } from 'src/tests/test-utils';
 
 import { beforeEach, describe } from 'vitest';
@@ -51,9 +51,9 @@ function Wrappers({ children }: { children: ReactNode }) {
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <FeatureToggleProvider>{children}</FeatureToggleProvider>
-      </AuthProvider>
+      <FeatureToggleProvider loadingComponent={<p>loading</p>}>
+        {children}
+      </FeatureToggleProvider>
     </QueryClientProvider>
   );
 }

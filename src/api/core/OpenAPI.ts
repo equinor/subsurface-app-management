@@ -2,14 +2,13 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ApiRequestOptions } from './ApiRequestOptions';
-import { auth, environment } from 'src/utils';
+import { environment } from 'src/utils';
 import { CancelablePromise } from 'src/api';
 import { request as __request } from 'src/api/core/request';
 import { getLocalStorage, updateLocalStorage } from 'src/utils/localStorage';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
 
-const { getToken: getApplicationToken } = auth;
-const { getApiUrl, getEnvironmentName } = environment;
+const { getEnvironmentName, getApiUrl } = environment;
 
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 type Headers = Record<string, string>;
@@ -38,7 +37,7 @@ export class TokenService {
    * @throws ApiError
    */
   public static getAmplifyPortalToken(): CancelablePromise<string> {
-    return __request(OpenAPI, {
+    return __request(OpenAPI_SAM, {
       method: 'GET',
       url: '/api/v1/Token/AmplifyPortal',
     });
@@ -49,7 +48,7 @@ export class TokenService {
    * @throws ApiError
    */
   public static getAmplifyPortalProductionToken(): CancelablePromise<string> {
-    return __request(OpenAPI, {
+    return __request(OpenAPI_SAM, {
       method: 'GET',
       url: '/api/v1/Token/AmplifyPortal/Production',
     });
@@ -98,12 +97,12 @@ const getPortalProdToken = async () => {
   );
 };
 
-export const OpenAPI: OpenAPIConfig = {
+export const OpenAPI_SAM: OpenAPIConfig = {
   BASE: getApiUrl(import.meta.env.VITE_API_URL),
   VERSION: '1.0',
   WITH_CREDENTIALS: false,
   CREDENTIALS: 'include',
-  TOKEN: getApplicationToken,
+  TOKEN: undefined,
   USERNAME: undefined,
   PASSWORD: undefined,
   HEADERS: undefined,
@@ -121,6 +120,7 @@ export const OpenAPI_Portal: OpenAPIConfig = {
   HEADERS: undefined,
   ENCODE_PATH: undefined,
 };
+
 export const OpenAPI_Portal_Prod: OpenAPIConfig = {
   BASE: `https://api-amplify-portal-production.radix.equinor.com`,
   VERSION: '1.0',

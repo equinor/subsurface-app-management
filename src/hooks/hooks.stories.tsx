@@ -5,24 +5,14 @@ import styled from 'styled-components';
 
 const hookList = [
   {
-    name: 'useSignalRMessages',
-    body: 'Returns service bus messages with wss given a topic + host + token',
-    code: `const {
-     messages,
-     hasUnreadMessages,
-     setMessageAsRead,
-     setAllMessagesAsRead,
-     deleteMessage } = useSignalRMessages<MessageDto>('recap_notifications', 'url', 'token')`,
-  },
-  {
     name: 'useFeatureToggling',
     body: 'Returns if a given key should be feature toggled on/off',
     code: 'const { showContent, isLoading } = useFeatureToggling("analytics")',
   },
   {
-    name: 'useAuth',
-    body: 'Returns auth object from AuthProvider',
-    code: 'const { account } = useAuth()',
+    name: 'useReleaseNotesQuery',
+    body: 'Returns release notes for a given app. Has optional options to override app name and enabled (react-query)',
+    code: 'const { data } = useReleaseNotesQuery()',
   },
 ];
 

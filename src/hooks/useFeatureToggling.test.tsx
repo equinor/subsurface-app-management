@@ -1,6 +1,5 @@
-import { ReactElement, ReactNode } from 'react';
+import { ReactNode } from 'react';
 
-import { AccountInfo } from '@azure/msal-browser';
 import { faker } from '@faker-js/faker';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -8,30 +7,19 @@ import { useFeatureToggleContext } from '../providers/FeatureToggleProvider';
 import { renderHook, waitFor } from '../tests/test-utils';
 import { useFeatureToggling } from './useFeatureToggling';
 import { CancelablePromise } from 'src/api';
-import { AuthProvider, FeatureToggleProvider } from 'src/providers';
+import { FeatureToggleProvider } from 'src/providers';
+import { EnvironmentType } from 'src/types';
 
-vi.mock('@azure/msal-react', () => ({
-  MsalProvider: (children: ReactElement) => <div>{children}</div>,
-}));
-
-vi.mock('@azure/msal-browser', () => {
-  return {
-    PublicClientApplication: class PublicClientApplication {
-      constructor() {
-        console.log('created');
-      }
-    },
-    AccountInfo: { username: 'mock' } as AccountInfo,
-  };
-});
-const ENVIRONMENT = 'test';
+const ENVIRONMENT = EnvironmentType.STAGING;
 const uniqueFeatureKey = faker.database.mongodbObjectId();
 enum Scenarios {
   WITH_FEATURES_KEY = 'withFeatures',
-  WITHOUT_FEATURES_KEY = 'withoutFatures',
+  WITHOUT_FEATURES_KEY = 'withoutFeatures',
   WHITELISTED_USER = 'whitelistedUser',
   WRONG_WHITELISTED_USER = 'wrongWhitelistedUser',
 }
+
+const username = faker.internet.userName();
 const mockedAppFeatures = [
   {
     applicationName: Scenarios.WITH_FEATURES_KEY,
@@ -39,7 +27,7 @@ const mockedAppFeatures = [
       {
         featureKey: uniqueFeatureKey,
         activeEnvironments: [ENVIRONMENT],
-        activeUsers: [],
+        activeUsers: [{ mail: username }],
         uuid: '',
         description: '',
       },
@@ -51,7 +39,7 @@ const mockedAppFeatures = [
       {
         featureKey: uniqueFeatureKey,
         activeEnvironments: [ENVIRONMENT],
-        activeUsers: [{ mail: 'MockUser@euquinor.com' }],
+        activeUsers: [{ mail: username }],
         uuid: '',
         description: '',
       },
@@ -62,15 +50,21 @@ const mockedAppFeatures = [
     features: [
       {
         featureKey: uniqueFeatureKey,
-        activeEnvironments: [],
+        activeEnvironments: [ENVIRONMENT],
         activeUsers: [{ mail: 'otherMockedUser@euquinor.com' }],
         uuid: '',
         description: '',
       },
     ],
   },
-  { applicationName: Scenarios.WITHOUT_FEATURES_KEY, features: [] },
+  {
+    applicationName: Scenarios.WITHOUT_FEATURES_KEY,
+    features: [],
+  },
 ];
+
+let mockServiceHasError = false;
+
 vi.mock('src/api/services/PortalService', () => {
   class PortalService {
     public static getFeatureToggleFromApplicationName(
@@ -90,15 +84,11 @@ vi.mock('src/api/services/PortalService', () => {
   return { PortalService };
 });
 
-let mockServiceHasError = false;
-
 function Wrappers({ children }: { children: ReactNode }) {
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <FeatureToggleProvider>{children}</FeatureToggleProvider>
-      </AuthProvider>
+      <FeatureToggleProvider>{children}</FeatureToggleProvider>
     </QueryClientProvider>
   );
 }
@@ -109,18 +99,19 @@ function WrappersWithoutFeatureToggleProvider({
 }) {
   const queryClient = new QueryClient();
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>{children}</AuthProvider>
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 }
 
 test('should return true for showContent when there is a feature and it is matching the environment we are in', async () => {
   vi.stubEnv('VITE_NAME', Scenarios.WITH_FEATURES_KEY);
   vi.stubEnv('VITE_ENVIRONMENT_NAME', ENVIRONMENT);
-  const { result } = renderHook(() => useFeatureToggling(uniqueFeatureKey), {
-    wrapper: Wrappers,
-  });
+  const { result } = renderHook(
+    () => useFeatureToggling({ featureKey: uniqueFeatureKey }),
+    {
+      wrapper: Wrappers,
+    }
+  );
 
   await waitFor(
     () => {
@@ -129,67 +120,12 @@ test('should return true for showContent when there is a feature and it is match
     { timeout: 600 }
   );
 });
+
 test('should return false for showContent when there is a feature but it does not match the environment we are in', async () => {
   vi.stubEnv('VITE_NAME', Scenarios.WITH_FEATURES_KEY);
   vi.stubEnv('VITE_ENVIRONMENT_NAME', faker.animal.dog());
-  const { result } = renderHook(() => useFeatureToggling(uniqueFeatureKey), {
-    wrapper: Wrappers,
-  });
-
-  await waitFor(
-    () => {
-      expect(result.current.showContent).toBe(false);
-    },
-    { timeout: 600 }
-  );
-});
-test('should return true for showContent when there is not a feature, despite matching the environment we are in', async () => {
-  vi.stubEnv('VITE_NAME', Scenarios.WITH_FEATURES_KEY);
-  vi.stubEnv('VITE_ENVIRONMENT_NAME', ENVIRONMENT);
-  const { result } = renderHook(() => useFeatureToggling(faker.animal.bird()), {
-    wrapper: Wrappers,
-  });
-
-  await waitFor(
-    () => {
-      expect(result.current.showContent).toBe(true);
-    },
-    { timeout: 600 }
-  );
-});
-test('should return true for showContent when there is a feature and we have a whitelisted user, but not matching the environment we are in', async () => {
-  vi.stubEnv('VITE_NAME', Scenarios.WHITELISTED_USER);
-  vi.stubEnv('VITE_ENVIRONMENT_NAME', faker.animal.dog());
-  const { result } = renderHook(() => useFeatureToggling(uniqueFeatureKey), {
-    wrapper: Wrappers,
-  });
-
-  await waitFor(
-    () => {
-      expect(result.current.showContent).toBe(true);
-    },
-    { timeout: 600 }
-  );
-});
-test('should return false for showContent when there is a feature, but not matching the environment or the whitelisted user', async () => {
-  vi.stubEnv('VITE_NAME', Scenarios.WRONG_WHITELISTED_USER);
-  vi.stubEnv('VITE_ENVIRONMENT_NAME', faker.animal.dog());
-  const { result } = renderHook(() => useFeatureToggling(uniqueFeatureKey), {
-    wrapper: Wrappers,
-  });
-
-  await waitFor(
-    () => {
-      expect(result.current.showContent).toBe(false);
-    },
-    { timeout: 600 }
-  );
-});
-test('should return false for showContent when there is no feature, and "showIfKeyMissing" is set to false', async () => {
-  vi.stubEnv('VITE_NAME', Scenarios.WITHOUT_FEATURES_KEY);
-  vi.stubEnv('VITE_ENVIRONMENT_NAME', faker.animal.dog());
   const { result } = renderHook(
-    () => useFeatureToggling(uniqueFeatureKey, false),
+    () => useFeatureToggling({ featureKey: uniqueFeatureKey }),
     {
       wrapper: Wrappers,
     }
@@ -202,13 +138,98 @@ test('should return false for showContent when there is no feature, and "showIfK
     { timeout: 600 }
   );
 });
+
+test('should return true for showContent when there is not a feature, despite matching the environment we are in', async () => {
+  vi.stubEnv('VITE_NAME', Scenarios.WITH_FEATURES_KEY);
+  vi.stubEnv('VITE_ENVIRONMENT_NAME', ENVIRONMENT);
+  const { result } = renderHook(
+    () => useFeatureToggling({ featureKey: faker.animal.bird() }),
+    {
+      wrapper: Wrappers,
+    }
+  );
+
+  await waitFor(
+    () => {
+      expect(result.current.showContent).toBe(true);
+    },
+    { timeout: 600 }
+  );
+});
+
+test('should return true for showContent when there is a feature and we have a whitelisted user, but not matching the environment we are in', async () => {
+  vi.stubEnv('VITE_NAME', Scenarios.WHITELISTED_USER);
+  vi.stubEnv('VITE_ENVIRONMENT_NAME', faker.animal.dog());
+  const { result } = renderHook(
+    () =>
+      useFeatureToggling({
+        featureKey: uniqueFeatureKey,
+        username,
+        showIfKeyIsMissing: false,
+      }),
+    {
+      wrapper: Wrappers,
+    }
+  );
+
+  await waitFor(
+    () => {
+      expect(result.current.showContent).toBe(true);
+    },
+    { timeout: 600 }
+  );
+});
+
+test('should return false for showContent when there is a feature, but not matching the environment or the whitelisted user', async () => {
+  vi.stubEnv('VITE_NAME', Scenarios.WRONG_WHITELISTED_USER);
+  vi.stubEnv('VITE_ENVIRONMENT_NAME', faker.animal.dog());
+  const { result } = renderHook(
+    () => useFeatureToggling({ featureKey: uniqueFeatureKey, username }),
+    {
+      wrapper: Wrappers,
+    }
+  );
+
+  await waitFor(
+    () => {
+      expect(result.current.showContent).toBe(false);
+    },
+    { timeout: 600 }
+  );
+});
+
+test('should return false for showContent when there is no feature, and "showIfKeyMissing" is set to false', async () => {
+  vi.stubEnv('VITE_NAME', Scenarios.WITHOUT_FEATURES_KEY);
+  vi.stubEnv('VITE_ENVIRONMENT_NAME', faker.animal.dog());
+  const { result } = renderHook(
+    () =>
+      useFeatureToggling({
+        featureKey: uniqueFeatureKey,
+        showIfKeyIsMissing: false,
+      }),
+    {
+      wrapper: Wrappers,
+    }
+  );
+
+  await waitFor(
+    () => {
+      expect(result.current.showContent).toBe(false);
+    },
+    { timeout: 600 }
+  );
+});
+
 test('should return false if error request has error', async () => {
   mockServiceHasError = true;
   vi.stubEnv('VITE_NAME', Scenarios.WITH_FEATURES_KEY);
   vi.stubEnv('VITE_ENVIRONMENT_NAME', ENVIRONMENT);
-  const { result } = renderHook(() => useFeatureToggling(uniqueFeatureKey), {
-    wrapper: Wrappers,
-  });
+  const { result } = renderHook(
+    () => useFeatureToggling({ featureKey: uniqueFeatureKey }),
+    {
+      wrapper: Wrappers,
+    }
+  );
   await new Promise((resolve) => setTimeout(resolve, 5000));
   await waitFor(
     () => {
@@ -225,4 +246,23 @@ test('useFeatureToggleContext throws error when used outside context', () => {
       wrapper: WrappersWithoutFeatureToggleProvider,
     });
   }).toThrow("'useFeatureToggleContext' must be used within provider");
+});
+
+test("shows warning when feature has activeUsers but username isn't defined", async () => {
+  mockServiceHasError = false;
+  console.warn = vi.fn();
+  vi.stubEnv('VITE_NAME', Scenarios.WRONG_WHITELISTED_USER);
+  vi.stubEnv('VITE_ENVIRONMENT_NAME', faker.animal.dog());
+  renderHook(
+    () =>
+      useFeatureToggling({
+        featureKey: uniqueFeatureKey,
+        username: undefined,
+      }),
+    {
+      wrapper: Wrappers,
+    }
+  );
+
+  await waitFor(() => expect(console.warn).toHaveBeenCalled());
 });
