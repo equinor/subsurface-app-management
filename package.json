@@ -1,9 +1,10 @@
 {
   "name": "@equinor/subsurface-app-management",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "React Typescript components/hooks to communicate with equinor/sam",
-  "main": "dist/index.js",
+  "main": "dist/subsurface-app-management.cjs",
   "types": "dist/index.d.ts",
+  "module": "dist/index.js",
   "author": "Amplify Team",
   "license": "ISC",
   "homepage": "https://github.com/equinor/subsurface-app-management#readme",
