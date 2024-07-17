@@ -6,7 +6,7 @@
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "types": ["node", "vite/client", "vitest/globals"],
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
