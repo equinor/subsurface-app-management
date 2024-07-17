@@ -5,22 +5,6 @@ import styled from 'styled-components';
 
 const providersList = [
   {
-    name: 'AuthProvider',
-    body: 'MSAL authentication provider',
-    code: `<AuthProvider
-  loadingComponent={component to show when loading}
-  unauthorizedComponent={componentToShowWhenUnauthorized}>
-    {children}
-</AuthProvider>`,
-  },
-  {
-    name: 'TutorialStepsProvider',
-    body: 'Provider needed to use tutorial hook',
-    code: `<TutorialStepsProvider>
-    {children}
-</TutorialStepsProvider>`,
-  },
-  {
     name: 'FeatureToggleProvider',
     body: 'Provider needed to use feature toggle hook',
     code: `<FeatureToggleProvider>

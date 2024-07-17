@@ -14,7 +14,7 @@ type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 type Headers = Record<string, string>;
 
 const environmentName = getEnvironmentName(
-  import.meta.env.VITE_ENVIRONMENT_NAME
+  import.meta.env?.VITE_ENVIRONMENT_NAME
 );
 const noLocalhostEnvironmentName =
   environmentName === 'localhost' ? 'development' : environmentName;
@@ -98,7 +98,7 @@ const getPortalProdToken = async () => {
 };
 
 export const OpenAPI_SAM: OpenAPIConfig = {
-  BASE: getApiUrl(import.meta.env.VITE_API_URL),
+  BASE: getApiUrl(import.meta.env?.VITE_API_URL),
   VERSION: '1.0',
   WITH_CREDENTIALS: false,
   CREDENTIALS: 'include',

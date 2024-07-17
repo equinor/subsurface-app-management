@@ -13,7 +13,7 @@ interface ReleaseNotesQueryProps {
 
 export function useReleaseNotesQuery(options?: ReleaseNotesQueryProps) {
   const applicationName =
-    options?.overrideAppName ?? getAppName(import.meta.env.VITE_NAME);
+    options?.overrideAppName ?? getAppName(import.meta.env?.VITE_NAME);
 
   return useQuery<ReleaseNote[]>({
     queryKey: ['get-all-release-notes'],
