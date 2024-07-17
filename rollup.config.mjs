@@ -36,7 +36,6 @@ export default [
         preserveModulesRoot: 'src',
         format: 'es',
       },
-      { file: './dist/subsurface-app-management.cjs', format: 'cjs', interop: 'auto' },
     ],
   },
 ];
