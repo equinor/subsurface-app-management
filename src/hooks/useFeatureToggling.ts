@@ -21,17 +21,17 @@ interface UseFeatureTogglingOptions {
 export function useFeatureToggling({
   featureKey,
   username,
-  showIfKeyIsMissing,
+  showIfKeyIsMissing = true,
+  showIfIsLoading = false,
 }: UseFeatureTogglingOptions) {
   const { features, isError, environmentName, isLoading } = useFeatureToggleContext();
-  const fallback = showIfKeyIsMissing ?? true;
 
-  if (!fallback ) {
+  if (!showIfKeyIsMissing) {
     console.warn(`[FeatureToggle] Feature: ${featureKey} will not show when the feature toggle is removed! Was this intentional?`)
   }
 
   const showContent = useMemo(() => {
-    if (isLoading) return false
+    if ((!showIfIsLoading && isLoading) || isError) return false
 
     const feature = features?.find(
         (feature) => feature.featureKey === featureKey
@@ -56,12 +56,9 @@ export function useFeatureToggling({
           `[FeatureToggle] Feature ${featureKey} was not found, has it been removed?`
       );
     }
-    if (isError) {
-      return false;
-    }
 
-    return fallback;
-  }, [environmentName, fallback, features, featureKey, isError, isLoading, username]);
+    return showIfKeyIsMissing;
+  }, [showIfIsLoading, isLoading, isError, features, showIfKeyIsMissing, featureKey, username, environmentName]);
 
   return { showContent };
 }
