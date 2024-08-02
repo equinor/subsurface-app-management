@@ -9,8 +9,8 @@ import {
 } from 'src/providers/FeatureToggleProvider';
 import { EnvironmentType } from 'src/types';
 
-vi.mock('src/api/services/PortalService', () => {
-  class PortalService {
+vi.mock('src/api', () => {
+  class FeatureToggleService {
     public static getFeatureToggleFromApplicationName(): CancelablePromise<unknown> {
       return new CancelablePromise((resolve) => {
         setTimeout(() => {
@@ -19,7 +19,7 @@ vi.mock('src/api/services/PortalService', () => {
       });
     }
   }
-  return { PortalService };
+  return { FeatureToggleService };
 });
 
 test('Overrides work as expected', () => {

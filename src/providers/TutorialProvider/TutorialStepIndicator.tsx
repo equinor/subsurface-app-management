@@ -2,7 +2,7 @@ import { FC } from 'react';
 
 import { tokens } from '@equinor/eds-tokens';
 
-import { CustomTutorialStep, GenericTutorialStep } from 'src/api';
+import { Step } from 'src/api';
 
 import styled from 'styled-components';
 
@@ -48,7 +48,7 @@ const StepIndicator = styled.div<StepIndicatorProps>`
 `;
 
 interface TutorialStepIndicatorProps {
-  steps: (GenericTutorialStep | CustomTutorialStep)[];
+  steps: Step[];
   currentStep: number;
 }
 

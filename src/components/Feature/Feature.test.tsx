@@ -32,8 +32,8 @@ const mockedAppFeatures = [
   },
   { applicationName: Scenarios.WITHOUT_FEATURES_KEY, features: [] },
 ];
-vi.mock('src/api/services/PortalService', () => {
-  class PortalService {
+vi.mock('src/api/services/FeatureToggleService', () => {
+  class FeatureToggleService {
     public static getFeatureToggleFromApplicationName(
       key: Scenarios
     ): CancelablePromise<unknown> {
@@ -44,7 +44,7 @@ vi.mock('src/api/services/PortalService', () => {
       });
     }
   }
-  return { PortalService };
+  return { FeatureToggleService };
 });
 
 function Wrappers({ children }: { children: ReactNode }) {

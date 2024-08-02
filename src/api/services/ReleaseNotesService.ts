@@ -1,12 +1,10 @@
-/* generated using openapi-typescript-codegen -- do no edit */
+/* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-
 import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI_Portal } from '../core/OpenAPI';
+import { OpenAPI_Portal} from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-
 export class ReleaseNotesService {
   /**
    * @param applicationName
@@ -30,18 +28,22 @@ export class ReleaseNotesService {
       },
     });
   }
-
   /**
+   * @param tags
    * @returns any Success
    * @throws ApiError
    */
-  public static getMyReleasenotes(): CancelablePromise<any> {
+  public static getMyReleasenotes(
+    tags?: Array<string>
+  ): CancelablePromise<any> {
     return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ReleaseNotes/myreleasenotes',
+      query: {
+        tags: tags,
+      },
     });
   }
-
   /**
    * @param applicationName
    * @param releaseId
@@ -61,7 +63,6 @@ export class ReleaseNotesService {
       },
     });
   }
-
   /**
    * @returns string Success
    * @throws ApiError

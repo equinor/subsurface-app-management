@@ -2,8 +2,12 @@ import { createContext, FC, ReactElement, ReactNode, useContext } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
-import { FeatureAPIType, FeatureToggleDto, GraphUser } from 'src/api';
-import { PortalService } from 'src/api/services/PortalService';
+// These 2 api imports need to be separated to be able to use vi.mock in tests
+import {
+  FeatureAPIType,
+  GraphUser,
+} from 'src/api';
+import { FeatureToggleService } from 'src/api/services/FeatureToggleService'
 import { EnvironmentType } from 'src/types';
 import { environment } from 'src/utils';
 import { getEnvironmentName } from 'src/utils/environment';
@@ -64,10 +68,10 @@ export const FeatureToggleProvider: FC<FeatureToggleProviderProps> = ({
     data: featureToggle,
     isLoading,
     isError,
-  } = useQuery<FeatureToggleDto>({
+  } = useQuery({
     queryKey: ['getFeatureToggleFromAppName'],
     queryFn: async () =>
-      PortalService.getFeatureToggleFromApplicationName(applicationName),
+      FeatureToggleService.getFeatureToggleFromApplicationName(applicationName),
   });
 
   if (isLoading && loadingComponent) return loadingComponent;

@@ -1,19 +1,17 @@
-/* generated using openapi-typescript-codegen -- do no edit */
+/* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-
 import type { ServiceNowIncidentAttachmentResponse } from './ServiceNowIncidentAttachmentResponse';
-
 export type ServiceNowIncidentResponse = {
-  number?: string | null;
-  assignmentGroup?: string | null;
-  configurationItem?: string | null;
-  title?: string | null;
-  description?: string | null;
-  caller?: string | null;
-  state?: string | null;
-  urgency?: string | null;
-  sysId?: string | null;
-  attachmentResponse?: ServiceNowIncidentAttachmentResponse;
+  number: string;
+  assignmentGroup: string;
+  configurationItem: string;
+  title: string;
+  description: string;
+  caller: string;
+  state: string;
+  urgency: string;
+  sysId: string;
+  attachmentResponse?: Array<ServiceNowIncidentAttachmentResponse> | null;
 };

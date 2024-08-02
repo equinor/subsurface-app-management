@@ -11,13 +11,7 @@ import {
   TUTORIAL_HIGHLIGHTER_DATATEST_ID,
   TUTORIAL_LOCALSTORAGE_VALUE_STRING,
 } from './TutorialProvider.const';
-import {
-  CancelablePromise,
-  CustomTutorialStep,
-  GenericTutorialStep,
-  Tutorial,
-  TutorialPosition,
-} from 'src/api';
+import { CancelablePromise, Step, Tutorial, TutorialPosition } from 'src/api';
 import { useTutorial } from 'src/providers/TutorialProvider/TutorialProvider.hooks';
 import { EnvironmentType } from 'src/types';
 
@@ -49,7 +43,7 @@ export const getStyleStringForPosition = (position: TutorialPosition) => {
 
 const extraFakeSteps = () => {
   const numberOfExtraSteps = faker.number.int({ min: 2, max: 5 });
-  const extraSteps: (GenericTutorialStep | CustomTutorialStep)[] = [];
+  const extraSteps: Step[] = [];
   for (let i = 0; i < numberOfExtraSteps; i++) {
     extraSteps.push({
       title: faker.animal.bear() + i,
@@ -210,9 +204,9 @@ const getMemoryRouter = (props: GetMemoryRouterProps) => {
   );
 };
 
-const getStepTitleOrKey = (step: GenericTutorialStep | CustomTutorialStep) => {
+const getStepTitleOrKey = (step: Step): string => {
   if (step.key === undefined || step.key === null) {
-    return step.title;
+    return step.title ?? '';
   } else {
     return step.key;
   }
@@ -281,8 +275,8 @@ describe('TutorialProvider', () => {
     for (let i = 0; i < steps.length - 1; i++) {
       const currentStep = steps[i];
       if (currentStep.key === undefined || currentStep.key === null) {
-        const stepTitle = screen.queryByText(currentStep.title);
-        const stepBody = screen.queryByText(currentStep.body);
+        const stepTitle = screen.queryByText(currentStep.title ?? '');
+        const stepBody = screen.queryByText(currentStep.body ?? '');
 
         expect(stepTitle).toBeInTheDocument();
         expect(stepBody).toBeInTheDocument();
@@ -491,7 +485,7 @@ describe('TutorialProvider', () => {
       expect(highlighterElement).not.toBeInTheDocument();
 
       if (tutorial.steps[0].key === undefined) {
-        const stepOneTitle = screen.queryByText(tutorial.steps[0].title);
+        const stepOneTitle = screen.queryByText(tutorial.steps[0].title ?? '');
         expect(stepOneTitle).not.toBeInTheDocument();
       }
     });
