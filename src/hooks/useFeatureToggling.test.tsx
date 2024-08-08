@@ -73,7 +73,7 @@ vi.mock('src/api/services/FeatureToggleService', () => {
       return new CancelablePromise((resolve, reject) => {
         setTimeout(() => {
           if (mockServiceHasError) {
-            reject( 'error featureToggle');
+            reject('error featureToggle');
           } else {
             resolve(mockedAppFeatures.find((f) => f.applicationName === key));
           }
@@ -153,7 +153,7 @@ test('should return true for showContent feature is not found', async () => {
   await waitFor(
     () => {
       expect(result.current.showContent).toBe(true);
-      expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
     },
     { timeout: 600 }
   );
@@ -178,7 +178,7 @@ test('should return true for showContent when there is a feature and we have a w
   await waitFor(
     () => {
       expect(result.current.showContent).toBe(true);
-      expect(consoleWarnSpy).toHaveBeenCalled()
+      expect(consoleWarnSpy).toHaveBeenCalled();
     },
     { timeout: 600 }
   );
@@ -235,10 +235,10 @@ test('should return false if is loading', async () => {
     }
   );
   await waitFor(
-      () => {
-        expect(result.current.showContent).toBe(false);
-      },
-      { timeout: 1000 }
+    () => {
+      expect(result.current.showContent).toBe(false);
+    },
+    { timeout: 1000 }
   );
   await new Promise((resolve) => setTimeout(resolve, 5000));
   await waitFor(
@@ -254,23 +254,27 @@ test('should return true if is loading and showIfIsLoading=true', async () => {
   vi.stubEnv('VITE_NAME', Scenarios.WITH_FEATURES_KEY);
   vi.stubEnv('VITE_ENVIRONMENT_NAME', ENVIRONMENT);
   const { result } = renderHook(
-      () => useFeatureToggling({ featureKey: uniqueFeatureKey, showIfIsLoading: true}),
-      {
-        wrapper: Wrappers,
-      }
+    () =>
+      useFeatureToggling({
+        featureKey: uniqueFeatureKey,
+        showIfIsLoading: true,
+      }),
+    {
+      wrapper: Wrappers,
+    }
   );
   await waitFor(
-      () => {
-        expect(result.current.showContent).toBe(true);
-      },
-      { timeout: 1000 }
+    () => {
+      expect(result.current.showContent).toBe(true);
+    },
+    { timeout: 1000 }
   );
   await new Promise((resolve) => setTimeout(resolve, 5000));
   await waitFor(
-      () => {
-        expect(result.current.showContent).toBe(true);
-      },
-      { timeout: 1000 }
+    () => {
+      expect(result.current.showContent).toBe(true);
+    },
+    { timeout: 1000 }
   );
 }, 10000);
 
@@ -279,17 +283,17 @@ test('should return false if error request has error', async () => {
   vi.stubEnv('VITE_NAME', Scenarios.WITH_FEATURES_KEY);
   vi.stubEnv('VITE_ENVIRONMENT_NAME', ENVIRONMENT);
   const { result } = renderHook(
-      () => useFeatureToggling({ featureKey: uniqueFeatureKey }),
-      {
-        wrapper: Wrappers,
-      }
+    () => useFeatureToggling({ featureKey: uniqueFeatureKey }),
+    {
+      wrapper: Wrappers,
+    }
   );
   await new Promise((resolve) => setTimeout(resolve, 5000));
   await waitFor(
-      () => {
-        expect(result.current.showContent).toBe(false);
-      },
-      { timeout: 6000 }
+    () => {
+      expect(result.current.showContent).toBe(false);
+    },
+    { timeout: 6000 }
   );
 }, 10000);
 

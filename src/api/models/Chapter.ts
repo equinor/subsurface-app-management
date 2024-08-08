@@ -3,9 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Chapter = {
-    order: number;
-    title: string;
-    subTitle: string;
-    content: string;
+  order: number;
+  title: string;
+  subTitle: string;
+  content: string;
 };
-

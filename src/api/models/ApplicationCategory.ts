@@ -3,8 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export enum ApplicationCategory {
-    JSDigitalFrontrunner = 'JS Digital Frontrunner',
-    Upscaling = 'Upscaling',
-    Toolbox = 'Toolbox',
-    External = 'External',
+  JSDigitalFrontrunner = 'JS Digital Frontrunner',
+  Upscaling = 'Upscaling',
+  Toolbox = 'Toolbox',
+  External = 'External',
 }
