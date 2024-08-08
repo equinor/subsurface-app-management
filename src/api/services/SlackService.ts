@@ -12,36 +12,28 @@ export class SlackService {
    * @returns any Success
    * @throws ApiError
    */
-  public static fileUpload(formData?: {
-    ContentType?: string;
-    ContentDisposition?: string;
-    Headers?: Record<string, Array<string>>;
-    Length?: number;
-    Name?: string;
-    FileName?: string;
-    comment?: string;
-  }): CancelablePromise<any> {
+
+  public static fileUpload(formData?: FormData): CancelablePromise<unknown> {
     return __request(OpenAPI_Portal, {
       method: 'POST',
       url: '/api/v1/Slack/fileUpload',
-      formData: formData,
-      mediaType: 'multipart/form-data',
+      body: formData,
     });
   }
+
   /**
-   * Creates a message in the slack channel defined in config
+   * Posts a slack message to channel defined in config
    * @param formData
    * @returns any Success
    * @throws ApiError
    */
-  public static postMessage(formData?: {
-    comment?: string;
-  }): CancelablePromise<any> {
+
+  public static postmessage(formData?: FormData): CancelablePromise<unknown> {
     return __request(OpenAPI_Portal, {
       method: 'POST',
       url: '/api/v1/Slack/postmessage',
-      formData: formData,
-      mediaType: 'multipart/form-data',
+      body: formData,
     });
   }
+
 }
