@@ -8,6 +8,7 @@ export type ImpersonateUser = {
   firstName: string;
   lastName: string;
   uniqueName: string;
+  appName: string;
   roles: Array<string>;
   activeUsers: Array<string>;
 };
