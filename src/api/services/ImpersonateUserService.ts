@@ -2,9 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ImpersonateUser } from '../models/ImpersonateUser';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI_Portal} from '../core/OpenAPI';
+import {CancelablePromise, ImpersonateUser} from 'src/api';
+import { OpenAPI_Portal } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class ImpersonateUserService {
   /**
@@ -12,7 +11,7 @@ export class ImpersonateUserService {
    * @returns ImpersonateUser Success
    * @throws ApiError
    */
-  public static getApiV1ImpersonateUser(): CancelablePromise<ImpersonateUser> {
+  public static getApiV1ImpersonateUser(): CancelablePromise<Array<ImpersonateUser>> {
     return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser',
@@ -28,9 +27,9 @@ export class ImpersonateUserService {
    * @throws ApiError
    */
   public static createImpersonateUser(
-    requestBody?: ImpersonateUser
+      requestBody?: ImpersonateUser,
   ): CancelablePromise<ImpersonateUser> {
-  return __request(OpenAPI_Portal, {
+    return __request(OpenAPI_Portal, {
       method: 'POST',
       url: '/api/v1/ImpersonateUser',
       body: requestBody,
@@ -49,7 +48,7 @@ export class ImpersonateUserService {
    * @throws ApiError
    */
   public static putImpersonateUser(
-    requestBody?: ImpersonateUser
+      requestBody?: ImpersonateUser,
   ): CancelablePromise<ImpersonateUser> {
     return __request(OpenAPI_Portal, {
       method: 'PUT',
@@ -83,13 +82,13 @@ export class ImpersonateUserService {
    * @throws ApiError
    */
   public static getActiveUserByUsername(
-    username?: string
+      username?: string,
   ): CancelablePromise<ImpersonateUser> {
     return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser/ActiveUserByUsername',
       query: {
-        username: username,
+        'username': username,
       },
       errors: {
         400: `Bad Request`,
@@ -104,13 +103,13 @@ export class ImpersonateUserService {
    * @throws ApiError
    */
   public static getImpersonateUserById(
-    id?: string
+      id?: string,
   ): CancelablePromise<ImpersonateUser> {
     return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser/ImpersonateUser',
       query: {
-        id: id,
+        'id': id,
       },
       errors: {
         400: `Bad Request`,
@@ -125,13 +124,13 @@ export class ImpersonateUserService {
    * @throws ApiError
    */
   public static getImpersonateUserByUserName(
-    username?: string
+      username?: string,
   ): CancelablePromise<ImpersonateUser> {
     return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser/ImpersonateUserByUserName',
       query: {
-        username: username,
+        'username': username,
       },
       errors: {
         400: `Bad Request`,
@@ -145,13 +144,13 @@ export class ImpersonateUserService {
    * @throws ApiError
    */
   public static startImpersonating(
-    username?: string
+      username?: string,
   ): CancelablePromise<ImpersonateUser> {
     return __request(OpenAPI_Portal, {
       method: 'PUT',
       url: '/api/v1/ImpersonateUser/StartImpersonating',
       query: {
-        username: username,
+        'username': username,
       },
       errors: {
         400: `Bad Request`,
