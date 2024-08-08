@@ -7,6 +7,10 @@
   "author": "Amplify Team",
   "license": "ISC",
   "homepage": "https://github.com/equinor/subsurface-app-management#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/equinor/subsurface-app-management.git"
+  },
   "bugs": {
     "url": "https://github.com/equinor/subsurface-app-management/issues"
   },

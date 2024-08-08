@@ -4,6 +4,8 @@ on:
     secrets:
       npm-token:
         required: true
+permissions:
+  id-token: write
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -20,8 +22,9 @@ jobs:
         run: npm run test:ci
 
       - name: Build Components
-        run: npm run build
+        run: npm run build-components:ci
 
-      - uses: JS-DevTools/npm-publish@v1
+      - uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.npm-token }}
+          provenance: true
