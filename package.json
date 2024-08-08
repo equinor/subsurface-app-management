@@ -33,7 +33,6 @@
     "setup-husky": "husky install",
     "precommit": "npx lint-staged",
     "build": "rollup -c && tsc --project tsconfig.build.json && resolve-tspaths --project tsconfig.build.json",
-    "build:ci": "rm -rf lib dist && npm run build-components",
     "build-and-use": "node tooling/build-and-use.mjs",
     "brute-coverage": "node tooling/brute-coverage.mjs"
   },
