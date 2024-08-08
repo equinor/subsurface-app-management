@@ -1,13 +1,11 @@
-/* generated using openapi-typescript-codegen -- do no edit */
+/* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
 import type { Tutorial } from '../models/Tutorial';
-
 import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI_Portal_Prod } from '../core/OpenAPI';
+import { OpenAPI_Portal_Prod} from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-
 export class TutorialService {
   /**
    * Gets all tutorials for Application
@@ -26,7 +24,11 @@ export class TutorialService {
       },
     });
   }
-
+  /**
+   * Get A SAS token for Tutorial image container
+   * @returns string Success
+   * @throws ApiError
+   */
   public static getTutorialSasToken(): CancelablePromise<string> {
     return __request(OpenAPI_Portal_Prod, {
       method: 'GET',

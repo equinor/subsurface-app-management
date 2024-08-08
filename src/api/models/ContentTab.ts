@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type GraphUser = {
-  id: string;
-  displayName: string;
-  mail: string;
-  userPrincipalName: string;
+import type { Chapter } from './Chapter';
+export type ContentTab = {
+    name: string;
+    chapters: Array<Chapter>;
 };
+

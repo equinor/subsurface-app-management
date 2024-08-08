@@ -1,18 +1,15 @@
-/* generated using openapi-typescript-codegen -- do no edit */
+/* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-
-import { CustomTutorialStep } from './CustomTutorialStep';
-import { GenericTutorialStep } from './GenericTutorialStep';
-
+import type { Step } from './Step';
 export type Tutorial = {
-  id: string;
+  id?: string | null;
   name: string;
   shortName: string;
   path: string;
   application: string;
-  steps: Array<CustomTutorialStep | GenericTutorialStep>;
+  steps: Array<Step>;
   showInProd: boolean;
   willPopUp: boolean;
   dynamicPositioning?: boolean | null;

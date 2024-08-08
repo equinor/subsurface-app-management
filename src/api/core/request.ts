@@ -1,3 +1,4 @@
+/* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
@@ -8,21 +9,21 @@ import { CancelablePromise } from './CancelablePromise';
 import type { OnCancel } from './CancelablePromise';
 import type { OpenAPIConfig } from './OpenAPI';
 
-const isDefined = <T>(
+export const isDefined = <T>(
   value: T | null | undefined
 ): value is Exclude<T, null | undefined> => {
   return value !== undefined && value !== null;
 };
 
-const isString = (value: any): value is string => {
+export const isString = (value: any): value is string => {
   return typeof value === 'string';
 };
 
-const isStringWithValue = (value: any): value is string => {
+export const isStringWithValue = (value: any): value is string => {
   return isString(value) && value !== '';
 };
 
-const isBlob = (value: any): value is Blob => {
+export const isBlob = (value: any): value is Blob => {
   return (
     typeof value === 'object' &&
     typeof value.type === 'string' &&
@@ -35,15 +36,15 @@ const isBlob = (value: any): value is Blob => {
   );
 };
 
-const isFormData = (value: any): value is FormData => {
+export const isFormData = (value: any): value is FormData => {
   return value instanceof FormData;
 };
 
-const isSuccess = (status: number): boolean => {
+export const isSuccess = (status: number): boolean => {
   return status >= 200 && status < 300;
 };
 
-const base64 = (str: string): string => {
+export const base64 = (str: string): string => {
   try {
     return btoa(str);
   } catch (err) {
@@ -52,7 +53,7 @@ const base64 = (str: string): string => {
   }
 };
 
-const getQueryString = (params: Record<string, any>): string => {
+export const getQueryString = (params: Record<string, any>): string => {
   const qs: string[] = [];
 
   const append = (key: string, value: any) => {
@@ -105,7 +106,9 @@ const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
   return url;
 };
 
-const getFormData = (options: ApiRequestOptions): FormData | undefined => {
+export const getFormData = (
+  options: ApiRequestOptions
+): FormData | undefined => {
   if (options.formData) {
     const formData = new FormData();
 
@@ -134,7 +137,7 @@ const getFormData = (options: ApiRequestOptions): FormData | undefined => {
 
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 
-const resolve = async <T>(
+export const resolve = async <T>(
   options: ApiRequestOptions,
   resolver?: T | Resolver<T>
 ): Promise<T | undefined> => {
@@ -144,14 +147,16 @@ const resolve = async <T>(
   return resolver;
 };
 
-const getHeaders = async (
+export const getHeaders = async (
   config: OpenAPIConfig,
   options: ApiRequestOptions
 ): Promise<Headers> => {
-  const token = await resolve(options, config.TOKEN);
-  const username = await resolve(options, config.USERNAME);
-  const password = await resolve(options, config.PASSWORD);
-  const additionalHeaders = await resolve(options, config.HEADERS);
+  const [token, username, password, additionalHeaders] = await Promise.all([
+    resolve(options, config.TOKEN),
+    resolve(options, config.USERNAME),
+    resolve(options, config.PASSWORD),
+    resolve(options, config.HEADERS),
+  ]);
 
   const headers = Object.entries({
     Accept: 'application/json',
@@ -176,7 +181,7 @@ const getHeaders = async (
     headers['Authorization'] = `Basic ${credentials}`;
   }
 
-  if (options.body) {
+  if (options.body !== undefined) {
     if (options.mediaType) {
       headers['Content-Type'] = options.mediaType;
     } else if (isBlob(options.body)) {
@@ -191,8 +196,8 @@ const getHeaders = async (
   return new Headers(headers);
 };
 
-const getRequestBody = (options: ApiRequestOptions): any => {
-  if (options.body) {
+export const getRequestBody = (options: ApiRequestOptions): any => {
+  if (options.body !== undefined) {
     if (options.mediaType?.includes('/json')) {
       return JSON.stringify(options.body);
     } else if (
@@ -205,7 +210,6 @@ const getRequestBody = (options: ApiRequestOptions): any => {
       return JSON.stringify(options.body);
     }
   }
-
   return undefined;
 };
 
@@ -236,7 +240,7 @@ export const sendRequest = async (
   });
 };
 
-const getResponseHeader = (
+export const getResponseHeader = (
   xhr: XMLHttpRequest,
   responseHeader?: string
 ): string | undefined => {
@@ -249,12 +253,15 @@ const getResponseHeader = (
   return undefined;
 };
 
-const getResponseBody = (xhr: XMLHttpRequest): any => {
+export const getResponseBody = (xhr: XMLHttpRequest): any => {
   if (xhr.status !== 204) {
     try {
       const contentType = xhr.getResponseHeader('Content-Type');
       if (contentType) {
-        const isJSON = contentType.toLowerCase().startsWith('application/json');
+        const jsonTypes = ['application/json', 'application/problem+json'];
+        const isJSON = jsonTypes.some((type) =>
+          contentType.toLowerCase().startsWith(type)
+        );
         if (isJSON) {
           return JSON.parse(xhr.responseText);
         } else {
@@ -268,7 +275,7 @@ const getResponseBody = (xhr: XMLHttpRequest): any => {
   return undefined;
 };
 
-const catchErrorCodes = (
+export const catchErrorCodes = (
   options: ApiRequestOptions,
   result: ApiResult
 ): void => {
@@ -289,7 +296,21 @@ const catchErrorCodes = (
   }
 
   if (!result.ok) {
-    throw new ApiError(options, result, 'Generic Error');
+    const errorStatus = result.status ?? 'unknown';
+    const errorStatusText = result.statusText ?? 'unknown';
+    const errorBody = (() => {
+      try {
+        return JSON.stringify(result.body, null, 2);
+      } catch (e) {
+        return undefined;
+      }
+    })();
+
+    throw new ApiError(
+      options,
+      result,
+      `Generic Error: status: ${errorStatus}; status text: ${errorStatusText}; body: ${errorBody}`
+    );
   }
 };
 

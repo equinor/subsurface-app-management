@@ -1,6 +1,6 @@
 {
   "name": "@equinor/subsurface-app-management",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "description": "React Typescript components/hooks to communicate with equinor/sam",
   "types": "dist/index.d.ts",
   "type": "module",
@@ -8,6 +8,10 @@
   "author": "Amplify Team",
   "license": "ISC",
   "homepage": "https://github.com/equinor/subsurface-app-management#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/equinor/subsurface-app-management.git"
+  },
   "bugs": {
     "url": "https://github.com/equinor/subsurface-app-management/issues"
   },
@@ -19,8 +23,8 @@
     "start": "NODE_OPTIONS=--openssl-legacy-provider && storybook dev -p 6006",
     "build-storybook": "NODE_OPTIONS='--openssl-legacy-provider --max-old-space-size=2048' storybook build",
     "setup": "npm install",
-    "pretty": "prettier --check ./config ./src",
-    "pretty:fix": "prettier --write ./config ./src",
+    "pretty": "prettier --check ./src",
+    "pretty:fix": "prettier --write ./src",
     "lint": "eslint ./src --ext .ts,.tsx",
     "lint:fix": "eslint ./src --ext .ts,.tsx --fix",
     "test": "vitest watch",

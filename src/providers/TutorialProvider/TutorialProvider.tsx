@@ -17,7 +17,7 @@ import { TUTORIAL_SEARCH_PARAM_KEY } from './TutorialProvider.const';
 import { CustomTutorialComponent } from './TutorialProvider.types';
 import { getAllElementsToHighlight } from './TutorialProvider.utils';
 import TutorialProviderInner from './TutorialProviderInner';
-import { CustomTutorialStep, GenericTutorialStep, Tutorial } from 'src/api';
+import { Step, Tutorial } from 'src/api';
 import { EnvironmentType } from 'src/types';
 import { getAppName, getEnvironmentName } from 'src/utils/environment';
 
@@ -31,7 +31,7 @@ export interface TutorialContextType {
     SetStateAction<HTMLElement[] | undefined>
   >;
   customStepComponents: CustomTutorialComponent[] | undefined;
-  currentStepObject: GenericTutorialStep | CustomTutorialStep | undefined;
+  currentStepObject: Step | undefined;
   isLastStep: boolean;
   dialogRef: MutableRefObject<HTMLDialogElement | null>;
   clearSearchParam: () => void;
@@ -182,8 +182,9 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({
       return;
     }
 
-    const stepsHaveComponents = customKeysFromSteps.map((keyFromStep) =>
-      customKeysFromComponents?.includes(keyFromStep)
+    const stepsHaveComponents = customKeysFromSteps.map(
+      (keyFromStep) =>
+        keyFromStep && customKeysFromComponents?.includes(keyFromStep)
     );
 
     if (stepsHaveComponents.some((step) => step !== true)) {
