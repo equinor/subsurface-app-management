@@ -4,7 +4,6 @@
 /* eslint-disable */
 import type { Chapter } from './Chapter';
 export type ContentTab = {
-    name: string;
-    chapters: Array<Chapter>;
+  name: string;
+  chapters: Array<Chapter>;
 };
-
