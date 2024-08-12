@@ -5,9 +5,13 @@ import { Button, Typography } from '@equinor/eds-core-react';
 import { StoryFn } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { TutorialProvider } from './TutorialProvider';
 import { CustomTutorialComponent } from './TutorialProvider.types';
 import { Tutorial } from 'src/api';
+import { TutorialProvider } from 'src/providers';
+import {
+  GET_TUTORIALS_FOR_APP,
+  GET_TUTORIALS_SAS_TOKEN,
+} from 'src/providers/TutorialProvider/TutorialProvider.const';
 
 import styled, { keyframes } from 'styled-components';
 
@@ -171,6 +175,7 @@ export const Primary: StoryFn = () => {
         <TutorialProvider
           tutorials={[tutorialForStory]}
           customStepComponents={customStepComponents}
+          ignoredQueryKeys={[GET_TUTORIALS_FOR_APP, GET_TUTORIALS_SAS_TOKEN]}
         >
           <Button onClick={handleOnStartClick}>Run tutorial</Button>
           <Wrapper>

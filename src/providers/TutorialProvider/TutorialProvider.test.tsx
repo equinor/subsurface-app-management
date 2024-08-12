@@ -5,13 +5,15 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
 
 import { render, renderHook, screen, userEvent } from '../../tests/test-utils';
-import { TutorialProvider } from './TutorialProvider';
 import {
   DIALOG_EDGE_MARGIN,
+  GET_TUTORIALS_FOR_APP,
+  GET_TUTORIALS_SAS_TOKEN,
   TUTORIAL_HIGHLIGHTER_DATATEST_ID,
   TUTORIAL_LOCALSTORAGE_VALUE_STRING,
 } from './TutorialProvider.const';
 import { CancelablePromise, Step, Tutorial, TutorialPosition } from 'src/api';
+import { TutorialProvider } from 'src/providers';
 import { useTutorial } from 'src/providers/TutorialProvider/TutorialProvider.hooks';
 import { EnvironmentType } from 'src/types';
 
@@ -21,6 +23,7 @@ const TEST_TUTORIAL_SHORT_NAME = 'test-tutorial';
 const TEST_TUTORIAL_FROM_BACKEND_SHORT_NAME = 'test-tutorial';
 const TEST_TUTORIAL_CUSTOM_STEP_KEY = 'custom-step';
 const TEST_TUTORIAL_SAS_TOKEN = 'thisIsASasToken';
+const TEST_WRONG_CUSTOM_KEY = 'thisIsTheWrongKey';
 
 const getMarginCss = (type: string) => {
   return `margin-${type}: ${DIALOG_EDGE_MARGIN}px;`;
@@ -106,7 +109,7 @@ vi.mock('src/api/services/TutorialService', () => {
           } else {
             resolve([fakeTutorial({ tutorialFromBackendHook: true })]);
           }
-        }, 500)
+        }, 200)
       );
     }
 
@@ -118,7 +121,7 @@ vi.mock('src/api/services/TutorialService', () => {
           } else {
             resolve(TEST_TUTORIAL_SAS_TOKEN);
           }
-        }, 500)
+        }, 200)
       );
     }
   }
@@ -133,6 +136,7 @@ interface GetMemoryRouterProps {
   withWrongCustomComponentKeyString?: boolean;
   withNoTutorialsOnPath?: boolean;
   withPathForTutorialFromHook?: boolean;
+  withIgnoredQueryKeys?: boolean;
   forceInProd?: boolean;
 }
 
@@ -145,6 +149,7 @@ const getMemoryRouter = (props: GetMemoryRouterProps) => {
     withWrongCustomComponentKeyString,
     withNoTutorialsOnPath,
     withPathForTutorialFromHook,
+    withIgnoredQueryKeys,
     forceInProd,
   } = props;
   const queryClient = new QueryClient();
@@ -172,11 +177,16 @@ const getMemoryRouter = (props: GetMemoryRouterProps) => {
                   : [
                       {
                         key: withWrongCustomComponentKeyString
-                          ? 'thisIsTheWrongKey'
+                          ? TEST_WRONG_CUSTOM_KEY
                           : TEST_TUTORIAL_CUSTOM_STEP_KEY,
                         element: <div>{TEST_TUTORIAL_CUSTOM_STEP_KEY}</div>,
                       },
                     ]
+              }
+              ignoredQueryKeys={
+                withIgnoredQueryKeys
+                  ? [GET_TUTORIALS_FOR_APP, GET_TUTORIALS_SAS_TOKEN]
+                  : []
               }
             >
               {tutorialSteps.map((step, index) => {
@@ -245,10 +255,10 @@ describe('TutorialProvider', () => {
     const router = getMemoryRouter({ tutorial });
     render(<RouterProvider router={router} />);
 
+    await waitForBackendCall();
     const highlighterElement = screen.queryByTestId(
       TUTORIAL_HIGHLIGHTER_DATATEST_ID
     );
-
     expect(highlighterElement).toBeInTheDocument();
 
     const skipButton = screen.getByText(/skip/i);
@@ -264,10 +274,11 @@ describe('TutorialProvider', () => {
     const tutorial = fakeTutorial();
     const user = userEvent.setup();
     render(<RouterProvider router={getMemoryRouter({ tutorial })} />);
+
+    await waitForBackendCall();
     const highlighterElement = screen.queryByTestId(
       TUTORIAL_HIGHLIGHTER_DATATEST_ID
     );
-
     expect(highlighterElement).toBeInTheDocument();
     const steps = tutorial.steps;
 
@@ -309,7 +320,11 @@ describe('TutorialProvider', () => {
       withNoCustomSteps: true,
     });
     const user = userEvent.setup();
-    render(<RouterProvider router={getMemoryRouter({ tutorial })} />);
+    render(
+      <RouterProvider
+        router={getMemoryRouter({ tutorial, withIgnoredQueryKeys: true })}
+      />
+    );
 
     const stepOneTitle = screen.queryByText(
       getStepTitleOrKey(tutorial.steps[0])
@@ -347,17 +362,18 @@ describe('TutorialProvider', () => {
 
     expect(highlighterElement).not.toBeInTheDocument();
   });
+
   test('will show tutorial from useGetTutorialsForApp hook', async () => {
     render(
       <RouterProvider
         router={getMemoryRouter({ withPathForTutorialFromHook: true })}
       />
     );
+
     await waitForBackendCall();
     const highlighterElement = screen.queryByTestId(
       TUTORIAL_HIGHLIGHTER_DATATEST_ID
     );
-
     expect(highlighterElement).toBeInTheDocument();
   });
 
@@ -394,8 +410,8 @@ describe('TutorialProvider', () => {
         />
       );
 
-      await new Promise((resolve) => setTimeout(resolve, 400));
-      expect(spy).toHaveBeenCalledTimes(1);
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      expect(spy).toHaveBeenCalledTimes(9);
 
       const errorDialogText = screen.getByText(
         /there was a problem starting this tutorial./i
@@ -410,7 +426,7 @@ describe('TutorialProvider', () => {
       expect(closeButton).not.toBeInTheDocument();
     }, 10000);
 
-    test('shows error dialog when having wrong custom components, if tutorial started from searchparam', () => {
+    test('shows error dialog when having wrong custom components, if tutorial started from searchparam', async () => {
       window.localStorage.setItem(
         TEST_TUTORIAL_SHORT_NAME,
         TUTORIAL_LOCALSTORAGE_VALUE_STRING
@@ -425,7 +441,14 @@ describe('TutorialProvider', () => {
           })}
         />
       );
-      expect(spy).toHaveBeenCalledTimes(1);
+      await waitForBackendCall();
+
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringContaining('Could not find the custom'),
+        expect.arrayContaining([TEST_TUTORIAL_CUSTOM_STEP_KEY]),
+        expect.stringContaining('However in the custom'),
+        expect.arrayContaining([TEST_WRONG_CUSTOM_KEY])
+      );
 
       const errorDialogText = screen.getByText(
         /there was a problem starting this tutorial./i
@@ -450,7 +473,10 @@ describe('TutorialProvider', () => {
       );
 
       await waitForBackendCall();
-      expect(spy).toHaveBeenCalledTimes(3); // Two extra for act() warnings
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringContaining('Could not find all'),
+        expect.arrayContaining([null])
+      );
 
       const errorDialogText = screen.getByText(
         /there was a problem starting this tutorial./i
@@ -472,7 +498,10 @@ describe('TutorialProvider', () => {
       );
 
       await waitForBackendCall();
-      expect(spy).toHaveBeenCalledTimes(3); // Two extra for act() warnings
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringContaining('Could not find all'),
+        expect.arrayContaining([null])
+      );
 
       const errorDialogText = screen.queryByText(
         /there was a problem starting this tutorial./i

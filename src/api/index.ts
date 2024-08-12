@@ -9,9 +9,9 @@ export { request } from './core/request';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { AmplifyApplication } from './models/AmplifyApplication';
-export { ApplicationCategory} from './models/ApplicationCategory';
-export type { ContentTab} from './models/ContentTab';
-export type { AccessRoles} from './models/AccessRoles';
+export { ApplicationCategory } from './models/ApplicationCategory';
+export type { ContentTab } from './models/ContentTab';
+export type { AccessRoles } from './models/AccessRoles';
 export type { FeatureAPIType } from 'src/api/models/FeatureAPIType';
 export type { FeatureToggleDto } from './models/FeatureToggleDto';
 export type { GraphUser } from './models/GraphUser';

@@ -13,6 +13,8 @@ import {
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
+import { useIsFetching } from '@tanstack/react-query';
+
 import { TUTORIAL_SEARCH_PARAM_KEY } from './TutorialProvider.const';
 import { CustomTutorialComponent } from './TutorialProvider.types';
 import { getAllElementsToHighlight } from './TutorialProvider.utils';
@@ -55,7 +57,19 @@ interface TutorialProviderProps {
   overrideEnvironmentName?: EnvironmentType;
   customStepComponents?: CustomTutorialComponent[];
   tutorials?: Tutorial[];
+  ignoredQueryKeys?: string[];
 }
+
+/**
+ * Tutorial provider expects to be within a QueryClientProvider
+ * @param children Expects to wrap the application globally, typically in a providers file with multiple providers
+ * @param overrideAppName Overrides the "NAME" env variable, which is used to fetch the relevant tutorials for your app
+ * @param overrideEnvironmentName Overrides the "ENVIRONMENT_NAME" env variable, which is used for the possibility to hide tutorials in "production"
+ * @param customStepComponents Adds custom steps components with a key that can be used to link it to a step in a tutorial
+ * @param tutorials Passing tutorial object directly. This does not replace any tutorials found from API call, but rather is appended to them
+ * @param ignoredQueryKeys An array of query keys TutorialProviders will not wait to finish loading before looking for elements to highlight
+ * @constructor
+ */
 
 export const TutorialProvider: FC<TutorialProviderProps> = ({
   children,
@@ -63,10 +77,12 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({
   overrideEnvironmentName,
   customStepComponents,
   tutorials,
+  ignoredQueryKeys,
 }) => {
   const [activeTutorial, setActiveTutorial] = useState<Tutorial | undefined>(
     undefined
   );
+
   const [tutorialError, setTutorialError] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [shortNameFromParams, setShortNameFromParams] = useState<
@@ -77,11 +93,22 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({
     HTMLElement[] | undefined
   >(undefined);
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
+  const appIsFetching =
+    useIsFetching({
+      predicate: (query) => {
+        return !ignoredQueryKeys?.some((ignoredKey) =>
+          query.queryKey.includes(ignoredKey)
+        );
+      },
+    }) > 0;
+
   const dialogRef = useRef<HTMLDialogElement | null>(null);
+
   const appName = overrideAppName ?? getAppName(import.meta.env.VITE_NAME);
   const environmentName =
     overrideEnvironmentName ??
     getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME);
+
   const currentStepObject = useMemo(() => {
     if (!activeTutorial) return;
     return activeTutorial.steps.at(currentStep);
@@ -124,7 +151,7 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({
   // Try to find all elements to highlight, and set it to a state for further use.
   // If not found, set error state to true, and give console.error
   useEffect(() => {
-    if (!activeTutorial || tutorialError) return;
+    if (!activeTutorial || tutorialError || appIsFetching) return;
 
     const handleTryToGetElementsAgain = async () => {
       // Wait for 300ms before trying again
@@ -155,13 +182,19 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({
         console.error('Error trying to get elements to highlight', error);
       });
     }
-  }, [activeTutorial, currentStep, tutorialError, shortNameFromParams]);
+  }, [
+    activeTutorial,
+    currentStep,
+    tutorialError,
+    shortNameFromParams,
+    appIsFetching,
+  ]);
 
   // CUSTOM COMPONENT CHECK
   // Check to see if the tutorial has the custom components for any custom steps it has.
   // Sets tutorialError to true if it does not find a match for all potential custom steps
   useEffect(() => {
-    if (!activeTutorial || tutorialError) return;
+    if (!activeTutorial || tutorialError || appIsFetching) return;
     const customKeysFromSteps = activeTutorial.steps
       .filter((step) => step.key !== undefined && step.key !== null)
       // Writing 'customStep.key as string' for coverage, we know its string since we filter out right before the map
@@ -197,7 +230,7 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({
       );
       setTutorialError(true);
     }
-  }, [activeTutorial, customStepComponents, tutorialError]);
+  }, [activeTutorial, appIsFetching, customStepComponents, tutorialError]);
 
   return (
     <TutorialContext.Provider
