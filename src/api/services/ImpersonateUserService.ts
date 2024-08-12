@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { ImpersonateUser } from '../models/ImpersonateUser';
 import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI_Portal} from '../core/OpenAPI';
+import { OpenAPI_Portal } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class ImpersonateUserService {
   /**
@@ -12,7 +12,9 @@ export class ImpersonateUserService {
    * @returns ImpersonateUser Success
    * @throws ApiError
    */
-  public static getApiV1ImpersonateUser(): CancelablePromise<ImpersonateUser> {
+  public static getApiV1ImpersonateUser(): CancelablePromise<
+    Array<ImpersonateUser>
+  > {
     return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser',
@@ -30,7 +32,7 @@ export class ImpersonateUserService {
   public static createImpersonateUser(
     requestBody?: ImpersonateUser
   ): CancelablePromise<ImpersonateUser> {
-  return __request(OpenAPI_Portal, {
+    return __request(OpenAPI_Portal, {
       method: 'POST',
       url: '/api/v1/ImpersonateUser',
       body: requestBody,
@@ -135,6 +137,21 @@ export class ImpersonateUserService {
       },
       errors: {
         400: `Bad Request`,
+        500: `Server Error`,
+      },
+    });
+  }
+  /**
+   * @returns boolean Success
+   * @throws ApiError
+   */
+  public static canImpersonate(): CancelablePromise<boolean> {
+    return __request(OpenAPI_Portal, {
+      method: 'GET',
+      url: '/api/v1/ImpersonateUser/CanImpersonate',
+      errors: {
+        400: `Bad Request`,
+        404: `Not Found`,
         500: `Server Error`,
       },
     });

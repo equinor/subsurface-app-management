@@ -17,24 +17,27 @@ interface UseFeatureTogglingOptions {
  * @param username - username to feature toggle on, typically username from azure. Does not need to be provided if not feature-toggling for specific user
  * @param showIfKeyIsMissing - Show/hide if the key was not found/has been deleted. Defaults to true
  * @param ShowIfIsLoading - Show/hide if the feature toggles are still loading. Defaults to false
-*/
+ */
 export function useFeatureToggling({
   featureKey,
   username,
   showIfKeyIsMissing = true,
   showIfIsLoading = false,
 }: UseFeatureTogglingOptions) {
-  const { features, isError, environmentName, isLoading } = useFeatureToggleContext();
+  const { features, isError, environmentName, isLoading } =
+    useFeatureToggleContext();
 
   if (!showIfKeyIsMissing) {
-    console.warn(`[FeatureToggle] Feature: ${featureKey} will not show when the feature toggle is removed! Was this intentional?`)
+    console.warn(
+      `[FeatureToggle] Feature: ${featureKey} will not show when the feature toggle is removed! Was this intentional?`
+    );
   }
 
   const showContent = useMemo(() => {
-    if ((!showIfIsLoading && isLoading) || isError) return false
+    if ((!showIfIsLoading && isLoading) || isError) return false;
 
     const feature = features?.find(
-        (feature) => feature.featureKey === featureKey
+      (feature) => feature.featureKey === featureKey
     );
 
     if (feature) {
@@ -53,12 +56,21 @@ export function useFeatureToggling({
       return feature.activeEnvironments.includes(environmentName);
     } else {
       console.warn(
-          `[FeatureToggle] Feature ${featureKey} was not found, has it been removed?`
+        `[FeatureToggle] Feature ${featureKey} was not found, has it been removed?`
       );
     }
 
     return showIfKeyIsMissing;
-  }, [showIfIsLoading, isLoading, isError, features, showIfKeyIsMissing, featureKey, username, environmentName]);
+  }, [
+    showIfIsLoading,
+    isLoading,
+    isError,
+    features,
+    showIfKeyIsMissing,
+    featureKey,
+    username,
+    environmentName,
+  ]);
 
   return { showContent };
 }

@@ -3,11 +3,8 @@ import { createContext, FC, ReactElement, ReactNode, useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 // These 2 api imports need to be separated to be able to use vi.mock in tests
-import {
-  FeatureAPIType,
-  GraphUser,
-} from 'src/api';
-import { FeatureToggleService } from 'src/api/services/FeatureToggleService'
+import { FeatureAPIType, GraphUser } from 'src/api';
+import { FeatureToggleService } from 'src/api/services/FeatureToggleService';
 import { EnvironmentType } from 'src/types';
 import { environment } from 'src/utils';
 import { getEnvironmentName } from 'src/utils/environment';

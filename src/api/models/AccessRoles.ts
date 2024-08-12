@@ -3,7 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type AccessRoles = {
-    role: string;
-    description: string;
+  role: string;
+  description: string;
 };
-

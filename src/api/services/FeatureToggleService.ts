@@ -2,9 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { FeatureToggleDto } from '../models/FeatureToggleDto';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI_Portal_Prod} from '../core/OpenAPI';
+import type { CancelablePromise, FeatureToggleDto } from 'src/api';
+import { OpenAPI_Portal_Prod } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class FeatureToggleService {
   /**

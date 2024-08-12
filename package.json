@@ -1,6 +1,6 @@
 {
   "name": "@equinor/subsurface-app-management",
-  "version": "1.1.0",
+  "version": "1.1.4",
   "description": "React Typescript components/hooks to communicate with equinor/sam",
   "types": "dist/index.d.ts",
   "type": "module",
@@ -33,7 +33,6 @@
     "setup-husky": "husky install",
     "precommit": "npx lint-staged",
     "build": "rollup -c && tsc --project tsconfig.build.json && resolve-tspaths --project tsconfig.build.json",
-    "build:ci": "rm -rf lib dist && npm run build-components",
     "build-and-use": "node tooling/build-and-use.mjs",
     "brute-coverage": "node tooling/brute-coverage.mjs"
   },
