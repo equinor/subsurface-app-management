@@ -13,7 +13,7 @@ import {
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import {useIsFetching} from "@tanstack/react-query";
+import { useIsFetching } from '@tanstack/react-query';
 
 import { TUTORIAL_SEARCH_PARAM_KEY } from './TutorialProvider.const';
 import { CustomTutorialComponent } from './TutorialProvider.types';
@@ -57,7 +57,7 @@ interface TutorialProviderProps {
   overrideEnvironmentName?: EnvironmentType;
   customStepComponents?: CustomTutorialComponent[];
   tutorials?: Tutorial[];
-  ignoredQueryKeys?: string[]
+  ignoredQueryKeys?: string[];
 }
 
 /**
@@ -77,7 +77,7 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({
   overrideEnvironmentName,
   customStepComponents,
   tutorials,
-  ignoredQueryKeys
+  ignoredQueryKeys,
 }) => {
   const [activeTutorial, setActiveTutorial] = useState<Tutorial | undefined>(
     undefined
@@ -93,16 +93,21 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({
     HTMLElement[] | undefined
   >(undefined);
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
-  const appIsFetching = useIsFetching({predicate: (query) => {
-    return !ignoredQueryKeys?.some(ignoredKey => query.queryKey.includes(ignoredKey))
-    }}) > 0
+  const appIsFetching =
+    useIsFetching({
+      predicate: (query) => {
+        return !ignoredQueryKeys?.some((ignoredKey) =>
+          query.queryKey.includes(ignoredKey)
+        );
+      },
+    }) > 0;
+
   const dialogRef = useRef<HTMLDialogElement | null>(null);
 
   const appName = overrideAppName ?? getAppName(import.meta.env.VITE_NAME);
   const environmentName =
     overrideEnvironmentName ??
     getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME);
-
 
   const currentStepObject = useMemo(() => {
     if (!activeTutorial) return;
@@ -177,7 +182,13 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({
         console.error('Error trying to get elements to highlight', error);
       });
     }
-  }, [activeTutorial, currentStep, tutorialError, shortNameFromParams, appIsFetching]);
+  }, [
+    activeTutorial,
+    currentStep,
+    tutorialError,
+    shortNameFromParams,
+    appIsFetching,
+  ]);
 
   // CUSTOM COMPONENT CHECK
   // Check to see if the tutorial has the custom components for any custom steps it has.
