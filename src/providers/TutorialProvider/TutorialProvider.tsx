@@ -77,11 +77,12 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({
   overrideEnvironmentName,
   customStepComponents,
   tutorials,
-    ignoredQueryKeys
+  ignoredQueryKeys
 }) => {
   const [activeTutorial, setActiveTutorial] = useState<Tutorial | undefined>(
     undefined
   );
+
   const [tutorialError, setTutorialError] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [shortNameFromParams, setShortNameFromParams] = useState<
