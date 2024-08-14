@@ -6,7 +6,7 @@ import type { AmplifyApplication } from '../models/AmplifyApplication';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI_Portal, OpenAPI_Portal_Prod } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-import { JToken } from '../models/JToken';
+import { GraphAppRole } from '../models/GraphAppRole';
 export class AmplifyApplicationService {
   /**
    * Get all applications that user has access to
@@ -26,18 +26,19 @@ export class AmplifyApplicationService {
     });
   }
   /**
-   * @param appClientId
-   * @returns JToken Success
+   * Get all roles for an application
+   * @param applicationId
+   * @returns GraphAppRole Success
    * @throws ApiError
    */
   public static getAllAppRoles(
-    appClientId: string
-  ): CancelablePromise<Array<JToken>> {
+    applicationId: string
+  ): CancelablePromise<Array<GraphAppRole>> {
     return __request(OpenAPI_Portal, {
       method: 'GET',
-      url: '/api/v1/AmplifyApplication/application/{appClientId}/groups',
+      url: '/api/v1/AmplifyApplication/application/{applicationId}/appRoles',
       path: {
-        appClientId: appClientId,
+        applicationId: applicationId,
       },
     });
   }
