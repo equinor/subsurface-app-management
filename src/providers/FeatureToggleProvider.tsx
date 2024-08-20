@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 // These 2 api imports need to be separated to be able to use vi.mock in tests
 import { FeatureAPIType, GraphUser } from 'src/api';
 import { FeatureToggleService } from 'src/api/services/FeatureToggleService';
+import { GET_FEATURE_TOGGLES_FOR_APP } from 'src/constants/queryKeys';
 import { EnvironmentType } from 'src/types';
 import { environment } from 'src/utils';
 import { getEnvironmentName } from 'src/utils/environment';
@@ -66,7 +67,7 @@ export const FeatureToggleProvider: FC<FeatureToggleProviderProps> = ({
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ['getFeatureToggleFromAppName'],
+    queryKey: [GET_FEATURE_TOGGLES_FOR_APP],
     queryFn: async () =>
       FeatureToggleService.getFeatureToggleFromApplicationName(applicationName),
   });

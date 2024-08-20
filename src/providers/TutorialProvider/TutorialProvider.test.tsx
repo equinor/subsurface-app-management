@@ -7,12 +7,14 @@ import { waitFor } from '@testing-library/react';
 import { render, renderHook, screen, userEvent } from '../../tests/test-utils';
 import {
   DIALOG_EDGE_MARGIN,
-  GET_TUTORIALS_FOR_APP,
-  GET_TUTORIALS_SAS_TOKEN,
   TUTORIAL_HIGHLIGHTER_DATATEST_ID,
   TUTORIAL_LOCALSTORAGE_VALUE_STRING,
 } from './TutorialProvider.const';
 import { CancelablePromise, Step, Tutorial, TutorialPosition } from 'src/api';
+import {
+  GET_TUTORIALS_FOR_APP,
+  GET_TUTORIALS_SAS_TOKEN,
+} from 'src/constants/queryKeys';
 import { TutorialProvider } from 'src/providers';
 import { useTutorial } from 'src/providers/TutorialProvider/TutorialProvider.hooks';
 import { EnvironmentType } from 'src/types';

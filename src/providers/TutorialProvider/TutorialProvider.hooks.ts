@@ -2,11 +2,11 @@ import { useContext } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
+import { TutorialService } from 'src/api/services/TutorialService';
 import {
   GET_TUTORIALS_FOR_APP,
   GET_TUTORIALS_SAS_TOKEN,
-} from './TutorialProvider.const';
-import { TutorialService } from 'src/api/services/TutorialService';
+} from 'src/constants/queryKeys';
 import { TutorialContext } from 'src/providers/TutorialProvider/TutorialProvider';
 
 export const useGetTutorialsForApp = (appName: string) => {

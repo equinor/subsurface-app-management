@@ -7,11 +7,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { CustomTutorialComponent } from './TutorialProvider.types';
 import { Tutorial } from 'src/api';
-import { TutorialProvider } from 'src/providers';
 import {
   GET_TUTORIALS_FOR_APP,
   GET_TUTORIALS_SAS_TOKEN,
-} from 'src/providers/TutorialProvider/TutorialProvider.const';
+} from 'src/constants/queryKeys';
+import { TutorialProvider } from 'src/providers';
 
 import styled, { keyframes } from 'styled-components';
 
