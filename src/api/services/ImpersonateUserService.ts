@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ImpersonateUser } from '../models/ImpersonateUser';
+import type { ImpersonateUserDto } from 'src/api/models/ImpersonateUserDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI_Portal } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -13,7 +13,7 @@ export class ImpersonateUserService {
    * @throws ApiError
    */
   public static getApiV1ImpersonateUser(): CancelablePromise<
-    Array<ImpersonateUser>
+    Array<ImpersonateUserDto>
   > {
     return __request(OpenAPI_Portal, {
       method: 'GET',
@@ -30,8 +30,8 @@ export class ImpersonateUserService {
    * @throws ApiError
    */
   public static createImpersonateUser(
-    requestBody?: ImpersonateUser
-  ): CancelablePromise<ImpersonateUser> {
+    requestBody?: ImpersonateUserDto
+  ): CancelablePromise<ImpersonateUserDto> {
     return __request(OpenAPI_Portal, {
       method: 'POST',
       url: '/api/v1/ImpersonateUser',
@@ -51,8 +51,8 @@ export class ImpersonateUserService {
    * @throws ApiError
    */
   public static putImpersonateUser(
-    requestBody?: ImpersonateUser
-  ): CancelablePromise<ImpersonateUser> {
+    requestBody?: ImpersonateUserDto
+  ): CancelablePromise<ImpersonateUserDto> {
     return __request(OpenAPI_Portal, {
       method: 'PUT',
       url: '/api/v1/ImpersonateUser',
@@ -71,7 +71,7 @@ export class ImpersonateUserService {
    */
   public static getApiV1ImpersonateUserGetImpersonateUserForApp(
     appName: string
-  ): CancelablePromise<Array<ImpersonateUser>> {
+  ): CancelablePromise<Array<ImpersonateUserDto>> {
     return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser/GetImpersonateUserForApp/{appName}',
@@ -89,7 +89,7 @@ export class ImpersonateUserService {
    * @returns ImpersonateUser Success
    * @throws ApiError
    */
-  public static getAllActiveUsers(): CancelablePromise<ImpersonateUser> {
+  public static getAllActiveUsers(): CancelablePromise<ImpersonateUserDto> {
     return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser/ActiveUsers',
@@ -104,7 +104,7 @@ export class ImpersonateUserService {
    * @returns ImpersonateUser Success
    * @throws ApiError
    */
-  public static getActiveUser(): CancelablePromise<ImpersonateUser> {
+  public static getActiveUser(): CancelablePromise<ImpersonateUserDto> {
     return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser/ActiveUser',
@@ -122,7 +122,7 @@ export class ImpersonateUserService {
    */
   public static getImpersonateUserById(
     id?: string
-  ): CancelablePromise<ImpersonateUser> {
+  ): CancelablePromise<ImpersonateUserDto> {
     return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser/ImpersonateUser',
@@ -143,7 +143,7 @@ export class ImpersonateUserService {
    */
   public static getImpersonateUserByUserName(
     username?: string
-  ): CancelablePromise<ImpersonateUser> {
+  ): CancelablePromise<ImpersonateUserDto> {
     return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser/ImpersonateUserByUserName',
@@ -178,7 +178,7 @@ export class ImpersonateUserService {
    */
   public static startImpersonating(
     username?: string
-  ): CancelablePromise<ImpersonateUser> {
+  ): CancelablePromise<ImpersonateUserDto> {
     return __request(OpenAPI_Portal, {
       method: 'PUT',
       url: '/api/v1/ImpersonateUser/StartImpersonating',
@@ -196,7 +196,7 @@ export class ImpersonateUserService {
    * @returns ImpersonateUser Success
    * @throws ApiError
    */
-  public static stopImpersonating(): CancelablePromise<ImpersonateUser> {
+  public static stopImpersonating(): CancelablePromise<ImpersonateUserDto> {
     return __request(OpenAPI_Portal, {
       method: 'PUT',
       url: '/api/v1/ImpersonateUser/StopImpersonating',
