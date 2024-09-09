@@ -64,6 +64,27 @@ export class ImpersonateUserService {
     });
   }
   /**
+   * Get all impersonate users by application name
+   * @param appName
+   * @returns ImpersonateUser Success
+   * @throws ApiError
+   */
+  public static getApiV1ImpersonateUserGetImpersonateUserForApp(
+    appName: string
+  ): CancelablePromise<Array<ImpersonateUser>> {
+    return __request(OpenAPI_Portal, {
+      method: 'GET',
+      url: '/api/v1/ImpersonateUser/GetImpersonateUserForApp/{appName}',
+      path: {
+        appName: appName,
+      },
+      errors: {
+        400: `Bad Request`,
+        500: `Server Error`,
+      },
+    });
+  }
+  /**
    * Get all active users
    * @returns ImpersonateUser Success
    * @throws ApiError
@@ -79,20 +100,14 @@ export class ImpersonateUserService {
     });
   }
   /**
-   * Get active user by username
-   * @param username
+   * Get active user
    * @returns ImpersonateUser Success
    * @throws ApiError
    */
-  public static getActiveUserByUsername(
-    username?: string
-  ): CancelablePromise<ImpersonateUser> {
+  public static getActiveUser(): CancelablePromise<ImpersonateUser> {
     return __request(OpenAPI_Portal, {
       method: 'GET',
-      url: '/api/v1/ImpersonateUser/ActiveUserByUsername',
-      query: {
-        username: username,
-      },
+      url: '/api/v1/ImpersonateUser/ActiveUser',
       errors: {
         400: `Bad Request`,
         500: `Server Error`,
