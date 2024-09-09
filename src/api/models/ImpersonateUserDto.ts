@@ -2,11 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ImpersonateUser = {
+export type ImpersonateUserDto = {
   id?: string | null;
-  name: string;
   firstName: string;
   lastName: string;
+  fullName: string;
   uniqueName: string;
   appName: string;
   roles: Array<string>;

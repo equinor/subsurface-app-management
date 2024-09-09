@@ -15,7 +15,7 @@ export type { AccessRoles } from './models/AccessRoles';
 export type { FeatureAPIType } from 'src/api/models/FeatureAPIType';
 export type { FeatureToggleDto } from './models/FeatureToggleDto';
 export type { GraphUser } from './models/GraphUser';
-export type { ImpersonateUser } from './models/ImpersonateUser';
+export type { ImpersonateUserDto } from 'src/api/models/ImpersonateUserDto';
 export type { ReleaseNote } from './models/ReleaseNote';
 export type { ServiceNowIncidentAttachmentResponse } from './models/ServiceNowIncidentAttachmentResponse';
 export type { ServiceNowIncidentResponse } from './models/ServiceNowIncidentResponse';
