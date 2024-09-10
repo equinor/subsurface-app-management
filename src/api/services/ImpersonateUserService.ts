@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ImpersonateUserDto } from 'src/api/models/ImpersonateUserDto';
+import type { ImpersonateUserUpdateDto } from 'src/api/models/ImpersonateUserUpdateDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI_Portal } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -30,7 +31,7 @@ export class ImpersonateUserService {
    * @throws ApiError
    */
   public static createImpersonateUser(
-    requestBody?: ImpersonateUserDto
+    requestBody?: ImpersonateUserUpdateDto
   ): CancelablePromise<ImpersonateUserDto> {
     return __request(OpenAPI_Portal, {
       method: 'POST',
