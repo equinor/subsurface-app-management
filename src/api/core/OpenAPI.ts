@@ -142,6 +142,6 @@ export const OpenAPI_userImpersonate: OpenAPIConfig = {
   TOKEN: getPortalProdToken,
   USERNAME: undefined,
   PASSWORD: undefined,
-  HEADERS: { key: 'userImpersonation' },
+  HEADERS: { userImpersonation: '' },
   ENCODE_PATH: undefined,
 };
