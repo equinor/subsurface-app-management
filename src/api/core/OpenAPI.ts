@@ -135,7 +135,7 @@ export const OpenAPI_Portal_Prod: OpenAPIConfig = {
 };
 
 export const OpenAPI_userImpersonate: OpenAPIConfig = {
-  BASE: `https://api-amplify-portal-production.radix.equinor.com`,
+  BASE: `https://api-amplify-portal-${noLocalhostEnvironmentName}.radix.equinor.com`,
   VERSION: '1.0',
   WITH_CREDENTIALS: false,
   CREDENTIALS: 'include',
