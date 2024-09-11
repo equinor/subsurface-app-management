@@ -139,7 +139,7 @@ export const OpenAPI_userImpersonate: OpenAPIConfig = {
   VERSION: '1.0',
   WITH_CREDENTIALS: false,
   CREDENTIALS: 'include',
-  TOKEN: getPortalProdToken,
+  TOKEN: getPortalToken,
   USERNAME: undefined,
   PASSWORD: undefined,
   HEADERS: { userImpersonation: '' },
