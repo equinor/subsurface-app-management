@@ -133,3 +133,15 @@ export const OpenAPI_Portal_Prod: OpenAPIConfig = {
   HEADERS: undefined,
   ENCODE_PATH: undefined,
 };
+
+export const OpenAPI_userImpersonate: OpenAPIConfig = {
+  BASE: `https://api-amplify-portal-production.radix.equinor.com`,
+  VERSION: '1.0',
+  WITH_CREDENTIALS: false,
+  CREDENTIALS: 'include',
+  TOKEN: getPortalProdToken,
+  USERNAME: undefined,
+  PASSWORD: undefined,
+  HEADERS: { key: 'userImpersonation' },
+  ENCODE_PATH: undefined,
+};
