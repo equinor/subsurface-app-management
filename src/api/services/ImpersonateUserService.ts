@@ -5,7 +5,7 @@
 import type { ImpersonateUserDto } from 'src/api/models/ImpersonateUserDto';
 import type { ImpersonateUserUpdateDto } from 'src/api/models/ImpersonateUserUpdateDto';
 import type { CancelablePromise } from 'src/api';
-import { OpenAPI_userImpersonate } from '../core/OpenAPI';
+import { OpenAPI_Portal } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class ImpersonateUserService {
   /**
@@ -16,7 +16,7 @@ export class ImpersonateUserService {
   public static getApiV1ImpersonateUser(): CancelablePromise<
     Array<ImpersonateUserDto>
   > {
-    return __request(OpenAPI_userImpersonate, {
+    return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser',
       errors: {
@@ -33,7 +33,7 @@ export class ImpersonateUserService {
   public static createImpersonateUser(
     requestBody?: ImpersonateUserUpdateDto
   ): CancelablePromise<ImpersonateUserDto> {
-    return __request(OpenAPI_userImpersonate, {
+    return __request(OpenAPI_Portal, {
       method: 'POST',
       url: '/api/v1/ImpersonateUser',
       body: requestBody,
@@ -54,7 +54,7 @@ export class ImpersonateUserService {
   public static putImpersonateUser(
     requestBody?: ImpersonateUserDto
   ): CancelablePromise<ImpersonateUserDto> {
-    return __request(OpenAPI_userImpersonate, {
+    return __request(OpenAPI_Portal, {
       method: 'PUT',
       url: '/api/v1/ImpersonateUser',
       body: requestBody,
@@ -73,7 +73,7 @@ export class ImpersonateUserService {
   public static getApiV1ImpersonateUserGetImpersonateUserForApp(
     appName: string
   ): CancelablePromise<Array<ImpersonateUserDto>> {
-    return __request(OpenAPI_userImpersonate, {
+    return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser/GetImpersonateUserForApp/{appName}',
       path: {
@@ -91,7 +91,7 @@ export class ImpersonateUserService {
    * @throws ApiError
    */
   public static getAllActiveUsers(): CancelablePromise<ImpersonateUserDto> {
-    return __request(OpenAPI_userImpersonate, {
+    return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser/ActiveUsers',
       errors: {
@@ -106,7 +106,7 @@ export class ImpersonateUserService {
    * @throws ApiError
    */
   public static getActiveUser(): CancelablePromise<ImpersonateUserDto> {
-    return __request(OpenAPI_userImpersonate, {
+    return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser/ActiveUser',
       errors: {
@@ -124,7 +124,7 @@ export class ImpersonateUserService {
   public static getImpersonateUserById(
     id?: string
   ): CancelablePromise<ImpersonateUserDto> {
-    return __request(OpenAPI_userImpersonate, {
+    return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser/ImpersonateUser',
       query: {
@@ -145,7 +145,7 @@ export class ImpersonateUserService {
   public static getImpersonateUserByUserName(
     username?: string
   ): CancelablePromise<ImpersonateUserDto> {
-    return __request(OpenAPI_userImpersonate, {
+    return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser/ImpersonateUserByUserName',
       query: {
@@ -162,7 +162,7 @@ export class ImpersonateUserService {
    * @throws ApiError
    */
   public static canImpersonate(): CancelablePromise<boolean> {
-    return __request(OpenAPI_userImpersonate, {
+    return __request(OpenAPI_Portal, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser/CanImpersonate',
       errors: {
@@ -180,7 +180,7 @@ export class ImpersonateUserService {
   public static startImpersonating(
     username?: string
   ): CancelablePromise<ImpersonateUserDto> {
-    return __request(OpenAPI_userImpersonate, {
+    return __request(OpenAPI_Portal, {
       method: 'PUT',
       url: '/api/v1/ImpersonateUser/StartImpersonating',
       query: {
@@ -198,7 +198,7 @@ export class ImpersonateUserService {
    * @throws ApiError
    */
   public static stopImpersonating(): CancelablePromise<ImpersonateUserDto> {
-    return __request(OpenAPI_userImpersonate, {
+    return __request(OpenAPI_Portal, {
       method: 'PUT',
       url: '/api/v1/ImpersonateUser/StopImpersonating',
       errors: {
