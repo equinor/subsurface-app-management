@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { ImpersonateUserDto } from 'src/api/models/ImpersonateUserDto';
 import type { ImpersonateUserUpdateDto } from 'src/api/models/ImpersonateUserUpdateDto';
+import type { ObjectServiceResponse } from 'src/api/models/ObjectServiceResponse';
 import type { CancelablePromise } from 'src/api';
 import { OpenAPI_Portal } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -201,6 +202,28 @@ export class ImpersonateUserService {
     return __request(OpenAPI_Portal, {
       method: 'PUT',
       url: '/api/v1/ImpersonateUser/StopImpersonating',
+      errors: {
+        400: `Bad Request`,
+        404: `Not Found`,
+        500: `Server Error`,
+      },
+    });
+  }
+  /**
+   * Deletes an impersonation user by its Id
+   * @param impersonationUserId
+   * @returns ObjectServiceResponse Success
+   * @throws ApiError
+   */
+  public static deleteImpersonationUser(
+    impersonationUserId?: string
+  ): CancelablePromise<ObjectServiceResponse> {
+    return __request(OpenAPI_Portal, {
+      method: 'DELETE',
+      url: '/api/v1/ImpersonateUser/DeleteImpersonationUser',
+      query: {
+        impersonationUserId: impersonationUserId,
+      },
       errors: {
         400: `Bad Request`,
         404: `Not Found`,
