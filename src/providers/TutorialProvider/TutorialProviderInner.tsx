@@ -97,9 +97,9 @@ const TutorialProviderInner: FC = () => {
       (item) => item.shortName === shortNameFromParams
     );
 
-    const tutorialThatShouldPopUp = tutorialsForPath.find((item) => {
-      !window.localStorage.getItem(item.shortName) && item.willPopUp;
-    });
+    const tutorialThatShouldPopUp = tutorialsForPath.find(
+      (item) => !window.localStorage.getItem(item.shortName) && item.willPopUp
+    );
 
     if (tutorialToRunFromParams) {
       runTutorial(tutorialToRunFromParams);
