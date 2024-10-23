@@ -92,16 +92,19 @@ const TutorialProviderInner: FC = () => {
 
   useEffect(() => {
     if (tutorialsForPath.length < 1) return;
-    const tutorialToRun = tutorialsForPath.find(
-      (item) =>
-        !window.localStorage.getItem(item.shortName) ||
-        (shortNameFromParams &&
-          tutorialsForPath.some(
-            (item) => item.shortName === shortNameFromParams
-          ))
+
+    const tutorialToRunFromParams = tutorialsForPath.find(
+      (item) => item.shortName === shortNameFromParams
     );
-    if (tutorialToRun) {
-      runTutorial(tutorialToRun);
+
+    const tutorialThatShouldPopUp = tutorialsForPath.find((item) => {
+      !window.localStorage.getItem(item.shortName) && item.willPopUp;
+    });
+
+    if (tutorialToRunFromParams) {
+      runTutorial(tutorialToRunFromParams);
+    } else if (tutorialThatShouldPopUp) {
+      runTutorial(tutorialThatShouldPopUp);
     }
   }, [runTutorial, shortNameFromParams, tutorialsForPath]);
 
