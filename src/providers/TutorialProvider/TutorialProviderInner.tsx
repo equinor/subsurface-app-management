@@ -73,7 +73,7 @@ const TutorialProviderInner: FC = () => {
   }, [activeTutorial, allElementsToHighlight, currentStep, viewportWidth]);
 
   const tutorialsForPath = useMemo(() => {
-    return appTutorials.filter((item) => item.path === pathname);
+    return appTutorials.filter((item) => pathname.includes(item.path));
   }, [appTutorials, pathname]);
 
   const runTutorial = useCallback(

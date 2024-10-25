@@ -1,6 +1,6 @@
 import { CSSProperties, FC, useMemo } from 'react';
 
-import { Button, Typography } from '@equinor/eds-core-react';
+import { Button } from '@equinor/eds-core-react';
 
 import {
   DIALOG_EDGE_MARGIN,
@@ -11,6 +11,7 @@ import {
   DialogActions,
   DialogContent,
   DialogImage,
+  DialogTypography,
   DialogWrapper,
   NavigateSteps,
   StyledTutorialDialog,
@@ -50,8 +51,12 @@ const TutorialDialog: FC = () => {
     ) {
       return (
         <>
-          <Typography>{currentStepObject.title}</Typography>
-          <Typography>{currentStepObject.body}</Typography>
+          <DialogTypography variant="h5">
+            {currentStepObject.title}
+          </DialogTypography>
+          <DialogTypography group="paragraph" variant="body_short">
+            {currentStepObject.body}
+          </DialogTypography>
           {currentStepObject.imgUrl && sasToken && (
             <DialogImage
               data-testid="tutorial-image"
