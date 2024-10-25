@@ -1,4 +1,4 @@
-import { Dialog } from '@equinor/eds-core-react';
+import { Dialog, Typography } from '@equinor/eds-core-react';
 import { tokens } from '@equinor/eds-tokens';
 
 import styled, { keyframes } from 'styled-components';
@@ -58,12 +58,17 @@ export const DialogContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${spacings.comfortable.large};
+  width: fit-content;
+`;
+
+export const DialogTypography = styled(Typography)`
   width: 300px;
 `;
 
 export const DialogImage = styled.img`
   max-height: 300px;
   min-height: 50px;
+  max-width: 300px;
   object-fit: contain;
 `;
 

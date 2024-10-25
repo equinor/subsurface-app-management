@@ -28,6 +28,7 @@ const CustomComponentWrapper = styled.div`
   display: grid;
   grid-template-columns: 24px 1fr;
   gap: 24px;
+  width: 500px;
 `;
 
 const SmallOrangeLine = styled.div`
