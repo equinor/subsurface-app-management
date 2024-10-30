@@ -13,13 +13,12 @@ import {
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { useIsFetching } from '@tanstack/react-query';
-
 import { TUTORIAL_SEARCH_PARAM_KEY } from './TutorialProvider.const';
 import { CustomTutorialComponent } from './TutorialProvider.types';
 import { getAllElementsToHighlight } from './TutorialProvider.utils';
 import TutorialProviderInner from './TutorialProviderInner';
 import { Step, Tutorial } from 'src/api';
+import { useIsFetchingWithTimeout } from 'src/providers/TutorialProvider/TutorialProvider.hooks';
 import { EnvironmentType } from 'src/types';
 import { getAppName, getEnvironmentName } from 'src/utils/environment';
 
@@ -93,14 +92,11 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({
     HTMLElement[] | undefined
   >(undefined);
   const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
-  const appIsFetching =
-    useIsFetching({
-      predicate: (query) => {
-        return !ignoredQueryKeys?.some((ignoredKey) =>
-          query.queryKey.includes(ignoredKey)
-        );
-      },
-    }) > 0;
+  const appIsFetching = useIsFetchingWithTimeout((query) => {
+    return !ignoredQueryKeys?.some((ignoredKey) =>
+      query.queryKey.includes(ignoredKey)
+    );
+  });
 
   const dialogRef = useRef<HTMLDialogElement | null>(null);
 

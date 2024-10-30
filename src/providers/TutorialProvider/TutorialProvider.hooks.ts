@@ -1,6 +1,6 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
-import { useQuery } from '@tanstack/react-query';
+import { Query, useIsFetching, useQuery } from '@tanstack/react-query';
 
 import { TutorialService } from 'src/api/services/TutorialService';
 import {
@@ -8,6 +8,8 @@ import {
   GET_TUTORIALS_SAS_TOKEN,
 } from 'src/constants/queryKeys';
 import { TutorialContext } from 'src/providers/TutorialProvider/TutorialProvider';
+
+import { debounce } from 'lodash-es';
 
 export const useGetTutorialsForApp = (appName: string) => {
   return useQuery({
@@ -30,4 +32,20 @@ export const useTutorial = () => {
   }
 
   return context;
+};
+
+export const useIsFetchingWithTimeout = (
+  predicateFn: (query: Query) => boolean
+) => {
+  const [debouncedIsFetching, setDebouncedIsFetching] = useState(true);
+
+  const appIsFetching = useIsFetching({ predicate: predicateFn }) > 0;
+
+  useEffect(() => {
+    debounce(() => {
+      setDebouncedIsFetching(appIsFetching);
+    }, 100);
+  }, [appIsFetching]);
+
+  return debouncedIsFetching || debouncedIsFetching !== appIsFetching;
 };
