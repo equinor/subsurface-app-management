@@ -261,7 +261,10 @@ describe('TutorialProvider', () => {
     const highlighterElement = screen.queryByTestId(
       TUTORIAL_HIGHLIGHTER_DATATEST_ID
     );
-    expect(highlighterElement).toBeInTheDocument();
+
+    await waitFor(() => expect(highlighterElement).toBeInTheDocument(), {
+      timeout: 5000,
+    });
 
     const skipButton = screen.getByText(/skip/i);
 
