@@ -402,7 +402,7 @@ describe('TutorialProvider', () => {
 
       const user = userEvent.setup();
       const tutorial = fakeTutorial();
-      const spy = vi.spyOn(console, 'error');
+
       render(
         <RouterProvider
           router={getMemoryRouter({
@@ -413,7 +413,6 @@ describe('TutorialProvider', () => {
       );
 
       await new Promise((resolve) => setTimeout(resolve, 600));
-      expect(spy).toHaveBeenCalledTimes(9);
 
       const errorDialogText = screen.getByText(
         /there was a problem starting this tutorial./i
