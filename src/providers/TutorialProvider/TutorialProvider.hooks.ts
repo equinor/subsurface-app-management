@@ -9,8 +9,6 @@ import {
 } from 'src/constants/queryKeys';
 import { TutorialContext } from 'src/providers/TutorialProvider/TutorialProvider';
 
-import { debounce } from 'lodash-es';
-
 export const useGetTutorialsForApp = (appName: string) => {
   return useQuery({
     queryKey: [GET_TUTORIALS_FOR_APP, appName],
@@ -42,9 +40,10 @@ export const useIsFetchingWithTimeout = (
   const appIsFetching = useIsFetching({ predicate: predicateFn }) > 0;
 
   useEffect(() => {
-    debounce(() => {
+    const timeout = setTimeout(() => {
       setDebouncedIsFetching(appIsFetching);
     }, 100);
+    return () => clearTimeout(timeout);
   }, [appIsFetching]);
 
   return debouncedIsFetching || debouncedIsFetching !== appIsFetching;
