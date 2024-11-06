@@ -1,6 +1,6 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
-import { useQuery } from '@tanstack/react-query';
+import { Query, useIsFetching, useQuery } from '@tanstack/react-query';
 
 import { TutorialService } from 'src/api/services/TutorialService';
 import {
@@ -30,4 +30,21 @@ export const useTutorial = () => {
   }
 
   return context;
+};
+
+export const useIsFetchingWithTimeout = (
+  predicateFn: (query: Query) => boolean
+) => {
+  const [debouncedIsFetching, setDebouncedIsFetching] = useState(true);
+
+  const appIsFetching = useIsFetching({ predicate: predicateFn }) > 0;
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedIsFetching(appIsFetching);
+    }, 100);
+    return () => clearTimeout(timeout);
+  }, [appIsFetching]);
+
+  return debouncedIsFetching || debouncedIsFetching !== appIsFetching;
 };

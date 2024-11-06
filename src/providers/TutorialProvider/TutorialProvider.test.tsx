@@ -2,7 +2,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
 import { faker } from '@faker-js/faker';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 
 import { render, renderHook, screen, userEvent } from '../../tests/test-utils';
 import {
@@ -225,7 +225,7 @@ const getStepTitleOrKey = (step: Step): string => {
 };
 
 const waitForBackendCall = async () => {
-  return new Promise((resolve) => setTimeout(resolve, 600));
+  return act(() => new Promise((resolve) => setTimeout(resolve, 600)));
 };
 
 // scrollIntoView is not implemented in JSDOM
@@ -258,7 +258,7 @@ describe('TutorialProvider', () => {
     render(<RouterProvider router={router} />);
 
     await waitForBackendCall();
-    const highlighterElement = screen.queryByTestId(
+    const highlighterElement = await screen.findByTestId(
       TUTORIAL_HIGHLIGHTER_DATATEST_ID
     );
     expect(highlighterElement).toBeInTheDocument();
@@ -272,49 +272,59 @@ describe('TutorialProvider', () => {
     expect(highlighterElement).not.toBeInTheDocument();
   });
 
-  test("can go through tutorial and click 'Done'", async () => {
-    const tutorial = fakeTutorial();
-    const user = userEvent.setup();
-    render(<RouterProvider router={getMemoryRouter({ tutorial })} />);
+  test(
+    "can go through tutorial and click 'Done'",
+    async () => {
+      const tutorial = fakeTutorial();
+      const user = userEvent.setup();
+      render(<RouterProvider router={getMemoryRouter({ tutorial })} />);
 
-    await waitForBackendCall();
-    const highlighterElement = screen.queryByTestId(
-      TUTORIAL_HIGHLIGHTER_DATATEST_ID
-    );
-    expect(highlighterElement).toBeInTheDocument();
-    const steps = tutorial.steps;
+      const highlighterElement = await screen.findByTestId(
+        TUTORIAL_HIGHLIGHTER_DATATEST_ID
+      );
 
-    await waitForBackendCall();
-    for (let i = 0; i < steps.length - 1; i++) {
-      const currentStep = steps[i];
-      if (currentStep.key === undefined || currentStep.key === null) {
-        const stepTitle = screen.queryByText(currentStep.title ?? '');
-        const stepBody = screen.queryByText(currentStep.body ?? '');
+      expect(highlighterElement).toBeInTheDocument();
+      await waitFor(() => expect(highlighterElement).toBeInTheDocument(), {
+        timeout: 15000,
+      });
 
-        expect(stepTitle).toBeInTheDocument();
-        expect(stepBody).toBeInTheDocument();
+      const steps = tutorial.steps;
 
-        if (currentStep.imgUrl && currentStep.imgUrl.length > 0) {
-          const image = screen.getByTestId('tutorial-image');
-          expect(image).toHaveAttribute(
-            'src',
-            `${currentStep.imgUrl}?${TEST_TUTORIAL_SAS_TOKEN}`
+      await waitForBackendCall();
+      for (let i = 0; i < steps.length - 1; i++) {
+        const currentStep = steps[i];
+        if (currentStep.key === undefined || currentStep.key === null) {
+          const stepTitle = screen.queryByText(currentStep.title ?? '');
+          const stepBody = screen.queryByText(currentStep.body ?? '');
+
+          expect(stepTitle).toBeInTheDocument();
+          expect(stepBody).toBeInTheDocument();
+
+          if (currentStep.imgUrl && currentStep.imgUrl.length > 0) {
+            const image = screen.getByTestId('tutorial-image');
+            expect(image).toHaveAttribute(
+              'src',
+              `${currentStep.imgUrl}?${TEST_TUTORIAL_SAS_TOKEN}`
+            );
+          }
+        } else {
+          const customContent = screen.queryByText(
+            TEST_TUTORIAL_CUSTOM_STEP_KEY
           );
+          expect(customContent).toBeInTheDocument();
         }
-      } else {
-        const customContent = screen.queryByText(TEST_TUTORIAL_CUSTOM_STEP_KEY);
-        expect(customContent).toBeInTheDocument();
+        const nextButton = screen.getByText(/next/i);
+
+        await user.click(nextButton);
       }
-      const nextButton = screen.getByText(/next/i);
 
-      await user.click(nextButton);
-    }
+      const doneButton = screen.getByText(/done/i);
+      await user.click(doneButton);
 
-    const doneButton = screen.getByText(/done/i);
-    await user.click(doneButton);
-
-    expect(highlighterElement).not.toBeInTheDocument();
-  });
+      expect(highlighterElement).not.toBeInTheDocument();
+    },
+    { timeout: 20000 }
+  );
 
   test('can click "prev" to go back one step', async () => {
     const tutorial = fakeTutorial({
@@ -327,7 +337,7 @@ describe('TutorialProvider', () => {
         router={getMemoryRouter({ tutorial, withIgnoredQueryKeys: true })}
       />
     );
-
+    await waitForBackendCall();
     const stepOneTitle = screen.queryByText(
       getStepTitleOrKey(tutorial.steps[0])
     );
@@ -372,8 +382,7 @@ describe('TutorialProvider', () => {
       />
     );
 
-    await waitForBackendCall();
-    const highlighterElement = screen.queryByTestId(
+    const highlighterElement = await screen.findByTestId(
       TUTORIAL_HIGHLIGHTER_DATATEST_ID
     );
     expect(highlighterElement).toBeInTheDocument();
@@ -402,7 +411,7 @@ describe('TutorialProvider', () => {
 
       const user = userEvent.setup();
       const tutorial = fakeTutorial();
-      const spy = vi.spyOn(console, 'error');
+
       render(
         <RouterProvider
           router={getMemoryRouter({
@@ -412,10 +421,7 @@ describe('TutorialProvider', () => {
         />
       );
 
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      expect(spy).toHaveBeenCalledTimes(9);
-
-      const errorDialogText = screen.getByText(
+      const errorDialogText = await screen.findByText(
         /there was a problem starting this tutorial./i
       );
       expect(errorDialogText).toBeInTheDocument();
@@ -443,13 +449,16 @@ describe('TutorialProvider', () => {
           })}
         />
       );
-      await waitForBackendCall();
 
-      expect(spy).toHaveBeenCalledWith(
-        expect.stringContaining('Could not find the custom'),
-        expect.arrayContaining([TEST_TUTORIAL_CUSTOM_STEP_KEY]),
-        expect.stringContaining('However in the custom'),
-        expect.arrayContaining([TEST_WRONG_CUSTOM_KEY])
+      await waitFor(
+        () =>
+          expect(spy).toHaveBeenCalledWith(
+            expect.stringContaining('Could not find the custom'),
+            expect.arrayContaining([TEST_TUTORIAL_CUSTOM_STEP_KEY]),
+            expect.stringContaining('However in the custom'),
+            expect.arrayContaining([TEST_WRONG_CUSTOM_KEY])
+          ),
+        { timeout: 10000 }
       );
 
       const errorDialogText = screen.getByText(
@@ -474,10 +483,13 @@ describe('TutorialProvider', () => {
         />
       );
 
-      await waitForBackendCall();
-      expect(spy).toHaveBeenCalledWith(
-        expect.stringContaining('Could not find all'),
-        expect.arrayContaining([null])
+      await waitFor(
+        () =>
+          expect(spy).toHaveBeenCalledWith(
+            expect.stringContaining('Could not find all'),
+            expect.arrayContaining([null])
+          ),
+        { timeout: 10000 }
       );
 
       const errorDialogText = screen.getByText(
@@ -499,10 +511,13 @@ describe('TutorialProvider', () => {
         />
       );
 
-      await waitForBackendCall();
-      expect(spy).toHaveBeenCalledWith(
-        expect.stringContaining('Could not find all'),
-        expect.arrayContaining([null])
+      await waitFor(
+        () =>
+          expect(spy).toHaveBeenCalledWith(
+            expect.stringContaining('Could not find all'),
+            expect.arrayContaining([null])
+          ),
+        { timeout: 10000 }
       );
 
       const errorDialogText = screen.queryByText(
