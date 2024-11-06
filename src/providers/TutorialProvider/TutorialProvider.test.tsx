@@ -337,7 +337,7 @@ describe('TutorialProvider', () => {
         router={getMemoryRouter({ tutorial, withIgnoredQueryKeys: true })}
       />
     );
-
+    await waitForBackendCall();
     const stepOneTitle = screen.queryByText(
       getStepTitleOrKey(tutorial.steps[0])
     );
