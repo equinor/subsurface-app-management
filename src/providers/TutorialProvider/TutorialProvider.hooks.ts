@@ -23,6 +23,9 @@ export const useGetTutorialSasToken = () => {
   });
 };
 
+/**
+ * Use with caution. There has not been much testing of how using this hook in an app affects the tutorial logic
+ */
 export const useTutorial = () => {
   const context = useContext(TutorialContext);
   if (context === undefined) {
