@@ -114,6 +114,11 @@ const TutorialProviderInner: FC = () => {
     setActiveTutorial(undefined);
   };
 
+  // Resets the hasStartedTutorial ref to allow running multiple tutorials consecutively without refreshing the page
+  const resetHasStartedTutorial = useCallback(() => {
+    hasStartedTutorial.current = false;
+  }, []);
+
   if (
     !activeTutorial?.showInProd &&
     environmentName === EnvironmentType.PRODUCTION
@@ -157,7 +162,7 @@ const TutorialProviderInner: FC = () => {
           }}
         />
       )}
-      <TutorialDialog />
+      <TutorialDialog resetHasStartedTutorial={resetHasStartedTutorial} />
     </>
   );
 };

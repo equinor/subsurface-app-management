@@ -20,7 +20,13 @@ import { getBestPositionWithoutOverlap } from './TutorialProvider.utils';
 import TutorialStepIndicator from './TutorialStepIndicator';
 import { TutorialPosition } from 'src/api';
 
-const TutorialDialog: FC = () => {
+interface TutorialDialogProps {
+  resetHasStartedTutorial: () => void;
+}
+
+const TutorialDialog: FC<TutorialDialogProps> = ({
+  resetHasStartedTutorial,
+}) => {
   const { data: sasToken } = useGetTutorialSasToken();
 
   const {
@@ -132,6 +138,7 @@ const TutorialDialog: FC = () => {
       dialogRef.current?.close();
       setCurrentStep(0);
       setAllElementsToHighlight(undefined);
+      resetHasStartedTutorial();
     }
   };
   const handleOnSkip = () => {
