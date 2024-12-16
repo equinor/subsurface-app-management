@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import { CancelablePromise, Tutorial } from 'src/api';
-import { OpenAPI_Portal_Prod } from '../core/OpenAPI';
+import { OpenAPI_JSEMBARK_Prod } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class TutorialService {
   /**
@@ -15,7 +15,7 @@ export class TutorialService {
   public static getTutorialsForApplication(
     applicationName: string
   ): CancelablePromise<Array<Tutorial>> {
-    return __request(OpenAPI_Portal_Prod, {
+    return __request(OpenAPI_JSEMBARK_Prod, {
       method: 'GET',
       url: '/api/v1/Tutorial/{applicationName}',
       path: {
@@ -29,7 +29,7 @@ export class TutorialService {
    * @throws ApiError
    */
   public static getTutorialSasToken(): CancelablePromise<string> {
-    return __request(OpenAPI_Portal_Prod, {
+    return __request(OpenAPI_JSEMBARK_Prod, {
       method: 'GET',
       url: '/api/v1/Tutorial/SASToken',
     });

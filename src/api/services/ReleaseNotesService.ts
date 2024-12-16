@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CancelablePromise } from 'src/api';
-import { OpenAPI_Portal } from '../core/OpenAPI';
+import { OpenAPI_SAM } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class ReleaseNotesService {
   /**
@@ -18,7 +18,7 @@ export class ReleaseNotesService {
     version?: string,
     tags?: Array<string>
   ): CancelablePromise<any> {
-    return __request(OpenAPI_Portal, {
+    return __request(OpenAPI_SAM, {
       method: 'GET',
       url: '/api/v1/ReleaseNotes',
       query: {
@@ -36,7 +36,7 @@ export class ReleaseNotesService {
   public static getMyReleasenotes(
     tags?: Array<string>
   ): CancelablePromise<any> {
-    return __request(OpenAPI_Portal, {
+    return __request(OpenAPI_SAM, {
       method: 'GET',
       url: '/api/v1/ReleaseNotes/myreleasenotes',
       query: {
@@ -54,7 +54,7 @@ export class ReleaseNotesService {
     applicationName: string,
     releaseId: string
   ): CancelablePromise<any> {
-    return __request(OpenAPI_Portal, {
+    return __request(OpenAPI_SAM, {
       method: 'GET',
       url: '/api/v1/ReleaseNotes/{applicationName}/{releaseId}',
       path: {
@@ -68,11 +68,29 @@ export class ReleaseNotesService {
    * @throws ApiError
    */
   public static getContainerSasUri(): CancelablePromise<string> {
-    return __request(OpenAPI_Portal, {
+    return __request(OpenAPI_SAM, {
       method: 'GET',
       url: '/api/v1/ReleaseNotes/GetContainerSasUri',
       errors: {
         401: `Unauthorized`,
+      },
+    });
+  }
+  /**
+   * Get release note image
+   * @param path
+   * @returns string OK
+   * @throws ApiError
+   */
+  public static getReleaseNoteImage(path: string): CancelablePromise<string> {
+    return __request(OpenAPI_SAM, {
+      method: 'GET',
+      url: '/api/v1/ReleaseNotes/getreleasenoteimage/{path}',
+      path: {
+        path: path,
+      },
+      errors: {
+        404: `Not Found`,
       },
     });
   }

@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { AmplifyApplication } from '../models/AmplifyApplication';
 import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI_Portal, OpenAPI_Portal_Prod } from '../core/OpenAPI';
+import { OpenAPI_JSEMBARK, OpenAPI_JSEMBARK_Prod } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import { GraphAppRole } from '../models/GraphAppRole';
 export class AmplifyApplicationService {
@@ -16,7 +16,7 @@ export class AmplifyApplicationService {
   public static userApplications(): CancelablePromise<
     Array<AmplifyApplication>
   > {
-    return __request(OpenAPI_Portal_Prod, {
+    return __request(OpenAPI_JSEMBARK_Prod, {
       method: 'GET',
       url: '/api/v1/AmplifyApplication/userapplications',
       errors: {
@@ -34,7 +34,7 @@ export class AmplifyApplicationService {
   public static getAllAppRoles(
     applicationId: string
   ): CancelablePromise<Array<GraphAppRole>> {
-    return __request(OpenAPI_Portal, {
+    return __request(OpenAPI_JSEMBARK, {
       method: 'GET',
       url: '/api/v1/AmplifyApplication/application/{applicationId}/appRoles',
       path: {

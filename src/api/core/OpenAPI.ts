@@ -38,7 +38,7 @@ export class TokenService {
    * @throws ApiError
    */
   public static getAmplifyPortalToken(): CancelablePromise<string> {
-    return __request(OpenAPI_SAM, {
+    return __request(OpenAPI_APP, {
       method: 'GET',
       url: '/api/v1/Token/AmplifyPortal',
     });
@@ -49,7 +49,7 @@ export class TokenService {
    * @throws ApiError
    */
   public static getAmplifyPortalProductionToken(): CancelablePromise<string> {
-    return __request(OpenAPI_SAM, {
+    return __request(OpenAPI_APP, {
       method: 'GET',
       url: '/api/v1/Token/AmplifyPortal/Production',
     });
@@ -84,21 +84,32 @@ const getToken = async (
   return requestToken;
 };
 
-export const getPortalToken = async (): Promise<string> => {
+export const getJSEmbarkToken = async (): Promise<string> => {
   return getToken(
     `amplify-portal-${environmentName}`,
     TokenService.getAmplifyPortalToken
   );
 };
 
-const getPortalProdToken = async () => {
+const getJSEmbarkProdToken = async () => {
   return getToken(
     `amplify-portal-production`,
     TokenService.getAmplifyPortalProductionToken
   );
 };
 
-export const OpenAPI_SAM: OpenAPIConfig = {
+export const getSAMToken = async (): Promise<string> => {
+  return getToken(`sam-${environmentName}`, TokenService.getAmplifyPortalToken);
+};
+
+const getSAMProdToken = async () => {
+  return getToken(
+    `sam-production`,
+    TokenService.getAmplifyPortalProductionToken
+  );
+};
+
+export const OpenAPI_APP: OpenAPIConfig = {
   BASE: getApiUrl(import.meta.env.VITE_API_URL),
   VERSION: '1.0',
   WITH_CREDENTIALS: false,
@@ -110,24 +121,48 @@ export const OpenAPI_SAM: OpenAPIConfig = {
   ENCODE_PATH: undefined,
 };
 
-export const OpenAPI_Portal: OpenAPIConfig = {
+export const OpenAPI_JSEMBARK: OpenAPIConfig = {
   BASE: `https://api-amplify-portal-${noLocalhostEnvironmentName}.radix.equinor.com`,
   VERSION: '1.0',
   WITH_CREDENTIALS: false,
   CREDENTIALS: 'include',
-  TOKEN: getPortalToken,
+  TOKEN: getJSEmbarkToken,
   USERNAME: undefined,
   PASSWORD: undefined,
   HEADERS: undefined,
   ENCODE_PATH: undefined,
 };
 
-export const OpenAPI_Portal_Prod: OpenAPIConfig = {
+export const OpenAPI_JSEMBARK_Prod: OpenAPIConfig = {
   BASE: `https://api-amplify-portal-production.radix.equinor.com`,
   VERSION: '1.0',
   WITH_CREDENTIALS: false,
   CREDENTIALS: 'include',
-  TOKEN: getPortalProdToken,
+  TOKEN: getJSEmbarkProdToken,
+  USERNAME: undefined,
+  PASSWORD: undefined,
+  HEADERS: undefined,
+  ENCODE_PATH: undefined,
+};
+
+export const OpenAPI_SAM: OpenAPIConfig = {
+  BASE: `https://api-sam-backend-${noLocalhostEnvironmentName}.radix.equinor.com`,
+  VERSION: '1.0',
+  WITH_CREDENTIALS: false,
+  CREDENTIALS: 'include',
+  TOKEN: getSAMToken,
+  USERNAME: undefined,
+  PASSWORD: undefined,
+  HEADERS: undefined,
+  ENCODE_PATH: undefined,
+};
+
+export const OpenAPI_SAM_Prod: OpenAPIConfig = {
+  BASE: `https://api-sam-backend-production.radix.equinor.com`,
+  VERSION: '1.0',
+  WITH_CREDENTIALS: false,
+  CREDENTIALS: 'include',
+  TOKEN: getSAMProdToken,
   USERNAME: undefined,
   PASSWORD: undefined,
   HEADERS: undefined,
