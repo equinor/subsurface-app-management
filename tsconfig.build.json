@@ -4,6 +4,7 @@
     "src/**/*.stories.ts*",
     "src/**/*.test.ts*",
     "vite.config.ts",
-    "src/storybook"
+    "src/storybook",
+    ".storybook"
   ]
 }
