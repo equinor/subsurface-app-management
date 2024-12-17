@@ -11,35 +11,16 @@ import { render, screen } from 'src/tests/test-utils';
 
 import { beforeEach, describe } from 'vitest';
 
-const ENVIRONMENT = 'test';
-const uniqueFeatureKey = faker.database.mongodbObjectId();
 enum Scenarios {
   WITH_FEATURES_KEY = 'withFeatures',
   WITHOUT_FEATURES_KEY = 'withoutFeatures',
 }
-const mockedAppFeatures = [
-  {
-    applicationName: Scenarios.WITH_FEATURES_KEY,
-    features: [
-      {
-        featureKey: uniqueFeatureKey,
-        activeEnvironments: [ENVIRONMENT],
-        activeUsers: [],
-        uuid: '',
-        description: '',
-      },
-    ],
-  },
-  { applicationName: Scenarios.WITHOUT_FEATURES_KEY, features: [] },
-];
 vi.mock('src/api/services/FeatureToggleService', () => {
   class FeatureToggleService {
-    public static getFeatureToggleFromApplicationName(
-      key: Scenarios
-    ): CancelablePromise<unknown> {
+    public static getMyFeatures(): CancelablePromise<unknown> {
       return new CancelablePromise((resolve) => {
         setTimeout(() => {
-          resolve(mockedAppFeatures.find((f) => f.applicationName === key));
+          resolve([{ uuid: Scenarios.WITH_FEATURES_KEY }]);
         }, 300);
       });
     }
@@ -51,15 +32,12 @@ function Wrappers({ children }: { children: ReactNode }) {
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <FeatureToggleProvider loadingComponent={<p>loading</p>}>
-        {children}
-      </FeatureToggleProvider>
+      <FeatureToggleProvider>{children}</FeatureToggleProvider>
     </QueryClientProvider>
   );
 }
 describe('Feature toggle component', () => {
   beforeEach(() => {
-    vi.stubEnv('VITE_ENVIRONMENT_NAME', ENVIRONMENT);
     vi.stubEnv('VITE_IS_MOCK', 'true');
   });
 
@@ -67,7 +45,7 @@ describe('Feature toggle component', () => {
     vi.stubEnv('VITE_NAME', Scenarios.WITH_FEATURES_KEY);
     const randomString = faker.animal.fish();
     render(
-      <Feature featureKey={Scenarios.WITH_FEATURES_KEY}>
+      <Feature featureUuid={Scenarios.WITH_FEATURES_KEY}>
         <p>{randomString}</p>
       </Feature>,
       { wrapper: Wrappers }
@@ -82,7 +60,7 @@ describe('Feature toggle component', () => {
     vi.stubEnv('VITE_NAME', Scenarios.WITH_FEATURES_KEY);
     const randomString = faker.animal.fish();
     render(
-      <Feature featureKey={Scenarios.WITHOUT_FEATURES_KEY}>
+      <Feature featureUuid={Scenarios.WITHOUT_FEATURES_KEY}>
         <p>{randomString}</p>
       </Feature>,
       { wrapper: Wrappers }
