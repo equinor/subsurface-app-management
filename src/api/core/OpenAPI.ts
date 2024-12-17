@@ -54,6 +54,28 @@ export class TokenService {
       url: '/api/v1/Token/AmplifyPortal/Production',
     });
   }
+
+  /**
+   * @returns string Success
+   * @throws ApiError
+   */
+  public static getSamPortalToken(): CancelablePromise<string> {
+    return __request(OpenAPI_APP, {
+      method: 'GET',
+      url: '/api/v1/Token/SamPortal',
+    });
+  }
+
+  /**
+   * @returns string Success
+   * @throws ApiError
+   */
+  public static getSamPortalProductionToken(): CancelablePromise<string> {
+    return __request(OpenAPI_APP, {
+      method: 'GET',
+      url: '/api/v1/Token/SamPortal/Production',
+    });
+  }
 }
 
 const isJwtTokenExpired = (token: string) => {
@@ -99,7 +121,7 @@ const getJSEmbarkProdToken = async () => {
 };
 
 export const getSAMToken = async (): Promise<string> => {
-  return getToken(`sam-${environmentName}`, TokenService.getAmplifyPortalToken);
+  return getToken(`sam-${environmentName}`, TokenService.getSamPortalToken);
 };
 
 const getSAMProdToken = async () => {

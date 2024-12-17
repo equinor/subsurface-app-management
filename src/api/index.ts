@@ -4,7 +4,7 @@
 /* eslint-disable */
 export { ApiError } from './core/ApiError';
 export { CancelablePromise, CancelError } from './core/CancelablePromise';
-export { OpenAPI_APP, getJSEmbarkToken } from './core/OpenAPI';
+export { OpenAPI_APP, getJSEmbarkToken, getSAMToken } from './core/OpenAPI';
 export { request } from './core/request';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
