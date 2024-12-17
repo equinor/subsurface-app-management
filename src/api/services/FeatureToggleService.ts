@@ -2,29 +2,29 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CancelablePromise, FeatureToggleDto } from 'src/api';
-import { OpenAPI_Portal_Prod } from '../core/OpenAPI';
+import type { CancelablePromise, MyFeatureDto } from 'src/api';
+import { OpenAPI_SAM_Prod } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class FeatureToggleService {
   /**
-   * Gets a Feature Toggle from Application name
+   * Get my features
    * @param applicationName name
-   * @returns FeatureToggleDto Success
+   * @returns MyFeatureDto OK
    * @throws ApiError
    */
-  public static getFeatureToggleFromApplicationName(
+  public static getMyFeatures(
     applicationName: string
-  ): CancelablePromise<FeatureToggleDto> {
-    return __request(OpenAPI_Portal_Prod, {
+  ): CancelablePromise<Array<MyFeatureDto>> {
+    return __request(OpenAPI_SAM_Prod, {
       method: 'GET',
-      url: '/api/v1/FeatureToggle/{applicationName}',
+      url: '/api/v1/FeatureToggle/{applicationName}/myfeatures',
       path: {
         applicationName: applicationName,
       },
       errors: {
         400: `Bad Request`,
         404: `Not Found`,
-        500: `Server Error`,
+        500: `Internal Server Error`,
       },
     });
   }

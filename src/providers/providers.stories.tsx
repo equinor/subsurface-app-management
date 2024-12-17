@@ -1,18 +1,8 @@
-import { Typography } from '@equinor/eds-core-react';
 import { Meta } from '@storybook/react';
 
 import styled from 'styled-components';
 
 const providersList = [
-  {
-    name: 'AuthProvider',
-    body: 'MSAL authentication provider',
-    code: `<AuthProvider
-  loadingComponent={component to show when loading}
-  unauthorizedComponent={componentToShowWhenUnauthorized}>
-    {children}
-</AuthProvider>`,
-  },
   {
     name: 'TutorialStepsProvider',
     body: 'Provider needed to use tutorial hook',
@@ -64,14 +54,14 @@ const Divider = styled.hr`
 export const Docs = () => (
   <Container>
     <div>
-      <Typography variant="h1">List of all providers</Typography>
+      <h1>List of all providers</h1>
       <Divider />
     </div>
     {providersList.map((provider) => (
       <Content key={provider.name}>
         <div>
-          <Typography variant="h3">{provider.name}</Typography>-
-          <Typography>{provider.body}</Typography>
+          <h3>{provider.name}</h3>-
+          <p>{provider.body}</p>
         </div>
         <code>{provider.code}</code>
       </Content>

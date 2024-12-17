@@ -4,11 +4,7 @@ enum ReleaseNoteType {
   BUG_FIX = 'Bug fix',
 }
 
-type ReleaseNoteTypeInformation = {
-  [key in ReleaseNoteType]: {
-    dotColor: string;
-  };
-};
+type ReleaseNoteTypeInformation = Record<ReleaseNoteType, { dotColor: string }>;
 
 const RELEASENOTE_TYPES_INFORMATION: ReleaseNoteTypeInformation = {
   [ReleaseNoteType.FEATURE]: {

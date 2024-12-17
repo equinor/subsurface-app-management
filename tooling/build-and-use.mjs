@@ -27,7 +27,7 @@ async function runTasks() {
     await runTask({
       command: 'npm run build',
       name: `${chalk.white('Building')} ${chalk.bold.magenta(
-        'amplify-sam'
+        '@equinor/subsurface-app-management'
       )}`,
       ignoreStdErr: true,
     });

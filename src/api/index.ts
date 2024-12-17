@@ -4,7 +4,7 @@
 /* eslint-disable */
 export { ApiError } from './core/ApiError';
 export { CancelablePromise, CancelError } from './core/CancelablePromise';
-export { OpenAPI_SAM, getPortalToken } from './core/OpenAPI';
+export { OpenAPI_APP, getJSEmbarkToken, getSAMToken } from './core/OpenAPI';
 export { request } from './core/request';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
@@ -24,6 +24,7 @@ export { ServiceNowUrgency } from './models/ServiceNowUrgency';
 export type { Step } from './models/Step';
 export type { Tutorial } from './models/Tutorial';
 export { TutorialPosition } from './models/TutorialPosition';
+export type { MyFeatureDto } from './models/MyFeatureDto';
 
 export { AmplifyApplicationService } from './services/AmplifyApplicationService';
 export { FeatureToggleService } from './services/FeatureToggleService';

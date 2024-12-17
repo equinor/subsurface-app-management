@@ -1,28 +1,23 @@
-import { DetailedHTMLProps, FC, HTMLAttributes, ReactNode } from 'react';
+import { FC, ReactNode } from 'react';
 
 import { useFeatureToggling } from 'src/hooks';
+import { UseFeatureTogglingOptions } from 'src/hooks/useFeatureToggling';
 
-interface FeatureProps {
-  featureKey: string;
+interface FeatureProps extends UseFeatureTogglingOptions {
   children: ReactNode;
-  fallback?: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
-  showIfKeyIsMissing?: boolean;
+  fallback?: ReactNode;
 }
 
-export const Feature: FC<FeatureProps> = ({
-  featureKey,
-  children,
-  fallback,
-  showIfKeyIsMissing = true,
-}) => {
+export const Feature: FC<FeatureProps> = ({ children, fallback, ...rest }) => {
   const { showContent } = useFeatureToggling({
-    featureKey,
-    showIfKeyIsMissing,
+    ...rest,
   });
 
   if (showContent) {
     return <>{children}</>;
   }
 
-  return <>{fallback ?? null}</>;
+  if (fallback === undefined) return null;
+
+  return <>{fallback}</>;
 };

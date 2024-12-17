@@ -52,6 +52,7 @@ export default defineConfig({
         ['json-summary', { file: 'coverage.json' }],
       ],
       reportOnFailure: true,
+      cleanOnRerun: false,
       thresholds: {
         perFile: true,
         statements: 100,

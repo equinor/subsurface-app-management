@@ -1,5 +1,4 @@
 import { tokens } from '@equinor/eds-tokens';
-
 import { Preview } from '@storybook/react';
 
 const { colors } = tokens;
