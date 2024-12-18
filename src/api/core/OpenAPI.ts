@@ -113,6 +113,11 @@ export const getJSEmbarkToken = async (): Promise<string> => {
   );
 };
 
+/**
+ * @deprecated - Use getJSEmbarkToken instead
+ */
+export const getPortalToken = () => getJSEmbarkToken();
+
 const getJSEmbarkProdToken = async () => {
   return getToken(
     `amplify-portal-production`,
