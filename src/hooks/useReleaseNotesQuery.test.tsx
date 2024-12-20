@@ -9,7 +9,7 @@ import { CancelablePromise, ReleaseNote } from 'src/api';
 
 vi.mock('src/api/services/ReleaseNotesService', () => {
   class ReleaseNotesService {
-    public static getReleasenoteList(
+    public static getPublishedReleasenotes(
       appName: string
     ): CancelablePromise<ReleaseNote[]> {
       return new CancelablePromise((resolve) => {
@@ -18,6 +18,10 @@ vi.mock('src/api/services/ReleaseNotesService', () => {
             {
               releaseId: faker.string.uuid(),
               applicationName: appName,
+              title: faker.book.title(),
+              body: faker.lorem.paragraph(),
+              draft: false,
+              createdDate: faker.date.recent().toISOString(),
             },
           ]);
         }, 100);
