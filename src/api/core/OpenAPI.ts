@@ -130,10 +130,7 @@ export const getSAMToken = async (): Promise<string> => {
 };
 
 const getSAMProdToken = async () => {
-  return getToken(
-    `sam-production`,
-    TokenService.getAmplifyPortalProductionToken
-  );
+  return getToken(`sam-production`, TokenService.getSamPortalProductionToken);
 };
 
 export const OpenAPI_APP: OpenAPIConfig = {
