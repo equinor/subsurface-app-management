@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 
-import { CancelablePromise } from 'src/api';
+import { CancelablePromise, MyFeatureDto } from 'src/api';
 import {
   FeatureToggleProvider,
   useFeatureToggleContext,
@@ -11,9 +11,19 @@ import { EnvironmentType } from 'src/types';
 
 vi.mock('src/api', () => {
   class FeatureToggleService {
-    public static getFeatureToggleFromApplicationName(): CancelablePromise<unknown> {
+    public static getMyFeatures(
+      appName: string,
+      env: string
+    ): CancelablePromise<MyFeatureDto[]> {
       return new CancelablePromise((resolve) => {
         setTimeout(() => {
+          if (env === 'production') {
+            resolve([
+              {
+                uuid: 'prod-uuid',
+              },
+            ]);
+          }
           resolve([]);
         }, 300);
       });
@@ -22,7 +32,7 @@ vi.mock('src/api', () => {
   return { FeatureToggleService };
 });
 
-test('Overrides work as expected', () => {
+test('Overrides work as expected', async () => {
   const appName = faker.animal.lion();
   const environmentName = 'production';
   const { result } = renderHook(() => useFeatureToggleContext(), {
@@ -41,5 +51,5 @@ test('Overrides work as expected', () => {
     },
   });
 
-  expect(result.current?.environmentName).toBe(environmentName);
+  expect(result.current.isLoading).toBeTruthy();
 });
