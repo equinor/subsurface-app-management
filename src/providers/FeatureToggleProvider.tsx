@@ -15,7 +15,6 @@ const { getAppName } = environment;
 interface FeatureToggleContextType {
   isLoading: boolean;
   isError: boolean;
-  environmentName: EnvironmentType;
   features?: MyFeatureDto[] | null;
 }
 
@@ -54,7 +53,8 @@ export const FeatureToggleProvider: FC<FeatureToggleProviderProps> = ({
     isError,
   } = useQuery({
     queryKey: [GET_FEATURE_TOGGLES_FOR_APP],
-    queryFn: async () => FeatureToggleService.getMyFeatures(applicationName),
+    queryFn: async () =>
+      FeatureToggleService.getMyFeatures(applicationName, environmentName),
   });
 
   return (
@@ -63,7 +63,6 @@ export const FeatureToggleProvider: FC<FeatureToggleProviderProps> = ({
         features: myFeatures,
         isLoading,
         isError,
-        environmentName,
       }}
     >
       {children}

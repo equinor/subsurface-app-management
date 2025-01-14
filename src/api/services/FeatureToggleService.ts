@@ -9,17 +9,20 @@ export class FeatureToggleService {
   /**
    * Get my features
    * @param applicationName name
+   * @param currentEnvironment name
    * @returns MyFeatureDto OK
    * @throws ApiError
    */
   public static getMyFeatures(
-    applicationName: string
+    applicationName: string,
+    currentEnvironment: string
   ): CancelablePromise<Array<MyFeatureDto>> {
     return __request(OpenAPI_SAM_Prod, {
       method: 'GET',
-      url: '/api/v1/FeatureToggle/{applicationName}/myfeatures',
+      url: '/api/v1/FeatureToggle/{applicationName}/{currentEnvironment}/myfeatures',
       path: {
         applicationName: applicationName,
+        currentEnvironment: currentEnvironment,
       },
       errors: {
         400: `Bad Request`,
