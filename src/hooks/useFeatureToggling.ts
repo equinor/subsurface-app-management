@@ -13,11 +13,12 @@ export interface UseFeatureTogglingOptions {
  * @param showIfKeyIsMissing - Show/hide if the key was not found/has been deleted. Defaults to true
  * @param ShowIfIsLoading - Show/hide if the feature toggles are still loading. Defaults to false
  */
-export function useFeatureToggling({
-  featureUuid,
-  showIfKeyIsMissing = true,
-  showIfIsLoading = false,
-}: UseFeatureTogglingOptions) {
+export function useFeatureToggling(params: UseFeatureTogglingOptions | string) {
+  const {
+    featureUuid,
+    showIfKeyIsMissing = true,
+    showIfIsLoading = false,
+  } = typeof params === 'string' ? { featureUuid: params } : params;
   const { features, isError, isLoading } = useFeatureToggleContext();
 
   if (!showIfKeyIsMissing) {
