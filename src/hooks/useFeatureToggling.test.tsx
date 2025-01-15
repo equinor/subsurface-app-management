@@ -61,6 +61,22 @@ test('should return true for showContent when the uuid is in "myFeatures"', asyn
   );
 });
 
+test('Using string as param works as expected', async () => {
+  const { result } = renderHook(
+    () => useFeatureToggling(Scenarios.WITH_FEATURES_KEY),
+    {
+      wrapper: Wrappers,
+    }
+  );
+
+  await waitFor(
+    () => {
+      expect(result.current.showContent).toBe(true);
+    },
+    { timeout: 600 }
+  );
+});
+
 test('should return false for showContent when uuid isnt in myFeatures', async () => {
   const { result } = renderHook(
     () => useFeatureToggling({ featureUuid: Scenarios.WITHOUT_FEATURES_KEY }),
