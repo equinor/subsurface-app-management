@@ -30,11 +30,9 @@ export function useFeatureToggling(params: UseFeatureTogglingOptions | string) {
   const showContent = useMemo(() => {
     if ((!showIfIsLoading && isLoading) || isError) return false;
 
-    const inMyFeatures = features?.some(
-      (feature) => feature.uuid === featureUuid
-    );
+    const found = features?.find((feature) => feature.uuid === featureUuid);
 
-    if (inMyFeatures) return true;
+    if (found) return found.active;
 
     return showIfKeyIsMissing;
   }, [

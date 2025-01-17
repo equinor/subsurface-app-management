@@ -4,4 +4,5 @@
 /* eslint-disable */
 export type MyFeatureDto = {
   uuid: string;
+  active: boolean;
 };
