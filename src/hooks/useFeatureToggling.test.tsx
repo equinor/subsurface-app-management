@@ -10,6 +10,7 @@ import { FeatureToggleProvider } from 'src/providers';
 
 enum Scenarios {
   WITH_FEATURES_KEY = 'withFeatures',
+  WITH_FEATURES_KEY_BUT_INACTIVE = 'withFeaturesInactive',
   WITHOUT_FEATURES_KEY = 'withoutFeatures',
 }
 
@@ -18,7 +19,10 @@ vi.mock('src/api/services/FeatureToggleService', () => {
     public static getMyFeatures(): CancelablePromise<unknown> {
       return new CancelablePromise((resolve) => {
         setTimeout(() => {
-          resolve([{ uuid: Scenarios.WITH_FEATURES_KEY }]);
+          resolve([
+            { uuid: Scenarios.WITH_FEATURES_KEY, active: true },
+            { uuid: Scenarios.WITH_FEATURES_KEY_BUT_INACTIVE, active: false },
+          ]);
         }, 300);
       });
     }
@@ -45,7 +49,7 @@ function WrappersWithoutFeatureToggleProvider({
   );
 }
 
-test('should return true for showContent when the uuid is in "myFeatures"', async () => {
+test('should return true for showContent when it is active in "myFeatures"', async () => {
   const { result } = renderHook(
     () => useFeatureToggling({ featureUuid: Scenarios.WITH_FEATURES_KEY }),
     {
@@ -56,6 +60,25 @@ test('should return true for showContent when the uuid is in "myFeatures"', asyn
   await waitFor(
     () => {
       expect(result.current.showContent).toBe(true);
+    },
+    { timeout: 600 }
+  );
+});
+
+test('should return true for showContent when active = false in "myFeatures"', async () => {
+  const { result } = renderHook(
+    () =>
+      useFeatureToggling({
+        featureUuid: Scenarios.WITH_FEATURES_KEY_BUT_INACTIVE,
+      }),
+    {
+      wrapper: Wrappers,
+    }
+  );
+
+  await waitFor(
+    () => {
+      expect(result.current.showContent).toBe(false);
     },
     { timeout: 600 }
   );
