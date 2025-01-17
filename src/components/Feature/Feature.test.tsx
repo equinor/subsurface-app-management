@@ -20,7 +20,7 @@ vi.mock('src/api/services/FeatureToggleService', () => {
     public static getMyFeatures(): CancelablePromise<unknown> {
       return new CancelablePromise((resolve) => {
         setTimeout(() => {
-          resolve([{ uuid: Scenarios.WITH_FEATURES_KEY }]);
+          resolve([{ uuid: Scenarios.WITH_FEATURES_KEY, active: true }]);
         }, 300);
       });
     }
