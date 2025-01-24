@@ -6,7 +6,7 @@ import type { ImpersonateUserDto } from 'src/api/models/ImpersonateUserDto';
 import type { ImpersonateUserUpdateDto } from 'src/api/models/ImpersonateUserUpdateDto';
 import type { ObjectServiceResponse } from 'src/api/models/ObjectServiceResponse';
 import type { CancelablePromise } from 'src/api';
-import { OpenAPI_JSEMBARK_Prod, OpenAPI_SAM_Prod } from '../core/OpenAPI';
+import { OpenAPI_JSEMBARK_Prod } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class ImpersonateUserService {
   /**
@@ -17,7 +17,7 @@ export class ImpersonateUserService {
   public static getApiV1ImpersonateUser(): CancelablePromise<
     Array<ImpersonateUserDto>
   > {
-    return __request(OpenAPI_SAM_Prod, {
+    return __request(OpenAPI_JSEMBARK_Prod, {
       method: 'GET',
       url: '/api/v1/ImpersonateUser',
       errors: {
@@ -34,7 +34,7 @@ export class ImpersonateUserService {
   public static createImpersonateUser(
     requestBody?: ImpersonateUserUpdateDto
   ): CancelablePromise<ImpersonateUserDto> {
-    return __request(OpenAPI_SAM_Prod, {
+    return __request(OpenAPI_JSEMBARK_Prod, {
       method: 'POST',
       url: '/api/v1/ImpersonateUser',
       body: requestBody,
@@ -55,7 +55,7 @@ export class ImpersonateUserService {
   public static putImpersonateUser(
     requestBody?: ImpersonateUserDto
   ): CancelablePromise<ImpersonateUserDto> {
-    return __request(OpenAPI_SAM_Prod, {
+    return __request(OpenAPI_JSEMBARK_Prod, {
       method: 'PUT',
       url: '/api/v1/ImpersonateUser',
       body: requestBody,
