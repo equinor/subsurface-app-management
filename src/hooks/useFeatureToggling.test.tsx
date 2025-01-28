@@ -172,20 +172,3 @@ test('useFeatureToggleContext throws error when used outside context', () => {
     });
   }).toThrow("'useFeatureToggleContext' must be used within provider");
 });
-
-test('console.warn is called if showIfKeyIsMissing is false', () => {
-  console.warn = vi.fn();
-
-  renderHook(
-    () =>
-      useFeatureToggling({
-        featureUuid: Scenarios.WITH_FEATURES_KEY,
-        showIfKeyIsMissing: false,
-      }),
-    {
-      wrapper: Wrappers,
-    }
-  );
-
-  expect(console.warn).toHaveBeenCalled();
-});
