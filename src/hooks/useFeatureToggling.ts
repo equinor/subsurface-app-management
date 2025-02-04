@@ -24,6 +24,9 @@ export function useFeatureToggling(params: UseFeatureTogglingOptions | string) {
     if (found) return found.active;
 
     // Default to show if feature is not found, i.e. has been deleted
+    console.warn(
+      `[FeatureToggling]: Feature with uuid ${featureUuid} not found. Defaulting to show.`
+    );
     return true;
   }, [showIfIsLoading, isLoading, isError, features, featureUuid]);
 
