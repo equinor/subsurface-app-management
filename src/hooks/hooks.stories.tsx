@@ -14,7 +14,12 @@ const hookList = [
     body: 'Returns release notes for a given app. Has optional options to override app name and enabled (react-query)',
     code: 'const { data } = useReleaseNotesQuery()',
   },
-];
+  {
+    name: 'useTutorialsQuery',
+    body: 'Returns tutorials for a given app.',
+    code: 'const { data } = useTutorialsQuery()',
+  },
+] as const;
 
 const Container = styled.div`
   display: flex;
