@@ -16,8 +16,23 @@ const hookList = [
   },
   {
     name: 'useTutorialsQuery',
-    body: 'Returns tutorials for a given app.',
+    body: 'Returns all tutorials data for the app you are in now, when in PROD it only returns the active ones',
     code: 'const { data } = useTutorialsQuery()',
+  },
+  {
+    name: 'useTutorials',
+    body: 'Returns tutorials for a given app.',
+    code: `const {
+    allTutorials,
+    tutorialsOnThisPage,
+    unseenTutorialsOnThisPage,
+    activeTutorial,
+    activeStep,
+    setActiveTutorial,
+    skipTutorial,
+    goToNextStep,
+    goToPreviousStep,
+} = useTutorials();`,
   },
 ] as const;
 

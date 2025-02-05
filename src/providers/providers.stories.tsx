@@ -4,18 +4,18 @@ import styled from 'styled-components';
 
 const providersList = [
   {
-    name: 'TutorialStepsProvider',
-    body: 'Provider needed to use tutorial hook',
-    code: `<TutorialStepsProvider>
-    {children}
-</TutorialStepsProvider>`,
-  },
-  {
     name: 'FeatureToggleProvider',
     body: 'Provider needed to use feature toggle hook',
     code: `<FeatureToggleProvider>
     {children}
 </FeatureToggleProvider>`,
+  },
+  {
+    name: 'TutorialProvider',
+    body: 'Provider needed to use tutorial hook',
+    code: `<TutorialProvider>
+    {children}
+</TutorialProvider>`,
   },
 ];
 
@@ -60,8 +60,7 @@ export const Docs = () => (
     {providersList.map((provider) => (
       <Content key={provider.name}>
         <div>
-          <h3>{provider.name}</h3>-
-          <p>{provider.body}</p>
+          <h3>{provider.name}</h3>-<p>{provider.body}</p>
         </div>
         <code>{provider.code}</code>
       </Content>
