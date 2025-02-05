@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 
 import { getAppName } from 'src/utils/environment';
 
-const SEEN_TUTORIALS_LOCALSTORAGE_KEY = `sam-seen-tutorials-${getAppName(import.meta.env.VITE_NAME)}`;
+export const SEEN_TUTORIALS_LOCALSTORAGE_KEY = `sam-seen-tutorials-${getAppName(import.meta.env.VITE_NAME)}`;
 
 function initializeSeenTutorials(): string[] {
   const localStorageData = localStorage.getItem(

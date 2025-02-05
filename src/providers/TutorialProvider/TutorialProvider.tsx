@@ -1,4 +1,11 @@
-import { createContext, FC, ReactElement, useMemo, useState } from 'react';
+import {
+  createContext,
+  FC,
+  ReactNode,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 import { matchPath, useLocation } from 'react-router';
 
 import { useSeenTutorials } from './useSeenTutorials';
@@ -21,13 +28,21 @@ export const TutorialDataContext = createContext<
   TutorialContextType | undefined
 >(undefined);
 
+export function useTutorials() {
+  const context = useContext(TutorialDataContext);
+  if (context === undefined) {
+    throw new Error("'useTutorials' must be used within provider");
+  }
+  return context;
+}
+
 interface TutorialProviderProps {
-  children: ReactElement;
+  children: ReactNode;
 }
 
 export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
   const { pathname } = useLocation();
-  const { data: tutorials } = useTutorialsQuery();
+  const { data: tutorials = [] } = useTutorialsQuery();
   const [activeTutorial, setActiveTutorial] = useState<
     MyTutorialDto | undefined
   >(undefined);
@@ -38,14 +53,14 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
     () =>
       tutorials?.filter(
         (tutorial) => matchPath(tutorial.path, pathname) !== null
-      ) ?? [],
+      ),
     [pathname, tutorials]
   );
   const unseenTutorialsOnThisPage = useMemo(
     () =>
       tutorialsOnThisPage?.filter(
         (tutorial) => !seenTutorials.includes(tutorial.id) && tutorial.willPopUp
-      ) ?? [],
+      ),
     [seenTutorials, tutorialsOnThisPage]
   );
 
@@ -54,6 +69,7 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
       throw new Error('Tutorial not found');
     }
     setActiveTutorial(tutorials.find((tutorial) => tutorialId === tutorial.id));
+    setActiveStep(0);
   };
 
   const handleSkipTutorial = (tutorialId: string) => {
@@ -65,6 +81,8 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
       throw new Error('No currently active tutorial!');
     }
 
+    // This check is more of a failsafe and won't ever happen in a real scenario
+    /* c8 ignore next 3 */
     if (activeStep === undefined) {
       throw new Error('activeStep is undefined!');
     }
@@ -83,11 +101,13 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
       throw new Error('No currently active tutorial!');
     }
 
+    // This check is more of a failsafe and won't ever happen in a real scenario
+    /* c8 ignore next 3 */
     if (activeStep === undefined) {
       throw new Error('activeStep is undefined!');
     }
 
-    if (activeStep - 1 < 0) {
+    if (activeStep === 0) {
       setActiveTutorial(undefined);
       setActiveStep(undefined);
     } else {
@@ -98,7 +118,7 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
   return (
     <TutorialDataContext.Provider
       value={{
-        allTutorials: tutorials || [],
+        allTutorials: tutorials,
         tutorialsOnThisPage,
         unseenTutorialsOnThisPage,
         activeTutorial,
