@@ -9,14 +9,14 @@ import {
   DIALOG_EDGE_MARGIN,
   TUTORIAL_HIGHLIGHTER_DATATEST_ID,
   TUTORIAL_LOCALSTORAGE_VALUE_STRING,
-} from './TutorialProvider.const';
+} from './OldTutorialProvider.const';
 import { CancelablePromise, Step, Tutorial, TutorialPosition } from 'src/api';
 import {
   GET_TUTORIALS_FOR_APP,
   GET_TUTORIALS_SAS_TOKEN,
 } from 'src/constants/queryKeys';
-import { TutorialProvider } from 'src/providers';
-import { useTutorial } from 'src/providers/TutorialProvider/TutorialProvider.hooks';
+import { OldTutorialProvider } from 'src/providers';
+import { useOldTutorial } from 'src/providers/OldTutorialProvider/OldTutorialProvider.hooks';
 import { EnvironmentType } from 'src/types';
 
 import { beforeEach, describe, expect, test } from 'vitest';
@@ -167,7 +167,7 @@ const getMemoryRouter = (props: GetMemoryRouterProps) => {
         path: withNoTutorialsOnPath ? '/thisIsTheWrongPath' : pathBase,
         element: (
           <QueryClientProvider client={queryClient}>
-            <TutorialProvider
+            <OldTutorialProvider
               overrideAppName={forceInProd ? faker.animal.dog() : undefined}
               overrideEnvironmentName={
                 forceInProd ? EnvironmentType.PRODUCTION : undefined
@@ -199,7 +199,7 @@ const getMemoryRouter = (props: GetMemoryRouterProps) => {
                   </div>
                 );
               })}
-            </TutorialProvider>
+            </OldTutorialProvider>
           </QueryClientProvider>
         ),
       },
@@ -242,7 +242,7 @@ describe('TutorialProvider', () => {
 
   test('useTutorial throws error if used outside provider', () => {
     console.error = vi.fn();
-    expect(() => renderHook(() => useTutorial())).toThrowError(
+    expect(() => renderHook(() => useOldTutorial())).toThrowError(
       "'useTutorial' must be used within a TutorialProvider"
     );
   });

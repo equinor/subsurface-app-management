@@ -13,12 +13,12 @@ import {
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { TUTORIAL_SEARCH_PARAM_KEY } from './TutorialProvider.const';
-import { CustomTutorialComponent } from './TutorialProvider.types';
-import { getAllElementsToHighlight } from './TutorialProvider.utils';
-import TutorialProviderInner from './TutorialProviderInner';
+import { TUTORIAL_SEARCH_PARAM_KEY } from './OldTutorialProvider.const';
+import { useIsFetchingWithTimeout } from './OldTutorialProvider.hooks';
+import { CustomTutorialComponent } from './OldTutorialProvider.types';
+import { getAllElementsToHighlight } from './OldTutorialProvider.utils';
+import OldTutorialProviderInner from './OldTutorialProviderInner';
 import { Step, Tutorial } from 'src/api';
-import { useIsFetchingWithTimeout } from 'src/providers/TutorialProvider/TutorialProvider.hooks';
 import { EnvironmentType } from 'src/types';
 import { getAppName, getEnvironmentName } from 'src/utils/environment';
 
@@ -50,7 +50,7 @@ export const TutorialContext = createContext<TutorialContextType | undefined>(
   undefined
 );
 
-interface TutorialProviderProps {
+interface OldTutorialProviderProps {
   children: ReactNode;
   overrideAppName?: string;
   overrideEnvironmentName?: EnvironmentType;
@@ -61,6 +61,7 @@ interface TutorialProviderProps {
 
 /**
  * Tutorial provider expects to be within a QueryClientProvider
+ * @deprecated - Use new TutorialProvider instead
  * @param children Expects to wrap the application globally, typically in a providers file with multiple providers
  * @param overrideAppName Overrides the "NAME" env variable, which is used to fetch the relevant tutorials for your app
  * @param overrideEnvironmentName Overrides the "ENVIRONMENT_NAME" env variable, which is used for the possibility to hide tutorials in "production"
@@ -70,7 +71,7 @@ interface TutorialProviderProps {
  * @constructor
  */
 
-export const TutorialProvider: FC<TutorialProviderProps> = ({
+export const OldTutorialProvider: FC<OldTutorialProviderProps> = ({
   children,
   overrideAppName,
   overrideEnvironmentName,
@@ -252,7 +253,7 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({
         environmentName,
       }}
     >
-      <TutorialProviderInner />
+      <OldTutorialProviderInner />
 
       {children}
     </TutorialContext.Provider>

@@ -47,12 +47,12 @@ const StepIndicator = styled.div<StepIndicatorProps>`
         }%`}
 `;
 
-interface TutorialStepIndicatorProps {
+interface OldTutorialStepIndicatorProps {
   steps: Step[];
   currentStep: number;
 }
 
-const TutorialStepIndicator: FC<TutorialStepIndicatorProps> = ({
+const OldTutorialStepIndicator: FC<OldTutorialStepIndicatorProps> = ({
   steps,
   currentStep,
 }) => {
@@ -72,4 +72,4 @@ const TutorialStepIndicator: FC<TutorialStepIndicatorProps> = ({
   );
 };
 
-export default TutorialStepIndicator;
+export default OldTutorialStepIndicator;

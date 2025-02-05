@@ -1,4 +1,4 @@
-import { DIALOG_EDGE_MARGIN } from './TutorialProvider.const';
+import { DIALOG_EDGE_MARGIN } from './OldTutorialProvider.const';
 import { Tutorial, TutorialPosition } from 'src/api';
 /* c8 ignore start */
 const doesBoundingRectOverlap = (
