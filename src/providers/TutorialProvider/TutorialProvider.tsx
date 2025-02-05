@@ -51,7 +51,7 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
   const unseenTutorialsOnThisPage = useMemo(
     () =>
       tutorialsOnThisPage?.filter(
-        (tutorial) => !seenTutorials.includes(tutorial.id)
+        (tutorial) => !seenTutorials.includes(tutorial.id) && tutorial.willPopUp
       ) ?? [],
     [seenTutorials, tutorialsOnThisPage]
   );
@@ -101,16 +101,6 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
       setActiveStep(activeStep - 1);
     }
   };
-
-  useEffect(() => {
-    const shouldPopupTutorial = unseenTutorialsOnThisPage?.find(
-      (tutorial) => tutorial.willPopUp
-    );
-    if (shouldPopupTutorial) {
-      setActiveTutorial(shouldPopupTutorial);
-      setActiveStep(0);
-    }
-  }, [unseenTutorialsOnThisPage]);
 
   return (
     <TutorialDataContext.Provider
