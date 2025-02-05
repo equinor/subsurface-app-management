@@ -29,8 +29,6 @@
     "lint:fix": "eslint ./src ./.storybook --fix",
     "test": "vitest watch",
     "test:ci": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "test:coverage-ci": "CI=true vitest run --coverage --coverage.reporter=json --coverage.reporter=json-summary --silent",
     "setup-husky": "husky install",
     "precommit": "npx lint-staged",
     "build": "rollup -c && tsc --project tsconfig.build.json && resolve-tspaths --project tsconfig.build.json",
