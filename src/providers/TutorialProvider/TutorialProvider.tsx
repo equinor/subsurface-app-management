@@ -1,11 +1,4 @@
-import {
-  createContext,
-  FC,
-  ReactElement,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, FC, ReactElement, useMemo, useState } from 'react';
 import { matchPath, useLocation } from 'react-router';
 
 import { useSeenTutorials } from './useSeenTutorials';
