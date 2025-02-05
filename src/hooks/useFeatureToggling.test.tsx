@@ -172,3 +172,23 @@ test('useFeatureToggleContext throws error when used outside context', () => {
     });
   }).toThrow("'useFeatureToggleContext' must be used within provider");
 });
+
+test('Should show console warning if feature is not found', async () => {
+  const spy = vi.spyOn(console, 'warn');
+
+  renderHook(
+    () =>
+      useFeatureToggling({
+        featureUuid: Scenarios.WITHOUT_FEATURES_KEY,
+      }),
+    {
+      wrapper: Wrappers,
+    }
+  );
+  await waitFor(
+    () => {
+      expect(spy).toHaveBeenCalledOnce();
+    },
+    { timeout: 1000 }
+  );
+});
