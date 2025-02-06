@@ -246,3 +246,30 @@ test('Skip tutorial works as expected', async () => {
 test("'useTutorials' throws error if used outside provider", async () => {
   expect(() => renderHook(() => useTutorials())).toThrowError();
 });
+
+test('Calling skipTutorial when a tutorial is active works as expected', async () => {
+  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+
+  await waitFor(
+    () => result.current.allTutorials.length === FAKE_TUTORIALS.length
+  );
+
+  const randomTutorial = faker.helpers.arrayElement(FAKE_TUTORIALS);
+
+  act(() => {
+    result.current.startTutorial(randomTutorial.id);
+  });
+
+  act(() => {
+    result.current.goToNextStep();
+  });
+
+  expect(result.current.activeStep).toBe(1);
+
+  act(() => {
+    result.current.skipTutorial(randomTutorial.id);
+  });
+
+  expect(result.current.activeTutorial).toBeUndefined();
+  expect(result.current.activeStep).toBeUndefined();
+});

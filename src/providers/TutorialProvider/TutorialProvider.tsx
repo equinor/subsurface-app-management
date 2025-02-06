@@ -73,6 +73,10 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
   };
 
   const handleSkipTutorial = (tutorialId: string) => {
+    if (activeTutorial && activeTutorial.id === tutorialId) {
+      setActiveTutorial(undefined);
+      setActiveStep(undefined);
+    }
     setSeenTutorial(tutorialId);
   };
 
