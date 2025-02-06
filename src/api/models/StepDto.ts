@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type StepDto = {
-  id?: string | null;
+  id: string | null;
   title?: string | null;
   body?: string | null;
   imgUrl?: string | null;

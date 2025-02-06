@@ -94,7 +94,7 @@ test('Should be able to set active tutorial', async () => {
   );
 
   act(() => {
-    result.current.setActiveTutorial(FAKE_TUTORIALS[0].id);
+    result.current.startTutorial(FAKE_TUTORIALS[0].id);
   });
 
   expect(result.current.activeTutorial?.id).toBe(FAKE_TUTORIALS[0].id);
@@ -109,7 +109,7 @@ test('Trying to set active tutorial to something that doesnt exist throws error'
   );
 
   expect(() =>
-    result.current.setActiveTutorial('some-id-that-doesnt-exist')
+    result.current.startTutorial('some-id-that-doesnt-exist')
   ).toThrowError();
 });
 
@@ -134,7 +134,7 @@ test('Going to next step works as expected', async () => {
   const randomTutorial = faker.helpers.arrayElement(FAKE_TUTORIALS);
 
   act(() => {
-    result.current.setActiveTutorial(randomTutorial.id);
+    result.current.startTutorial(randomTutorial.id);
   });
 
   act(() => {
@@ -166,7 +166,7 @@ test('Going to previous step works as expected', async () => {
   const randomTutorial = faker.helpers.arrayElement(FAKE_TUTORIALS);
 
   act(() => {
-    result.current.setActiveTutorial(randomTutorial.id);
+    result.current.startTutorial(randomTutorial.id);
   });
 
   act(() => {

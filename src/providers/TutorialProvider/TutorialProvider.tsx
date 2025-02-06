@@ -17,7 +17,7 @@ interface TutorialContextType {
   tutorialsOnThisPage: MyTutorialDto[];
   unseenTutorialsOnThisPage: MyTutorialDto[];
   activeTutorial: MyTutorialDto | undefined;
-  setActiveTutorial: (tutorialId: string) => void;
+  startTutorial: (tutorialId: string) => void;
   skipTutorial: (tutorialId: string) => void;
   activeStep: number | undefined;
   goToNextStep: () => void;
@@ -64,7 +64,7 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
     [seenTutorials, tutorialsOnThisPage]
   );
 
-  const handleSetActiveTutorial = (tutorialId: string) => {
+  const handleStartTutorial = (tutorialId: string) => {
     if (!tutorials?.some((tutorial) => tutorialId === tutorial.id)) {
       throw new Error('Tutorial not found');
     }
@@ -123,7 +123,7 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
         unseenTutorialsOnThisPage,
         activeTutorial,
         activeStep,
-        setActiveTutorial: handleSetActiveTutorial,
+        startTutorial: handleStartTutorial,
         skipTutorial: handleSkipTutorial,
         goToNextStep: handleOnGoToNextStep,
         goToPreviousStep: handleGoToPreviousStep,
