@@ -1,3 +1,7 @@
-export { TutorialProvider } from './TutorialProvider/TutorialProvider';
+export { OldTutorialProvider } from './OldTutorialProvider/OldTutorialProvider';
 export { FeatureToggleProvider } from './FeatureToggleProvider';
-export { useTutorial } from './TutorialProvider/TutorialProvider.hooks';
+export { useOldTutorial } from './OldTutorialProvider/OldTutorialProvider.hooks';
+export {
+  TutorialProvider,
+  useTutorials,
+} from 'src/providers/TutorialProvider/TutorialProvider';

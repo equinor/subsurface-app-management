@@ -1,600 +1,275 @@
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { ReactNode } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
 import { faker } from '@faker-js/faker';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, waitFor } from '@testing-library/react';
+import { act } from '@testing-library/react';
 
-import { render, renderHook, screen, userEvent } from '../../tests/test-utils';
+import { TutorialProvider, useTutorials } from './TutorialProvider';
+import { MyTutorialDto } from 'src/api';
 import {
-  DIALOG_EDGE_MARGIN,
-  TUTORIAL_HIGHLIGHTER_DATATEST_ID,
-  TUTORIAL_LOCALSTORAGE_VALUE_STRING,
-} from './TutorialProvider.const';
-import { CancelablePromise, Step, Tutorial, TutorialPosition } from 'src/api';
-import {
-  GET_TUTORIALS_FOR_APP,
-  GET_TUTORIALS_SAS_TOKEN,
-} from 'src/constants/queryKeys';
-import { TutorialProvider } from 'src/providers';
-import { useTutorial } from 'src/providers/TutorialProvider/TutorialProvider.hooks';
-import { EnvironmentType } from 'src/types';
+  SEEN_TUTORIALS_LOCALSTORAGE_KEY,
+  useSeenTutorials,
+} from 'src/providers/TutorialProvider/useSeenTutorials';
+import { renderHook, waitFor } from 'src/tests/test-utils';
 
-import { beforeEach, describe, expect, test } from 'vitest';
+import { expect } from 'vitest';
 
-const TEST_TUTORIAL_SHORT_NAME = 'test-tutorial';
-const TEST_TUTORIAL_FROM_BACKEND_SHORT_NAME = 'test-tutorial';
-const TEST_TUTORIAL_CUSTOM_STEP_KEY = 'custom-step';
-const TEST_TUTORIAL_SAS_TOKEN = 'thisIsASasToken';
-const TEST_WRONG_CUSTOM_KEY = 'thisIsTheWrongKey';
+const FAKE_TUTORIALS: MyTutorialDto[] = new Array(
+  faker.number.int({ min: 3, max: 5 })
+)
+  .fill(0)
+  .map((_, index) => ({
+    id: faker.string.uuid(),
+    name: faker.lorem.sentence(),
+    application: 'MyApp',
+    willPopUp: index % 2 === 0,
+    path: '/tutorials',
+    steps: new Array(faker.number.int({ min: 2, max: 5 })).fill(0).map(() => ({
+      id: faker.string.uuid(),
+      title: faker.book.title(),
+      body: faker.lorem.sentence(1),
+    })),
+  }));
 
-const getMarginCss = (type: string) => {
-  return `margin-${type}: ${DIALOG_EDGE_MARGIN}px;`;
-};
+vi.mock('src/hooks/useTutorialsQuery', () => {
+  const useTutorialsQuery = () => {
+    return {
+      data: FAKE_TUTORIALS,
+    };
+  };
 
-export const getStyleStringForPosition = (position: TutorialPosition) => {
-  switch (position) {
-    case TutorialPosition.TOP_LEFT:
-      return `${getMarginCss('top')} ${getMarginCss('left')}`;
-    case TutorialPosition.TOP_RIGHT:
-      return `${getMarginCss('top')} ${getMarginCss('right')}`;
-    case TutorialPosition.BOTTOM_LEFT:
-      return `${getMarginCss('bottom')} ${getMarginCss('left')}`;
-    case TutorialPosition.BOTTOM_RIGHT:
-      return `${getMarginCss('bottom')} ${getMarginCss('right')}`;
-    default:
-      return undefined;
-  }
-};
-
-const extraFakeSteps = () => {
-  const numberOfExtraSteps = faker.number.int({ min: 2, max: 5 });
-  const extraSteps: Step[] = [];
-  for (let i = 0; i < numberOfExtraSteps; i++) {
-    extraSteps.push({
-      title: faker.animal.bear() + i,
-      body:
-        faker.animal.fish() + faker.animal.cow() + faker.animal.insect() + i,
-    });
-  }
-  return extraSteps;
-};
-
-interface FakeTutorialProps {
-  position?: TutorialPosition;
-  withDynamicPositioning?: boolean;
-  withNoCustomSteps?: boolean;
-  tutorialFromBackendHook?: boolean;
-  willPopup?: boolean;
-}
-
-const fakeTutorial = (props?: FakeTutorialProps) => {
-  return {
-    id: 'testid',
-    name: 'Storybook tutorial',
-    shortName: props?.tutorialFromBackendHook
-      ? TEST_TUTORIAL_FROM_BACKEND_SHORT_NAME
-      : TEST_TUTORIAL_SHORT_NAME,
-    path: props?.tutorialFromBackendHook ? '/anotherPath' : '/path',
-    application: 'test',
-    showInProd: false,
-    willPopUp: props?.willPopup ?? false,
-    dynamicPositioning: props?.withDynamicPositioning,
-    steps: [
-      {
-        position: props?.position ?? undefined,
-        title: faker.animal.cat(),
-        body: faker.animal.crocodilia(),
-        imgUrl: 'https://placehold.co/200x700/png',
-        key: undefined,
-      },
-      {
-        title: faker.animal.cetacean(),
-        body: faker.animal.dog(),
-        key: null,
-      },
-      props?.withNoCustomSteps
-        ? { title: faker.animal.snake(), body: faker.animal.rodent() }
-        : { key: TEST_TUTORIAL_CUSTOM_STEP_KEY },
-      ...extraFakeSteps(),
-    ],
-  } as Tutorial;
-};
-
-let requestsHaveError = false;
-vi.mock('src/api/services/TutorialService', () => {
-  class TutorialService {
-    public static getTutorialsForApplication(): CancelablePromise<Tutorial[]> {
-      return new CancelablePromise((resolve, reject) =>
-        setTimeout(() => {
-          if (requestsHaveError) {
-            reject({ message: 'getTutorialsError' });
-          } else {
-            resolve([fakeTutorial({ tutorialFromBackendHook: true })]);
-          }
-        }, 200)
-      );
-    }
-
-    public static getTutorialSasToken(): CancelablePromise<string> {
-      return new CancelablePromise((resolve, reject) =>
-        setTimeout(() => {
-          if (requestsHaveError) {
-            reject({ message: 'getSasTokenError' });
-          } else {
-            resolve(TEST_TUTORIAL_SAS_TOKEN);
-          }
-        }, 200)
-      );
-    }
-  }
-  return { TutorialService };
+  return { useTutorialsQuery };
 });
 
-interface GetMemoryRouterProps {
-  tutorial?: Tutorial;
-  withNoSearchParams?: boolean;
-  withMissingCustomComponent?: boolean;
-  withMissingElementToHighlight?: boolean;
-  withWrongCustomComponentKeyString?: boolean;
-  withNoTutorialsOnPath?: boolean;
-  withPathForTutorialFromHook?: boolean;
-  withIgnoredQueryKeys?: boolean;
-  forceInProd?: boolean;
-}
-
-const getMemoryRouter = (props: GetMemoryRouterProps) => {
-  const {
-    tutorial,
-    withNoSearchParams,
-    withMissingCustomComponent,
-    withMissingElementToHighlight,
-    withWrongCustomComponentKeyString,
-    withNoTutorialsOnPath,
-    withPathForTutorialFromHook,
-    withIgnoredQueryKeys,
-    forceInProd,
-  } = props;
+function Wrapper({
+  initialEntry,
+  children,
+}: {
+  initialEntry?: string;
+  children: ReactNode;
+}) {
   const queryClient = new QueryClient();
 
-  const pathBase = withPathForTutorialFromHook ? '/anotherPath' : '/path';
-
-  // For when tutorial is not defined, and the tutorial is coming from useGetTutorialsFromApplication hook
-  const tutorialSteps = Array.from(Array(10).keys());
-
-  return createMemoryRouter(
-    [
-      {
-        path: withNoTutorialsOnPath ? '/thisIsTheWrongPath' : pathBase,
-        element: (
-          <QueryClientProvider client={queryClient}>
-            <TutorialProvider
-              overrideAppName={forceInProd ? faker.animal.dog() : undefined}
-              overrideEnvironmentName={
-                forceInProd ? EnvironmentType.PRODUCTION : undefined
-              }
-              tutorials={tutorial ? [tutorial] : []}
-              customStepComponents={
-                withMissingCustomComponent
-                  ? []
-                  : [
-                      {
-                        key: withWrongCustomComponentKeyString
-                          ? TEST_WRONG_CUSTOM_KEY
-                          : TEST_TUTORIAL_CUSTOM_STEP_KEY,
-                        element: <div>{TEST_TUTORIAL_CUSTOM_STEP_KEY}</div>,
-                      },
-                    ]
-              }
-              ignoredQueryKeys={
-                withIgnoredQueryKeys
-                  ? [GET_TUTORIALS_FOR_APP, GET_TUTORIALS_SAS_TOKEN]
-                  : []
-              }
-            >
-              {tutorialSteps.map((step, index) => {
-                if (withMissingElementToHighlight && index > 3) return null;
-                return (
-                  <div key={step} id={`${TEST_TUTORIAL_SHORT_NAME}-${step}`}>
-                    {`Element-${index}`}
-                  </div>
-                );
-              })}
-            </TutorialProvider>
-          </QueryClientProvider>
-        ),
-      },
-    ],
-    {
-      initialEntries: [
-        withNoSearchParams
-          ? pathBase
-          : `${pathBase}?tutorial=${encodeURIComponent(TEST_TUTORIAL_SHORT_NAME)}`,
-      ],
-
-      initialIndex: 0,
-    }
+  return (
+    <MemoryRouter initialEntries={initialEntry ? [initialEntry] : undefined}>
+      <QueryClientProvider client={queryClient}>
+        <TutorialProvider>{children}</TutorialProvider>
+      </QueryClientProvider>
+    </MemoryRouter>
   );
-};
+}
 
-const getStepTitleOrKey = (step: Step): string => {
-  if (step.key === undefined || step.key === null) {
-    return step.title ?? '';
-  } else {
-    return step.key;
+test('Returns expected tutorials', async () => {
+  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+
+  await waitFor(
+    () => result.current.allTutorials.length === FAKE_TUTORIALS.length
+  );
+
+  for (const tutorial of result.current.allTutorials) {
+    expect(FAKE_TUTORIALS.some((item) => item.id === tutorial.id)).toBeTruthy();
   }
-};
+});
 
-const waitForBackendCall = async () => {
-  return act(() => new Promise((resolve) => setTimeout(resolve, 600)));
-};
-
-// scrollIntoView is not implemented in JSDOM
-// GitHub issue: https://github.com/jsdom/jsdom/issues/1695
-window.HTMLElement.prototype.scrollIntoView = () => null;
-
-describe('TutorialProvider', () => {
-  beforeEach(() => {
-    window.localStorage.clear();
-    import.meta.env.VITE_ENVIRONMENT_NAME = 'development';
-
-    requestsHaveError = false;
+test('Returns tutorials on this page as expected', async () => {
+  const { result } = renderHook(() => useTutorials(), {
+    wrapper: ({ children }: { children: ReactNode }) => (
+      <Wrapper initialEntry="/some-other-page">{children}</Wrapper>
+    ),
   });
 
-  test('useTutorial throws error if used outside provider', () => {
-    console.error = vi.fn();
-    expect(() => renderHook(() => useTutorial())).toThrowError(
-      "'useTutorial' must be used within a TutorialProvider"
-    );
-  });
-
-  test('can skip tutorial', async () => {
-    window.localStorage.setItem(
-      TEST_TUTORIAL_SHORT_NAME,
-      TUTORIAL_LOCALSTORAGE_VALUE_STRING
-    );
-    const tutorial = fakeTutorial();
-    const user = userEvent.setup();
-    const router = getMemoryRouter({ tutorial });
-    render(<RouterProvider router={router} />);
-
-    await waitForBackendCall();
-    const highlighterElement = await screen.findByTestId(
-      TUTORIAL_HIGHLIGHTER_DATATEST_ID
-    );
-    expect(highlighterElement).toBeInTheDocument();
-
-    const skipButton = screen.getByText(/skip/i);
-
-    expect(skipButton).toBeInTheDocument();
-
-    await user.click(skipButton);
-
-    expect(highlighterElement).not.toBeInTheDocument();
-  });
-
-  test(
-    "can go through tutorial and click 'Done'",
-    async () => {
-      const tutorial = fakeTutorial();
-      const user = userEvent.setup();
-      render(<RouterProvider router={getMemoryRouter({ tutorial })} />);
-
-      const highlighterElement = await screen.findByTestId(
-        TUTORIAL_HIGHLIGHTER_DATATEST_ID
-      );
-
-      expect(highlighterElement).toBeInTheDocument();
-      await waitFor(() => expect(highlighterElement).toBeInTheDocument(), {
-        timeout: 15000,
-      });
-
-      const steps = tutorial.steps;
-
-      await waitForBackendCall();
-      for (let i = 0; i < steps.length - 1; i++) {
-        const currentStep = steps[i];
-        if (currentStep.key === undefined || currentStep.key === null) {
-          const stepTitle = screen.queryByText(currentStep.title ?? '');
-          const stepBody = screen.queryByText(currentStep.body ?? '');
-
-          expect(stepTitle).toBeInTheDocument();
-          expect(stepBody).toBeInTheDocument();
-
-          if (currentStep.imgUrl && currentStep.imgUrl.length > 0) {
-            const image = screen.getByTestId('tutorial-image');
-            expect(image).toHaveAttribute(
-              'src',
-              `${currentStep.imgUrl}?${TEST_TUTORIAL_SAS_TOKEN}`
-            );
-          }
-        } else {
-          const customContent = screen.queryByText(
-            TEST_TUTORIAL_CUSTOM_STEP_KEY
-          );
-          expect(customContent).toBeInTheDocument();
-        }
-        const nextButton = screen.getByText(/next/i);
-
-        await user.click(nextButton);
-      }
-
-      const doneButton = screen.getByText(/done/i);
-      await user.click(doneButton);
-
-      expect(highlighterElement).not.toBeInTheDocument();
-    },
-    { timeout: 20000 }
+  await waitFor(
+    () => result.current.allTutorials.length === FAKE_TUTORIALS.length
   );
 
-  test('can click "prev" to go back one step', async () => {
-    const tutorial = fakeTutorial({
-      withDynamicPositioning: true,
-      withNoCustomSteps: true,
+  expect(result.current.tutorialsOnThisPage.length).toBe(0);
+});
+
+test('Should be able to set active tutorial', async () => {
+  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+
+  await waitFor(
+    () => result.current.allTutorials.length === FAKE_TUTORIALS.length
+  );
+
+  act(() => {
+    result.current.startTutorial(FAKE_TUTORIALS[0].id);
+  });
+
+  expect(result.current.activeTutorial?.id).toBe(FAKE_TUTORIALS[0].id);
+  expect(result.current.activeStep).toBe(0);
+});
+
+test('Trying to set active tutorial to something that doesnt exist throws error', async () => {
+  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+
+  await waitFor(
+    () => result.current.allTutorials.length === FAKE_TUTORIALS.length
+  );
+
+  expect(() =>
+    result.current.startTutorial('some-id-that-doesnt-exist')
+  ).toThrowError();
+});
+
+test('Trying to go to next/previous step without active tutorials throws error', async () => {
+  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+
+  await waitFor(
+    () => result.current.allTutorials.length === FAKE_TUTORIALS.length
+  );
+
+  expect(() => result.current.goToNextStep()).toThrowError();
+  expect(() => result.current.goToPreviousStep()).toThrowError();
+});
+
+test('Going to next step works as expected', async () => {
+  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+
+  await waitFor(
+    () => result.current.allTutorials.length === FAKE_TUTORIALS.length
+  );
+
+  const randomTutorial = faker.helpers.arrayElement(FAKE_TUTORIALS);
+
+  act(() => {
+    result.current.startTutorial(randomTutorial.id);
+  });
+
+  act(() => {
+    result.current.goToNextStep();
+  });
+
+  expect(result.current.activeStep).toBe(1);
+
+  while (
+    (result.current.activeStep as number) <=
+    randomTutorial.steps.length - 1
+  ) {
+    act(() => {
+      result.current.goToNextStep();
     });
-    const user = userEvent.setup();
-    render(
-      <RouterProvider
-        router={getMemoryRouter({ tutorial, withIgnoredQueryKeys: true })}
-      />
-    );
-    await waitForBackendCall();
-    const stepOneTitle = screen.queryByText(
-      getStepTitleOrKey(tutorial.steps[0])
-    );
-    expect(stepOneTitle).toBeInTheDocument();
+  }
 
-    const nextButton = screen.getByText(/next/i);
-    await user.click(nextButton);
+  expect(result.current.activeTutorial).toBeUndefined();
+  expect(result.current.activeStep).toBeUndefined();
+});
 
-    const stepTwoTitle = screen.queryByText(
-      getStepTitleOrKey(tutorial.steps[1])
-    );
-    expect(stepTwoTitle).toBeInTheDocument();
+test('Going to previous step works as expected', async () => {
+  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
 
-    const stepOneTitleAgain = screen.queryByText(
-      getStepTitleOrKey(tutorial.steps[0])
-    );
-    expect(stepOneTitleAgain).not.toBeInTheDocument();
+  await waitFor(
+    () => result.current.allTutorials.length === FAKE_TUTORIALS.length
+  );
 
-    const prevButton = screen.getByText(/prev/i);
-    await user.click(prevButton);
+  const randomTutorial = faker.helpers.arrayElement(FAKE_TUTORIALS);
 
-    const stepOneTitleAgainAgain = screen.queryByText(
-      getStepTitleOrKey(tutorial.steps[0])
-    );
-    expect(stepOneTitleAgainAgain).toBeInTheDocument();
+  act(() => {
+    result.current.startTutorial(randomTutorial.id);
   });
 
-  test('will not show highlighter/dialog if no tutorials exist on path', () => {
-    render(<RouterProvider router={getMemoryRouter({})} />);
-
-    const highlighterElement = screen.queryByTestId(
-      TUTORIAL_HIGHLIGHTER_DATATEST_ID
-    );
-
-    expect(highlighterElement).not.toBeInTheDocument();
+  act(() => {
+    result.current.goToNextStep();
   });
 
-  test('will show tutorial from useGetTutorialsForApp hook', async () => {
-    render(
-      <RouterProvider
-        router={getMemoryRouter({ withPathForTutorialFromHook: true })}
-      />
-    );
+  expect(result.current.activeStep).toBe(1);
 
-    const highlighterElement = await screen.findByTestId(
-      TUTORIAL_HIGHLIGHTER_DATATEST_ID
-    );
-    expect(highlighterElement).toBeInTheDocument();
+  act(() => {
+    result.current.goToPreviousStep();
   });
 
-  test('does not show active tutorial in prod if "showInProd" is false', () => {
-    const tutorial = fakeTutorial();
-    const router = getMemoryRouter({ tutorial, forceInProd: true });
-    render(<RouterProvider router={router} />);
+  expect(result.current.activeStep).toBe(0);
 
-    const highlighterElement = screen.queryByTestId(
-      TUTORIAL_HIGHLIGHTER_DATATEST_ID
-    );
-    expect(highlighterElement).not.toBeInTheDocument();
-
-    const skipDialogButton = screen.queryByText(/test/i);
-    expect(skipDialogButton).not.toBeInTheDocument();
+  act(() => {
+    result.current.goToPreviousStep();
   });
 
-  describe('TutorialProvider error handling', () => {
-    test('shows and can close error dialog when missing custom component, if tutorial started from searchparam', async () => {
-      window.localStorage.setItem(
-        TEST_TUTORIAL_SHORT_NAME,
-        TUTORIAL_LOCALSTORAGE_VALUE_STRING
-      );
+  expect(result.current.activeTutorial).toBeUndefined();
+  expect(result.current.activeStep).toBeUndefined();
+});
 
-      const user = userEvent.setup();
-      const tutorial = fakeTutorial();
+test('Seen tutorials works as expected', async () => {
+  vi.stubEnv('VITE_NAME', 'MyApp');
+  const randomTutorial = faker.helpers.arrayElement(FAKE_TUTORIALS);
+  window.localStorage.setItem(
+    SEEN_TUTORIALS_LOCALSTORAGE_KEY,
+    JSON.stringify([randomTutorial.id])
+  );
 
-      render(
-        <RouterProvider
-          router={getMemoryRouter({
-            tutorial,
-            withMissingCustomComponent: true,
-          })}
-        />
-      );
-
-      const errorDialogText = await screen.findByText(
-        /there was a problem starting this tutorial./i
-      );
-      expect(errorDialogText).toBeInTheDocument();
-
-      const closeButton = screen.getByText(/close/i);
-      expect(closeButton).toBeInTheDocument();
-
-      await user.click(closeButton);
-
-      expect(closeButton).not.toBeInTheDocument();
-    }, 10000);
-
-    test('shows error dialog when having wrong custom components, if tutorial started from searchparam', async () => {
-      window.localStorage.setItem(
-        TEST_TUTORIAL_SHORT_NAME,
-        TUTORIAL_LOCALSTORAGE_VALUE_STRING
-      );
-      const tutorial = fakeTutorial();
-      const spy = vi.spyOn(console, 'error');
-      render(
-        <RouterProvider
-          router={getMemoryRouter({
-            tutorial,
-            withWrongCustomComponentKeyString: true,
-          })}
-        />
-      );
-
-      await waitFor(
-        () =>
-          expect(spy).toHaveBeenCalledWith(
-            expect.stringContaining('Could not find the custom'),
-            expect.arrayContaining([TEST_TUTORIAL_CUSTOM_STEP_KEY]),
-            expect.stringContaining('However in the custom'),
-            expect.arrayContaining([TEST_WRONG_CUSTOM_KEY])
-          ),
-        { timeout: 10000 }
-      );
-
-      const errorDialogText = screen.getByText(
-        /there was a problem starting this tutorial./i
-      );
-      expect(errorDialogText).toBeInTheDocument();
-    });
-
-    test('shows error dialog when not finding all elements to highlight, if tutorial started from searchparam', async () => {
-      window.localStorage.setItem(
-        TEST_TUTORIAL_SHORT_NAME,
-        TUTORIAL_LOCALSTORAGE_VALUE_STRING
-      );
-      const tutorial = fakeTutorial();
-      const spy = vi.spyOn(console, 'error');
-      render(
-        <RouterProvider
-          router={getMemoryRouter({
-            tutorial,
-            withMissingElementToHighlight: true,
-          })}
-        />
-      );
-
-      await waitFor(
-        () =>
-          expect(spy).toHaveBeenCalledWith(
-            expect.stringContaining('Could not find all'),
-            expect.arrayContaining([null])
-          ),
-        { timeout: 10000 }
-      );
-
-      const errorDialogText = screen.getByText(
-        /there was a problem starting this tutorial./i
-      );
-      expect(errorDialogText).toBeInTheDocument();
-    });
-
-    test('shows nothing if tutorial has error when trying to run without search param', async () => {
-      const tutorial = fakeTutorial({ willPopup: true });
-      const spy = vi.spyOn(console, 'error');
-      render(
-        <RouterProvider
-          router={getMemoryRouter({
-            tutorial,
-            withNoSearchParams: true,
-            withMissingElementToHighlight: true,
-          })}
-        />
-      );
-
-      await waitFor(
-        () =>
-          expect(spy).toHaveBeenCalledWith(
-            expect.stringContaining('Could not find all'),
-            expect.arrayContaining([null])
-          ),
-        { timeout: 10000 }
-      );
-
-      const errorDialogText = screen.queryByText(
-        /there was a problem starting this tutorial./i
-      );
-      expect(errorDialogText).not.toBeInTheDocument();
-
-      const highlighterElement = screen.queryByTestId(
-        TUTORIAL_HIGHLIGHTER_DATATEST_ID
-      );
-      expect(highlighterElement).not.toBeInTheDocument();
-
-      if (tutorial.steps[0].key === undefined) {
-        const stepOneTitle = screen.queryByText(tutorial.steps[0].title ?? '');
-        expect(stepOneTitle).not.toBeInTheDocument();
-      }
-    });
+  const { result } = renderHook(() => useTutorials(), {
+    wrapper: ({ children }: { children: ReactNode }) => (
+      <Wrapper initialEntry="/tutorials">{children}</Wrapper>
+    ),
   });
 
-  describe('can define dialog position for individual steps', () => {
-    for (const position of Object.values(TutorialPosition)) {
-      test(`can define first step with position: '${position}'`, async () => {
-        const tutorial = fakeTutorial({
-          position: position,
-        });
+  expect(result.current.unseenTutorialsOnThisPage).not.toContain(
+    randomTutorial
+  );
+});
 
-        render(<RouterProvider router={getMemoryRouter({ tutorial })} />);
+test('Logs error if local storage is in unexpected format', async () => {
+  const spy = vi.spyOn(console, 'error');
 
-        const dialog = screen.getByTestId('tutorial-dialog');
+  vi.stubEnv('VITE_NAME', 'MyApp');
+  window.localStorage.setItem(
+    SEEN_TUTORIALS_LOCALSTORAGE_KEY,
+    'some random data'
+  );
 
-        if (position === TutorialPosition.CENTER) {
-          expect(dialog).not.toHaveAttribute(`style`);
-        } else {
-          await waitFor(
-            () =>
-              expect(dialog).toHaveAttribute(
-                `style`,
-                getStyleStringForPosition(position as TutorialPosition)
-              ),
-            { timeout: 1000 }
-          );
-        }
-      });
-    }
+  renderHook(() => useSeenTutorials());
+
+  expect(spy).toHaveBeenCalled();
+
+  window.localStorage.setItem(SEEN_TUTORIALS_LOCALSTORAGE_KEY, '[1,2,3]');
+
+  renderHook(() => useSeenTutorials());
+
+  expect(spy).toHaveBeenCalled();
+});
+
+test('Skip tutorial works as expected', async () => {
+  vi.stubEnv('VITE_NAME', 'MyApp');
+  const randomTutorial = faker.helpers.arrayElement(FAKE_TUTORIALS);
+
+  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+
+  act(() => result.current.skipTutorial(randomTutorial.id));
+
+  expect(
+    JSON.parse(
+      window.localStorage.getItem(SEEN_TUTORIALS_LOCALSTORAGE_KEY) ?? '[]'
+    )
+  ).toContain(randomTutorial.id);
+});
+
+test("'useTutorials' throws error if used outside provider", async () => {
+  expect(() => renderHook(() => useTutorials())).toThrowError();
+});
+
+test('Calling skipTutorial when a tutorial is active works as expected', async () => {
+  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+
+  await waitFor(
+    () => result.current.allTutorials.length === FAKE_TUTORIALS.length
+  );
+
+  const randomTutorial = faker.helpers.arrayElement(FAKE_TUTORIALS);
+
+  act(() => {
+    result.current.startTutorial(randomTutorial.id);
   });
 
-  test('shows nothing if there are no tutorials for app', async () => {
-    requestsHaveError = true;
-    render(<RouterProvider router={getMemoryRouter({})} />);
-
-    await waitForBackendCall();
-
-    const errorDialogText = screen.queryByText(
-      /there was a problem starting this tutorial./i
-    );
-    expect(errorDialogText).not.toBeInTheDocument();
-
-    const highlighterElement = screen.queryByTestId(
-      TUTORIAL_HIGHLIGHTER_DATATEST_ID
-    );
-    expect(highlighterElement).not.toBeInTheDocument();
+  act(() => {
+    result.current.goToNextStep();
   });
 
-  test('shows nothing if show in prod = false', async () => {
-    requestsHaveError = true;
-    render(<RouterProvider router={getMemoryRouter({})} />);
+  expect(result.current.activeStep).toBe(1);
 
-    await waitForBackendCall();
-
-    const errorDialogText = screen.queryByText(
-      /there was a problem starting this tutorial./i
-    );
-    expect(errorDialogText).not.toBeInTheDocument();
-
-    const highlighterElement = screen.queryByTestId(
-      TUTORIAL_HIGHLIGHTER_DATATEST_ID
-    );
-    expect(highlighterElement).not.toBeInTheDocument();
+  act(() => {
+    result.current.skipTutorial(randomTutorial.id);
   });
+
+  expect(result.current.activeTutorial).toBeUndefined();
+  expect(result.current.activeStep).toBeUndefined();
 });

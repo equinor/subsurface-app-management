@@ -14,7 +14,27 @@ const hookList = [
     body: 'Returns release notes for a given app. Has optional options to override app name and enabled (react-query)',
     code: 'const { data } = useReleaseNotesQuery()',
   },
-];
+  {
+    name: 'useTutorialsQuery',
+    body: 'Returns all tutorials data for the app you are in now, when in PROD it only returns the active ones',
+    code: 'const { data } = useTutorialsQuery()',
+  },
+  {
+    name: 'useTutorials',
+    body: 'Returns tutorials for a given app.',
+    code: `const {
+    allTutorials,
+    tutorialsOnThisPage,
+    unseenTutorialsOnThisPage,
+    activeTutorial,
+    activeStep,
+    setActiveTutorial,
+    skipTutorial,
+    goToNextStep,
+    goToPreviousStep,
+} = useTutorials();`,
+  },
+] as const;
 
 const Container = styled.div`
   display: flex;

@@ -3,18 +3,21 @@ import { useLocation } from 'react-router';
 
 import { Button, Typography } from '@equinor/eds-core-react';
 
-import TutorialDialog from './TutorialDialog';
 import {
   HIGHLIGHT_PADDING,
   TUTORIAL_HIGHLIGHTER_DATATEST_ID,
-} from './TutorialProvider.const';
-import { useGetTutorialsForApp, useTutorial } from './TutorialProvider.hooks';
-import { Highlighter, TutorialErrorDialog } from './TutorialProvider.styles';
-import { HighlightingInfo } from './TutorialProvider.types';
+} from './OldTutorialProvider.const';
+import {
+  useGetTutorialsForApp,
+  useOldTutorial,
+} from './OldTutorialProvider.hooks';
+import { Highlighter, TutorialErrorDialog } from './OldTutorialProvider.styles';
+import { HighlightingInfo } from './OldTutorialProvider.types';
 import { Tutorial } from 'src/api';
+import OldTutorialDialog from 'src/providers/OldTutorialProvider/OldTutorialDialog';
 import { EnvironmentType } from 'src/types/Environment';
 
-const TutorialProviderInner: FC = () => {
+const OldTutorialProviderInner: FC = () => {
   const { pathname } = useLocation();
   const {
     activeTutorial,
@@ -30,7 +33,7 @@ const TutorialProviderInner: FC = () => {
     clearSearchParam,
     appName,
     environmentName,
-  } = useTutorial();
+  } = useOldTutorial();
 
   const hasStartedTutorial = useRef(false);
   const { data: tutorialsFromBackend } = useGetTutorialsForApp(appName);
@@ -162,9 +165,9 @@ const TutorialProviderInner: FC = () => {
           }}
         />
       )}
-      <TutorialDialog resetHasStartedTutorial={resetHasStartedTutorial} />
+      <OldTutorialDialog resetHasStartedTutorial={resetHasStartedTutorial} />
     </>
   );
 };
 
-export default TutorialProviderInner;
+export default OldTutorialProviderInner;

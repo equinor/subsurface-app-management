@@ -1,5 +1,4 @@
-import { useFeatureToggleContext } from '../providers/FeatureToggleProvider';
-import { useFeatureToggling } from './useFeatureToggling';
-import { useReleaseNotesQuery } from './useReleaseNotesQuery';
-
-export { useFeatureToggling, useReleaseNotesQuery, useFeatureToggleContext };
+export { useFeatureToggleContext } from '../providers/FeatureToggleProvider';
+export { useFeatureToggling } from './useFeatureToggling';
+export { useReleaseNotesQuery } from './useReleaseNotesQuery';
+export { useTutorialsQuery } from 'src/hooks/useTutorialsQuery';

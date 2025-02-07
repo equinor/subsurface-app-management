@@ -29,6 +29,8 @@ export type { ServiceNowIncidentResponse } from './models/ServiceNowIncidentResp
 export { ServiceNowUrgency } from './models/ServiceNowUrgency';
 export type { Step } from './models/Step';
 export type { Tutorial } from './models/Tutorial';
+export type { MyTutorialDto } from './models/MyTutorialDto';
+export type { StepDto } from './models/StepDto';
 export { TutorialPosition } from './models/TutorialPosition';
 export type { MyFeatureDto } from './models/MyFeatureDto';
 

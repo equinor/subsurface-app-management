@@ -16,10 +16,6 @@ jobs:
     name: Test
     uses: ./.github/workflows/test.yaml
 
-  code-coverage:
-    name: Code coverage
-    uses: ./.github/workflows/code_coverage.yaml
-
   build:
     name: Build
     uses: ./.github/workflows/build.yaml

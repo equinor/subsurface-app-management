@@ -1,260 +1,139 @@
 import {
   createContext,
-  Dispatch,
   FC,
-  MutableRefObject,
   ReactNode,
-  SetStateAction,
-  useCallback,
-  useEffect,
+  useContext,
   useMemo,
-  useRef,
   useState,
 } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { matchPath, useLocation } from 'react-router';
 
-import { TUTORIAL_SEARCH_PARAM_KEY } from './TutorialProvider.const';
-import { CustomTutorialComponent } from './TutorialProvider.types';
-import { getAllElementsToHighlight } from './TutorialProvider.utils';
-import TutorialProviderInner from './TutorialProviderInner';
-import { Step, Tutorial } from 'src/api';
-import { useIsFetchingWithTimeout } from 'src/providers/TutorialProvider/TutorialProvider.hooks';
-import { EnvironmentType } from 'src/types';
-import { getAppName, getEnvironmentName } from 'src/utils/environment';
+import { useSeenTutorials } from './useSeenTutorials';
+import { MyTutorialDto } from 'src/api/models/MyTutorialDto';
+import { useTutorialsQuery } from 'src/hooks';
 
-export interface TutorialContextType {
-  activeTutorial: Tutorial | undefined;
-  setActiveTutorial: Dispatch<SetStateAction<Tutorial | undefined>>;
-  currentStep: number;
-  setCurrentStep: Dispatch<SetStateAction<number>>;
-  allElementsToHighlight: HTMLElement[] | undefined;
-  setAllElementsToHighlight: Dispatch<
-    SetStateAction<HTMLElement[] | undefined>
-  >;
-  customStepComponents: CustomTutorialComponent[] | undefined;
-  currentStepObject: Step | undefined;
-  isLastStep: boolean;
-  dialogRef: MutableRefObject<HTMLDialogElement | null>;
-  clearSearchParam: () => void;
-  shortNameFromParams: string | undefined;
-  setShortNameFromParams: Dispatch<SetStateAction<string | undefined>>;
-  tutorialsFromProps: Tutorial[];
-  tutorialError: boolean;
-  setTutorialError: Dispatch<SetStateAction<boolean>>;
-  viewportWidth: number;
-  appName: string;
-  environmentName: EnvironmentType;
+interface TutorialContextType {
+  allTutorials: MyTutorialDto[];
+  tutorialsOnThisPage: MyTutorialDto[];
+  unseenTutorialsOnThisPage: MyTutorialDto[];
+  activeTutorial: MyTutorialDto | undefined;
+  startTutorial: (tutorialId: string) => void;
+  skipTutorial: (tutorialId: string) => void;
+  activeStep: number | undefined;
+  goToNextStep: () => void;
+  goToPreviousStep: () => void;
 }
 
-export const TutorialContext = createContext<TutorialContextType | undefined>(
-  undefined
-);
+export const TutorialDataContext = createContext<
+  TutorialContextType | undefined
+>(undefined);
+
+export function useTutorials() {
+  const context = useContext(TutorialDataContext);
+  if (context === undefined) {
+    throw new Error("'useTutorials' must be used within provider");
+  }
+  return context;
+}
 
 interface TutorialProviderProps {
   children: ReactNode;
-  overrideAppName?: string;
-  overrideEnvironmentName?: EnvironmentType;
-  customStepComponents?: CustomTutorialComponent[];
-  tutorials?: Tutorial[];
-  ignoredQueryKeys?: string[];
 }
 
-/**
- * Tutorial provider expects to be within a QueryClientProvider
- * @param children Expects to wrap the application globally, typically in a providers file with multiple providers
- * @param overrideAppName Overrides the "NAME" env variable, which is used to fetch the relevant tutorials for your app
- * @param overrideEnvironmentName Overrides the "ENVIRONMENT_NAME" env variable, which is used for the possibility to hide tutorials in "production"
- * @param customStepComponents Adds custom steps components with a key that can be used to link it to a step in a tutorial
- * @param tutorials Passing tutorial object directly. This does not replace any tutorials found from API call, but rather is appended to them
- * @param ignoredQueryKeys An array of query keys TutorialProviders will not wait to finish loading before looking for elements to highlight
- * @constructor
- */
+export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
+  const { pathname } = useLocation();
+  const { data: tutorials = [] } = useTutorialsQuery();
+  const [activeTutorial, setActiveTutorial] = useState<
+    MyTutorialDto | undefined
+  >(undefined);
+  const [activeStep, setActiveStep] = useState<number | undefined>(undefined);
+  const [seenTutorials, setSeenTutorial] = useSeenTutorials();
 
-export const TutorialProvider: FC<TutorialProviderProps> = ({
-  children,
-  overrideAppName,
-  overrideEnvironmentName,
-  customStepComponents,
-  tutorials,
-  ignoredQueryKeys,
-}) => {
-  const [activeTutorial, setActiveTutorial] = useState<Tutorial | undefined>(
-    undefined
+  const tutorialsOnThisPage = useMemo(
+    () =>
+      tutorials?.filter(
+        (tutorial) => matchPath(tutorial.path, pathname) !== null
+      ),
+    [pathname, tutorials]
+  );
+  const unseenTutorialsOnThisPage = useMemo(
+    () =>
+      tutorialsOnThisPage?.filter(
+        (tutorial) => !seenTutorials.includes(tutorial.id) && tutorial.willPopUp
+      ),
+    [seenTutorials, tutorialsOnThisPage]
   );
 
-  const [tutorialError, setTutorialError] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [shortNameFromParams, setShortNameFromParams] = useState<
-    string | undefined
-  >(undefined);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [allElementsToHighlight, setAllElementsToHighlight] = useState<
-    HTMLElement[] | undefined
-  >(undefined);
-  const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
-  const appIsFetching = useIsFetchingWithTimeout((query) => {
-    return !ignoredQueryKeys?.some((ignoredKey) =>
-      query.queryKey.includes(ignoredKey)
-    );
-  });
-
-  const dialogRef = useRef<HTMLDialogElement | null>(null);
-
-  const appName = overrideAppName ?? getAppName(import.meta.env.VITE_NAME);
-  const environmentName =
-    overrideEnvironmentName ??
-    getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME);
-
-  const currentStepObject = useMemo(() => {
-    if (!activeTutorial) return;
-    return activeTutorial.steps.at(currentStep);
-  }, [activeTutorial, currentStep]);
-
-  const isLastStep = useMemo(() => {
-    if (!activeTutorial) return false;
-    return currentStep >= activeTutorial?.steps.length - 1;
-  }, [activeTutorial, currentStep]);
-
-  const clearSearchParam = useCallback(() => {
-    searchParams.delete(TUTORIAL_SEARCH_PARAM_KEY);
-    setSearchParams(searchParams);
-    setShortNameFromParams(undefined);
-  }, [searchParams, setSearchParams]);
-
-  useEffect(() => {
-    if (shortNameFromParams) return;
-    const nameFromSearchParam = searchParams.get(TUTORIAL_SEARCH_PARAM_KEY);
-    if (nameFromSearchParam) {
-      setShortNameFromParams(nameFromSearchParam);
+  const handleStartTutorial = (tutorialId: string) => {
+    if (!tutorials?.some((tutorial) => tutorialId === tutorial.id)) {
+      throw new Error('Tutorial not found');
     }
-  }, [searchParams, shortNameFromParams]);
+    setActiveTutorial(tutorials.find((tutorial) => tutorialId === tutorial.id));
+    setActiveStep(0);
+  };
 
-  useEffect(() => {
-    /* c8 ignore start */
-    const setViewportWidthHandler = () => {
-      setViewportWidth(window.innerWidth);
-    };
-    /* c8 ignore end */
+  const handleSkipTutorial = (tutorialId: string) => {
+    if (activeTutorial && activeTutorial.id === tutorialId) {
+      setActiveTutorial(undefined);
+      setActiveStep(undefined);
+    }
+    setSeenTutorial(tutorialId);
+  };
 
-    window.addEventListener('resize', setViewportWidthHandler);
+  const handleOnGoToNextStep = () => {
+    if (!activeTutorial) {
+      throw new Error('No currently active tutorial!');
+    }
 
-    return () => {
-      window.removeEventListener('resize', setViewportWidthHandler);
-    };
-  }, []);
+    // This check is more of a failsafe and won't ever happen in a real scenario
+    /* c8 ignore next 3 */
+    if (activeStep === undefined) {
+      throw new Error('activeStep is undefined!');
+    }
 
-  // ELEMENTS TO HIGHLIGHT CHECK
-  // Try to find all elements to highlight, and set it to a state for further use.
-  // If not found, set error state to true, and give console.error
-  useEffect(() => {
-    if (!activeTutorial || tutorialError || appIsFetching) return;
-
-    const handleTryToGetElementsAgain = async () => {
-      // Wait for 300ms before trying again
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
-      const allElementsToHighlightInTimeout =
-        getAllElementsToHighlight(activeTutorial);
-      /* c8 ignore start */
-      if (allElementsToHighlightInTimeout.every((item) => item !== null)) {
-        setAllElementsToHighlight(allElementsToHighlightInTimeout);
-        /* c8 ignore end */
-      } else {
-        console.error(
-          'Could not find all elements to highlight for the tutorial. \n ' +
-            'This is a list of elements that were found for each step: ',
-          allElementsToHighlightInTimeout
-        );
-        setTutorialError(true);
-      }
-    };
-
-    const allElementsToHighlight = getAllElementsToHighlight(activeTutorial);
-
-    if (allElementsToHighlight.every((item) => item !== null)) {
-      setAllElementsToHighlight(allElementsToHighlight);
+    if (activeStep + 1 >= activeTutorial.steps.length) {
+      setSeenTutorial(activeTutorial.id);
+      setActiveTutorial(undefined);
+      setActiveStep(undefined);
     } else {
-      handleTryToGetElementsAgain().catch((error) => {
-        console.error('Error trying to get elements to highlight', error);
-      });
+      setActiveStep(activeStep + 1);
     }
-  }, [
-    activeTutorial,
-    currentStep,
-    tutorialError,
-    shortNameFromParams,
-    appIsFetching,
-  ]);
+  };
 
-  // CUSTOM COMPONENT CHECK
-  // Check to see if the tutorial has the custom components for any custom steps it has.
-  // Sets tutorialError to true if it does not find a match for all potential custom steps
-  useEffect(() => {
-    if (!activeTutorial || tutorialError || appIsFetching) return;
-    const customKeysFromSteps = activeTutorial.steps
-      .filter((step) => step.key !== undefined && step.key !== null)
-      // Writing 'customStep.key as string' for coverage, we know its string since we filter out right before the map
-      .map((customStep) => customStep.key);
-    if (customKeysFromSteps.length === 0) return;
-
-    const customKeysFromComponents = customStepComponents?.map(
-      (stepComponent) => stepComponent.key
-    );
-
-    if (!customKeysFromComponents || customKeysFromComponents.length === 0) {
-      console.error(
-        'Could not find any custom components passed to the TutorialProvider \n' +
-          'Expected these keys for the active tutorial: ',
-        customKeysFromSteps
-      );
-      setTutorialError(true);
-      return;
+  const handleGoToPreviousStep = () => {
+    if (!activeTutorial) {
+      throw new Error('No currently active tutorial!');
     }
 
-    const stepsHaveComponents = customKeysFromSteps.map(
-      (keyFromStep) =>
-        keyFromStep && customKeysFromComponents?.includes(keyFromStep)
-    );
-
-    if (stepsHaveComponents.some((step) => step !== true)) {
-      console.error(
-        'Could not find the custom components related to the active tutorial. ' +
-          '\n The active tutorial expected to find these keys:  ',
-        customKeysFromSteps,
-        '\n However in the custom components we only found these keys: ',
-        customKeysFromComponents
-      );
-      setTutorialError(true);
+    // This check is more of a failsafe and won't ever happen in a real scenario
+    /* c8 ignore next 3 */
+    if (activeStep === undefined) {
+      throw new Error('activeStep is undefined!');
     }
-  }, [activeTutorial, appIsFetching, customStepComponents, tutorialError]);
+
+    if (activeStep === 0) {
+      setActiveTutorial(undefined);
+      setActiveStep(undefined);
+    } else {
+      setActiveStep(activeStep - 1);
+    }
+  };
 
   return (
-    <TutorialContext.Provider
+    <TutorialDataContext.Provider
       value={{
-        currentStepObject,
+        allTutorials: tutorials,
+        tutorialsOnThisPage,
+        unseenTutorialsOnThisPage,
         activeTutorial,
-        setActiveTutorial,
-        currentStep,
-        setCurrentStep,
-        allElementsToHighlight,
-        setAllElementsToHighlight,
-        customStepComponents,
-        isLastStep,
-        dialogRef,
-        clearSearchParam,
-        shortNameFromParams,
-        setShortNameFromParams,
-        tutorialsFromProps: tutorials ?? [],
-        tutorialError,
-        setTutorialError,
-        viewportWidth,
-        appName,
-        environmentName,
+        activeStep,
+        startTutorial: handleStartTutorial,
+        skipTutorial: handleSkipTutorial,
+        goToNextStep: handleOnGoToNextStep,
+        goToPreviousStep: handleGoToPreviousStep,
       }}
     >
-      <TutorialProviderInner />
-
       {children}
-    </TutorialContext.Provider>
+    </TutorialDataContext.Provider>
   );
 };

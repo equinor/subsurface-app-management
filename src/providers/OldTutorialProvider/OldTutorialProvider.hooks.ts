@@ -7,7 +7,7 @@ import {
   GET_TUTORIALS_FOR_APP,
   GET_TUTORIALS_SAS_TOKEN,
 } from 'src/constants/queryKeys';
-import { TutorialContext } from 'src/providers/TutorialProvider/TutorialProvider';
+import { TutorialContext } from 'src/providers/OldTutorialProvider/OldTutorialProvider';
 
 export const useGetTutorialsForApp = (appName: string) => {
   return useQuery({
@@ -25,8 +25,9 @@ export const useGetTutorialSasToken = () => {
 
 /**
  * Use with caution. There has not been much testing of how using this hook in an app affects the tutorial logic
+ * @deprecated - Use new Tutorial hook instead
  */
-export const useTutorial = () => {
+export const useOldTutorial = () => {
   const context = useContext(TutorialContext);
   if (context === undefined) {
     throw new Error("'useTutorial' must be used within a TutorialProvider");

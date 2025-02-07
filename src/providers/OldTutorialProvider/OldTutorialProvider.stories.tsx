@@ -11,7 +11,7 @@ import {
   GET_TUTORIALS_FOR_APP,
   GET_TUTORIALS_SAS_TOKEN,
 } from 'src/constants/queryKeys';
-import { TutorialProvider } from 'src/providers';
+import { OldTutorialProvider } from 'src/providers';
 
 import styled, { keyframes } from 'styled-components';
 
@@ -173,7 +173,7 @@ export const Primary: StoryFn = () => {
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <TutorialProvider
+        <OldTutorialProvider
           tutorials={[tutorialForStory]}
           customStepComponents={customStepComponents}
           ignoredQueryKeys={[GET_TUTORIALS_FOR_APP, GET_TUTORIALS_SAS_TOKEN]}
@@ -198,13 +198,13 @@ export const Primary: StoryFn = () => {
             <Wide id={`${STORYBOOK_TUTORIAL_SHORT_NAME}-4`}></Wide>
             <Wide id={`${STORYBOOK_TUTORIAL_SHORT_NAME}-5`}></Wide>
           </Wrapper>
-        </TutorialProvider>
+        </OldTutorialProvider>
       </QueryClientProvider>
     </BrowserRouter>
   );
 };
 
 export default {
-  title: 'Providers/TutorialProvider',
+  title: 'Providers/OldTutorialProvider',
   component: Primary,
 };

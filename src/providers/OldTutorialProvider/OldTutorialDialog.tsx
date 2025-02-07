@@ -5,8 +5,11 @@ import { Button } from '@equinor/eds-core-react';
 import {
   DIALOG_EDGE_MARGIN,
   TUTORIAL_LOCALSTORAGE_VALUE_STRING,
-} from './TutorialProvider.const';
-import { useGetTutorialSasToken, useTutorial } from './TutorialProvider.hooks';
+} from './OldTutorialProvider.const';
+import {
+  useGetTutorialSasToken,
+  useOldTutorial,
+} from './OldTutorialProvider.hooks';
 import {
   DialogActions,
   DialogContent,
@@ -15,16 +18,16 @@ import {
   DialogWrapper,
   NavigateSteps,
   StyledTutorialDialog,
-} from './TutorialProvider.styles';
-import { getBestPositionWithoutOverlap } from './TutorialProvider.utils';
-import TutorialStepIndicator from './TutorialStepIndicator';
+} from './OldTutorialProvider.styles';
+import { getBestPositionWithoutOverlap } from './OldTutorialProvider.utils';
+import OldTutorialStepIndicator from './OldTutorialStepIndicator';
 import { TutorialPosition } from 'src/api';
 
-interface TutorialDialogProps {
+interface OldTutorialDialogProps {
   resetHasStartedTutorial: () => void;
 }
 
-const TutorialDialog: FC<TutorialDialogProps> = ({
+const OldTutorialDialog: FC<OldTutorialDialogProps> = ({
   resetHasStartedTutorial,
 }) => {
   const { data: sasToken } = useGetTutorialSasToken();
@@ -43,7 +46,7 @@ const TutorialDialog: FC<TutorialDialogProps> = ({
     shortNameFromParams,
     viewportWidth,
     clearSearchParam,
-  } = useTutorial();
+  } = useOldTutorial();
 
   const dialogContent = useMemo(() => {
     if (!currentStepObject) return;
@@ -166,7 +169,7 @@ const TutorialDialog: FC<TutorialDialogProps> = ({
       >
         <DialogContent>
           {dialogContent}
-          <TutorialStepIndicator
+          <OldTutorialStepIndicator
             steps={activeTutorial?.steps ?? []}
             currentStep={currentStep}
           />
@@ -191,4 +194,4 @@ const TutorialDialog: FC<TutorialDialogProps> = ({
   );
 };
 
-export default TutorialDialog;
+export default OldTutorialDialog;
