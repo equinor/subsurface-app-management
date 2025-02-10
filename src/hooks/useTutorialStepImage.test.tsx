@@ -7,13 +7,13 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { CancelablePromise } from 'src/api';
 import { useTutorialStepImage } from 'src/hooks/useTutorialStepImage';
 
-vi.mock('src/api', () => {
+vi.mock('src/api/services/TutorialService', () => {
   class TutorialService {
     public static getTutorialImage(path: string) {
       return new CancelablePromise((resolve) => {
         setTimeout(() => {
           resolve(path);
-        }, 200);
+        }, 100);
       });
     }
   }
