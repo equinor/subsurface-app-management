@@ -2,11 +2,16 @@ import { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { faker } from '@faker-js/faker';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { act } from '@testing-library/react';
 
 import { TutorialProvider, useTutorials } from './TutorialProvider';
 import { MyTutorialDto } from 'src/api';
+import { GET_TUTORIAL_STEP_IMAGE } from 'src/constants';
 import {
   SEEN_TUTORIALS_LOCALSTORAGE_KEY,
   useSeenTutorials,
@@ -14,6 +19,8 @@ import {
 import { renderHook, waitFor } from 'src/tests/test-utils';
 
 import { expect } from 'vitest';
+
+const FAKE_IMAGE_PATH = 'some-path';
 
 const FAKE_TUTORIALS: MyTutorialDto[] = new Array(
   faker.number.int({ min: 3, max: 5 })
@@ -29,6 +36,7 @@ const FAKE_TUTORIALS: MyTutorialDto[] = new Array(
       id: faker.string.uuid(),
       title: faker.book.title(),
       body: faker.lorem.sentence(1),
+      imgUrl: index === 0 ? FAKE_IMAGE_PATH : undefined,
     })),
   }));
 
@@ -40,6 +48,17 @@ vi.mock('src/hooks/useTutorialsQuery', () => {
   };
 
   return { useTutorialsQuery };
+});
+
+vi.mock('src/api/services/TutorialService', () => {
+  class TutorialService {
+    public static getTutorialImage(path: string) {
+      return new Promise((resolve) => {
+        resolve(path);
+      });
+    }
+  }
+  return { TutorialService };
 });
 
 function Wrapper({
@@ -70,6 +89,20 @@ test('Returns expected tutorials', async () => {
   for (const tutorial of result.current.allTutorials) {
     expect(FAKE_TUTORIALS.some((item) => item.id === tutorial.id)).toBeTruthy();
   }
+});
+
+test('Pre-fetches images', async () => {
+  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+
+  await waitFor(
+    () => result.current.allTutorials.length === FAKE_TUTORIALS.length
+  );
+
+  expect(() =>
+    renderHook(() => useQueryClient(), {
+      wrapper: Wrapper,
+    }).result.current.getQueryData([GET_TUTORIAL_STEP_IMAGE, FAKE_IMAGE_PATH])
+  ).toBeDefined();
 });
 
 test('Returns tutorials on this page as expected', async () => {
