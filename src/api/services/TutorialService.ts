@@ -71,4 +71,22 @@ export class TutorialService {
       },
     });
   }
+  /**
+   * Get tutorial image
+   * @param path
+   * @returns string OK
+   * @throws ApiError
+   */
+  public static getTutorialImage(path: string): CancelablePromise<string> {
+    return __request(OpenAPI_SAM_Prod, {
+      method: 'GET',
+      url: '/api/v1/Tutorial/gettutorialimage/{path}',
+      path: {
+        path: path,
+      },
+      errors: {
+        404: `Not Found`,
+      },
+    });
+  }
 }
