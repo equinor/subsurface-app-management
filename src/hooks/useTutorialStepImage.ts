@@ -9,6 +9,9 @@ export function useTutorialStepImage(imgUrl: string | undefined) {
     queryFn: () => {
       return TutorialService.getTutorialImage(imgUrl!);
     },
+    // Assume that images (with the same imgUrl) don't change dynamically
+    gcTime: Infinity,
+    staleTime: Infinity,
     enabled: imgUrl !== undefined,
   });
 }

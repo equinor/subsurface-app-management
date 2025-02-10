@@ -11,6 +11,7 @@ import { matchPath, useLocation } from 'react-router';
 import { useSeenTutorials } from './useSeenTutorials';
 import { MyTutorialDto } from 'src/api/models/MyTutorialDto';
 import { useTutorialsQuery } from 'src/hooks';
+import { usePrefetchTutorialStepImages } from 'src/providers/TutorialProvider/hooks/usePrefetchTutorialStepImages';
 
 interface TutorialContextType {
   allTutorials: MyTutorialDto[];
@@ -48,6 +49,7 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
   >(undefined);
   const [activeStep, setActiveStep] = useState<number | undefined>(undefined);
   const [seenTutorials, setSeenTutorial] = useSeenTutorials();
+  usePrefetchTutorialStepImages();
 
   const tutorialsOnThisPage = useMemo(
     () =>
