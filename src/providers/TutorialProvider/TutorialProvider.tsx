@@ -17,6 +17,7 @@ interface TutorialContextType {
   allTutorials: MyTutorialDto[];
   tutorialsOnThisPage: MyTutorialDto[];
   unseenTutorialsOnThisPage: MyTutorialDto[];
+  seenTutorialIDs: string[];
   activeTutorial: MyTutorialDto | undefined;
   startTutorial: (tutorialId: string) => void;
   skipTutorial: (tutorialId: string) => void;
@@ -48,7 +49,7 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
     MyTutorialDto | undefined
   >(undefined);
   const [activeStep, setActiveStep] = useState<number | undefined>(undefined);
-  const [seenTutorials, setSeenTutorial] = useSeenTutorials();
+  const [seenTutorialIDs, setSeenTutorialIDs] = useSeenTutorials();
   usePrefetchTutorialStepImages();
 
   const tutorialsOnThisPage = useMemo(
@@ -61,9 +62,10 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
   const unseenTutorialsOnThisPage = useMemo(
     () =>
       tutorialsOnThisPage?.filter(
-        (tutorial) => !seenTutorials.includes(tutorial.id) && tutorial.willPopUp
+        (tutorial) =>
+          !seenTutorialIDs.includes(tutorial.id) && tutorial.willPopUp
       ),
-    [seenTutorials, tutorialsOnThisPage]
+    [seenTutorialIDs, tutorialsOnThisPage]
   );
 
   const handleStartTutorial = (tutorialId: string) => {
@@ -79,7 +81,7 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
       setActiveTutorial(undefined);
       setActiveStep(undefined);
     }
-    setSeenTutorial(tutorialId);
+    setSeenTutorialIDs(tutorialId);
   };
 
   const handleOnGoToNextStep = () => {
@@ -94,7 +96,7 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
     }
 
     if (activeStep + 1 >= activeTutorial.steps.length) {
-      setSeenTutorial(activeTutorial.id);
+      setSeenTutorialIDs(activeTutorial.id);
       setActiveTutorial(undefined);
       setActiveStep(undefined);
     } else {
@@ -129,6 +131,7 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
         unseenTutorialsOnThisPage,
         activeTutorial,
         activeStep,
+        seenTutorialIDs,
         startTutorial: handleStartTutorial,
         skipTutorial: handleSkipTutorial,
         goToNextStep: handleOnGoToNextStep,
