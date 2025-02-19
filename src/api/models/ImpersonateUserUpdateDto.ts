@@ -7,6 +7,7 @@ export type ImpersonateUserUpdateDto = {
   firstName: string;
   lastName: string;
   uniqueName: string;
+  email?: string | null;
   appName: string;
   roles: Array<string>;
   activeUsers: Array<string>;
