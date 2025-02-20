@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { readdir } from 'fs/promises';
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
+import { existsSync } from 'fs';
 
 async function runTasks() {
   console.clear();
@@ -87,40 +88,37 @@ async function runTasks() {
     )
   );
 
+  let nodeModulesDir = `../${selectedDir}/node_modules`;
+  if (existsSync(`../${selectedDir}/client`)) {
+    nodeModulesDir = `../${selectedDir}/client/node_modules`;
+  }
+
   await runTask({
-    command: `rm -rf ../${selectedDir}/client/node_modules/.vite`,
+    command: `rm -rf ${nodeModulesDir}/.vite`,
     name: `Removing ${chalk.bold.greenBright(
       '.vite'
-    )} folder from ${chalk.bold.greenBright(
-      `${selectedDir}/client/node_modules`
-    )}`,
+    )} folder from ${chalk.bold.greenBright(`${nodeModulesDir}`)}`,
   });
 
   await runTask({
-    command: `rm -rf ../${selectedDir}/client/node_modules/.cache`,
+    command: `rm -rf ${nodeModulesDir}/.cache`,
     name: `Removing ${chalk.bold.greenBright(
       '.cache'
-    )} folder from ${chalk.bold.greenBright(
-      `${selectedDir}/client/node_modules`
-    )}`,
+    )} folder from ${chalk.bold.greenBright(`${nodeModulesDir}`)}`,
   });
 
   await runTask({
-    command: `rm -rf ../${selectedDir}/client/node_modules/@equinor/subsurface-app-management/dist`,
+    command: `rm -rf ${nodeModulesDir}/@equinor/subsurface-app-management/dist`,
     name: `Removing old ${chalk.bold.greenBright(
       'subsurface-app-management/dist'
-    )} folder from ${chalk.bold.greenBright(
-      `${selectedDir}/client/node_modules`
-    )}`,
+    )} folder from ${chalk.bold.greenBright(`${nodeModulesDir}`)}`,
   });
 
   await runTask({
-    command: `cp -r ./dist ../${selectedDir}/client/node_modules/@equinor/subsurface-app-management/dist`,
+    command: `cp -r ./dist ${nodeModulesDir}/@equinor/subsurface-app-management/dist`,
     name: `Copying newly built ${chalk.bold.greenBright(
       'dist'
-    )} folder into ${chalk.bold.greenBright(
-      `${selectedDir}/client/node_modules`
-    )}`,
+    )} folder into ${chalk.bold.greenBright(`${nodeModulesDir}`)}`,
   });
 
   console.log(
