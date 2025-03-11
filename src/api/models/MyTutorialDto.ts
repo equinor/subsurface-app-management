@@ -10,4 +10,5 @@ export type MyTutorialDto = {
   application: string;
   steps: Array<StepDto>;
   willPopUp: boolean;
+  tutorialDraftId?: string | null;
 };
