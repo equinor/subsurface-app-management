@@ -5,7 +5,7 @@
 import type { AccessRoles } from './AccessRoles';
 import type { ApplicationCategory } from './ApplicationCategory';
 import type { ContentTab } from './ContentTab';
-export type AmplifyApplication = {
+export type Application = {
   id: string;
   name: string;
   adGroups: Array<string>;

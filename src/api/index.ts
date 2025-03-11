@@ -14,7 +14,7 @@ export {
 export { request } from './core/request';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
-export type { AmplifyApplication } from './models/AmplifyApplication';
+export type { Application } from 'src/api/models/Application';
 export { ApplicationCategory } from './models/ApplicationCategory';
 export type { ContentTab } from './models/ContentTab';
 export type { AccessRoles } from './models/AccessRoles';
@@ -34,7 +34,12 @@ export type { StepDto } from './models/StepDto';
 export { TutorialPosition } from './models/TutorialPosition';
 export type { MyFeatureDto } from './models/MyFeatureDto';
 
-export { AmplifyApplicationService } from './services/AmplifyApplicationService';
+import { ApplicationService } from 'src/api/services/ApplicationService';
+/**
+ * @deprecated Use ApplicationService instead
+ */
+const AmplifyApplicationService = ApplicationService;
+export { ApplicationService, AmplifyApplicationService };
 export { FeatureToggleService } from './services/FeatureToggleService';
 export { ImpersonateUserService } from './services/ImpersonateUserService';
 export { ReleaseNotesService } from './services/ReleaseNotesService';
