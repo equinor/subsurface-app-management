@@ -13,9 +13,14 @@ export function useTutorialsQuery() {
         getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME) ===
         EnvironmentType.PRODUCTION
       ) {
-        return TutorialService.getMyTutorials(
+        const prodTutorials = await TutorialService.getMyTutorials(
           getAppName(import.meta.env.VITE_NAME)
         );
+
+        return prodTutorials.map((tutorial) => ({
+          ...tutorial,
+          id: tutorial.tutorialDraftId ? tutorial.tutorialDraftId : tutorial.id,
+        }));
       }
 
       return TutorialService.getDraftTutorialsForApplication(
