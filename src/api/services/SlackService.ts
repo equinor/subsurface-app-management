@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CancelablePromise } from 'src/api';
-import { OpenAPI_JSEMBARK } from '../core/OpenAPI';
+import { OpenAPI_JSEMBARK, OpenAPI_SAM } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class SlackService {
   /**
@@ -14,7 +14,7 @@ export class SlackService {
    */
 
   public static fileUpload(formData?: FormData): CancelablePromise<unknown> {
-    return __request(OpenAPI_JSEMBARK, {
+    return __request(OpenAPI_SAM, {
       method: 'POST',
       url: '/api/v1/Slack/fileUpload',
       body: formData,
@@ -29,7 +29,7 @@ export class SlackService {
    */
 
   public static postmessage(formData?: FormData): CancelablePromise<unknown> {
-    return __request(OpenAPI_JSEMBARK, {
+    return __request(OpenAPI_SAM, {
       method: 'POST',
       url: '/api/v1/Slack/postmessage',
       body: formData,
