@@ -7,9 +7,6 @@ interface EnvVariables {
   APPLICATION_INSIGHTS_INSTRUMENTATION_KEY: string;
 }
 
-const OPTIONAL_ENV_VARIABLES: (keyof EnvVariables)[] = [
-  'APPLICATION_INSIGHTS_INSTRUMENTATION_KEY',
-];
 declare const window: { _env_: EnvVariables | undefined } & Window;
 
 const getConfig = <T extends keyof EnvVariables>(param: T) => {
