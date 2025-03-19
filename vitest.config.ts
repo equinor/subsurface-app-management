@@ -41,6 +41,7 @@ export default defineConfig({
         'src/utils/export.ts',
         'src/utils/UtilStory.tsx',
         'src/providers/AuthProvider/**',
+        'src/providers/ApplicationInsightsProvider.tsx',
         'src/hooks/useSignalRMessages.ts',
         'src/hooks/useOnScreen.ts',
         'src/components/Navigation/TopBar/Resources/FeedbackForm/**',
