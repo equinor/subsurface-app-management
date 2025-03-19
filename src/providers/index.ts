@@ -4,4 +4,5 @@ export { useOldTutorial } from './OldTutorialProvider/OldTutorialProvider.hooks'
 export {
   TutorialProvider,
   useTutorials,
-} from 'src/providers/TutorialProvider/TutorialProvider';
+} from './TutorialProvider/TutorialProvider';
+export { ApplicationInsightsProvider } from './ApplicationInsightsProvider';
