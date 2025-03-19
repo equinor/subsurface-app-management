@@ -138,3 +138,16 @@ HTMLElement.prototype.getBoundingClientRect = mockGetBoundingClientRect;
 HTMLElement.prototype.getClientRects = (): DOMRectList => new FakeDOMRectList();
 Range.prototype.getBoundingClientRect = mockGetBoundingClientRect;
 Range.prototype.getClientRects = (): DOMRectList => new FakeDOMRectList();
+
+vi.mock('@microsoft/applicationinsights-web', () => {
+  class ApplicationInsights {
+    constructor() {
+      console.log('loadAppInsights');
+    }
+    loadAppInsights() {
+      console.log('loadAppInsights');
+    }
+  }
+
+  return { ApplicationInsights };
+});
