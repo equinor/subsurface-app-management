@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import { OpenAPI_JSEMBARK } from '../core/OpenAPI';
+import { OpenAPI_SAM } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import { CancelablePromise, ServiceNowIncidentResponse } from 'src/api';
 export class ServiceNowService {
@@ -15,7 +15,7 @@ export class ServiceNowService {
   public static createIncident(
     formData?: FormData
   ): CancelablePromise<ServiceNowIncidentResponse> {
-    return __request(OpenAPI_JSEMBARK, {
+    return __request(OpenAPI_SAM, {
       method: 'POST',
       url: '/api/v1/ServiceNow/incident',
       body: formData,
