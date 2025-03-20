@@ -25,15 +25,15 @@ const clickPluginConfig: IClickAnalyticsConfiguration = {
 
 const INACTIVITY_MS = 1000 * 60 * 20;
 
-const APPLICATION_INSIGHT_INSTRUMENTATION_KEY =
-  environment.getApplicationInsightsInstrumentationKey(
-    import.meta.env.VITE_APPLICATION_INSIGHTS_INSTRUMENTATION_KEY
+const APPLICATION_INSIGHTS_CONNECTION_STRING =
+  environment.getApplicationInsightsConnectionString(
+    import.meta.env.VITE_APPLICATION_INSIGHTS_CONNECTION_STRING
   );
 
-const appInsights = APPLICATION_INSIGHT_INSTRUMENTATION_KEY
+const appInsights = APPLICATION_INSIGHTS_CONNECTION_STRING
   ? new ApplicationInsights({
       config: {
-        connectionString: APPLICATION_INSIGHT_INSTRUMENTATION_KEY,
+        connectionString: APPLICATION_INSIGHTS_CONNECTION_STRING,
         extensions: [reactPlugin, clickPluginInstance],
         extensionConfig: {
           // *** Add the Click Analytics plug-in. ***
@@ -52,7 +52,7 @@ appInsights?.loadAppInsights();
 const handleCollectScreenSize = debounce(() => {
   if (!appInsights) {
     console.warn(
-      '[SAM]: ApplicationInsightsProvider - "appInsights" is undefined, did you set APPLICATION_INSIGHTS_INSTRUMENTATION_KEY?'
+      '[SAM]: ApplicationInsightsProvider - "appInsights" is undefined, did you set APPLICATION_INSIGHTS_CONNECTION_STRING?'
     );
     return;
   }

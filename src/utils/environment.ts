@@ -4,11 +4,11 @@ interface EnvVariables {
   NAME: string;
   ENVIRONMENT_NAME: string;
   API_URL: string;
-  APPLICATION_INSIGHTS_INSTRUMENTATION_KEY?: string;
+  APPLICATION_INSIGHTS_CONNECTION_STRING?: string;
 }
 
 const OPTIONAL_ENV_VARIABLES: (keyof EnvVariables)[] = [
-  'APPLICATION_INSIGHTS_INSTRUMENTATION_KEY',
+  'APPLICATION_INSIGHTS_CONNECTION_STRING',
 ] as const;
 
 declare const window: { _env_: EnvVariables | undefined } & Window;
@@ -49,17 +49,17 @@ const getApiUrl = (apiUrl: string | undefined): string => {
   return apiUrl;
 };
 
-const getApplicationInsightsInstrumentationKey = (
+const getApplicationInsightsConnectionString = (
   instrumentationKey: string | undefined
 ): string | undefined => {
   if (!instrumentationKey) {
-    return getConfig('APPLICATION_INSIGHTS_INSTRUMENTATION_KEY');
+    return getConfig('APPLICATION_INSIGHTS_CONNECTION_STRING');
   }
   return instrumentationKey;
 };
 
 export {
-  getApplicationInsightsInstrumentationKey,
+  getApplicationInsightsConnectionString,
   getConfig,
   getAppName,
   getEnvironmentName,
