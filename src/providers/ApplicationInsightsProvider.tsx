@@ -52,7 +52,7 @@ appInsights?.loadAppInsights();
 const handleCollectScreenSize = debounce(() => {
   if (!appInsights) {
     console.warn(
-      '[SAM]: ApplicationInsightsProvider - "appInsights" is undefined, did you set APPLICATION_INSIGHTS_INSTRUMENTATION_KEY?'
+      '[SAM]: ApplicationInsightsProvider - "appInsights" is undefined, did you set APPLICATION_INSIGHTS_CONNECTION_STRING?'
     );
     return;
   }
