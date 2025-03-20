@@ -25,26 +25,38 @@ const clickPluginConfig: IClickAnalyticsConfiguration = {
 
 const INACTIVITY_MS = 1000 * 60 * 20;
 
-const appInsights = new ApplicationInsights({
-  config: {
-    connectionString: environment.getApplicationInsightsInstrumentationKey(
-      import.meta.env.VITE_APPLICATION_INSIGHTS_INSTRUMENTATION_KEY
-    ),
-    extensions: [reactPlugin, clickPluginInstance],
-    extensionConfig: {
-      // *** Add the Click Analytics plug-in. ***
-      [clickPluginInstance.identifier]: clickPluginConfig,
-    },
-    autoTrackPageVisitTime: true,
-    enableAutoRouteTracking: true,
-    sessionRenewalMs: INACTIVITY_MS,
-    sessionExpirationMs: INACTIVITY_MS,
-  },
-});
+const APPLICATION_INSIGHT_INSTRUMENTATION_KEY =
+  environment.getApplicationInsightsInstrumentationKey(
+    import.meta.env.VITE_APPLICATION_INSIGHTS_INSTRUMENTATION_KEY
+  );
 
-appInsights.loadAppInsights();
+const appInsights = APPLICATION_INSIGHT_INSTRUMENTATION_KEY
+  ? new ApplicationInsights({
+      config: {
+        connectionString: APPLICATION_INSIGHT_INSTRUMENTATION_KEY,
+        extensions: [reactPlugin, clickPluginInstance],
+        extensionConfig: {
+          // *** Add the Click Analytics plug-in. ***
+          [clickPluginInstance.identifier]: clickPluginConfig,
+        },
+        autoTrackPageVisitTime: true,
+        enableAutoRouteTracking: true,
+        sessionRenewalMs: INACTIVITY_MS,
+        sessionExpirationMs: INACTIVITY_MS,
+      },
+    })
+  : undefined;
+
+appInsights?.loadAppInsights();
 
 const handleCollectScreenSize = debounce(() => {
+  if (!appInsights) {
+    console.warn(
+      '[SAM]: ApplicationInsightsProvider - "appInsights" is undefined, did you set APPLICATION_INSIGHTS_INSTRUMENTATION_KEY?'
+    );
+    return;
+  }
+
   appInsights.trackEvent({
     name: 'Resolution',
     properties: {

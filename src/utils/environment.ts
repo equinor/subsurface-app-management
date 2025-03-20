@@ -4,8 +4,12 @@ interface EnvVariables {
   NAME: string;
   ENVIRONMENT_NAME: string;
   API_URL: string;
-  APPLICATION_INSIGHTS_INSTRUMENTATION_KEY: string;
+  APPLICATION_INSIGHTS_INSTRUMENTATION_KEY?: string;
 }
+
+const OPTIONAL_ENV_VARIABLES: (keyof EnvVariables)[] = [
+  'APPLICATION_INSIGHTS_INSTRUMENTATION_KEY',
+] as const;
 
 declare const window: { _env_: EnvVariables | undefined } & Window;
 
@@ -13,7 +17,10 @@ const getConfig = <T extends keyof EnvVariables>(param: T) => {
   if (!window._env_) {
     return '';
   }
-  if (window._env_[param] === undefined) {
+  if (
+    window._env_[param] === undefined &&
+    !OPTIONAL_ENV_VARIABLES.includes(param)
+  ) {
     throw new Error('Missing required environment variable: ' + param);
   }
   return window._env_[param];
@@ -44,7 +51,7 @@ const getApiUrl = (apiUrl: string | undefined): string => {
 
 const getApplicationInsightsInstrumentationKey = (
   instrumentationKey: string | undefined
-): string => {
+): string | undefined => {
   if (!instrumentationKey) {
     return getConfig('APPLICATION_INSIGHTS_INSTRUMENTATION_KEY');
   }
