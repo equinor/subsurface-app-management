@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { AmplifyApplication } from '../models/AmplifyApplication';
 import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI_JSEMBARK, OpenAPI_JSEMBARK_Prod, OpenAPI_SAM } from '../core/OpenAPI';
+import { OpenAPI_SAM } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import { GraphAppRole } from '../models/GraphAppRole';
 export class AmplifyApplicationService {
@@ -34,9 +34,9 @@ export class AmplifyApplicationService {
   public static getAllAppRoles(
     applicationId: string
   ): CancelablePromise<Array<GraphAppRole>> {
-    return __request(OpenAPI_JSEMBARK, {
+    return __request(OpenAPI_SAM, {
       method: 'GET',
-      url: '/api/v1/AmplifyApplication/application/{applicationId}/appRoles',
+      url: '/api/v1/Application/application/{applicationId}/appRoles',
       path: {
         applicationId: applicationId,
       },
