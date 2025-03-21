@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { AmplifyApplication } from '../models/AmplifyApplication';
 import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI_JSEMBARK, OpenAPI_JSEMBARK_Prod } from '../core/OpenAPI';
+import { OpenAPI_JSEMBARK, OpenAPI_JSEMBARK_Prod, OpenAPI_SAM } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import { GraphAppRole } from '../models/GraphAppRole';
 export class AmplifyApplicationService {
@@ -16,9 +16,9 @@ export class AmplifyApplicationService {
   public static userApplications(): CancelablePromise<
     Array<AmplifyApplication>
   > {
-    return __request(OpenAPI_JSEMBARK_Prod, {
+    return __request(OpenAPI_SAM, {
       method: 'GET',
-      url: '/api/v1/AmplifyApplication/userapplications',
+      url: '/api/v1/Application/userapplications',
       errors: {
         400: `Bad Request`,
         500: `Server Error`,
