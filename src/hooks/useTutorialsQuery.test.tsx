@@ -32,7 +32,7 @@ const FAKE_DRAFT_TUTORIALS = new Array(faker.number.int({ min: 3, max: 5 }))
 
 vi.mock('src/api', () => {
   class TutorialService {
-    static async getMyTutorials() {
+    static async getMyTutorialsForApplication() {
       return new Promise((resolve) => {
         setTimeout(() => resolve(FAKE_PROD_TUTORIALS), 500);
       });
