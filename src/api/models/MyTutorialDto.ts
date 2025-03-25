@@ -5,6 +5,7 @@
 import type { StepDto } from './StepDto';
 export type MyTutorialDto = {
   id: string;
+  tutorialDraftId?: string | null;
   name: string;
   path: string;
   application: string;
