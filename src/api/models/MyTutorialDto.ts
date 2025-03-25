@@ -6,6 +6,7 @@ import type { StepDto } from './StepDto';
 export type MyTutorialDto = {
   id: string;
   tutorialDraftId?: string | null;
+  isInteractive?: boolean | null;
   name: string;
   path: string;
   application: string;
