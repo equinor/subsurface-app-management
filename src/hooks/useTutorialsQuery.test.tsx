@@ -20,6 +20,7 @@ function fakeTutorial(index: number): MyTutorialDto {
       title: faker.book.title(),
       body: faker.lorem.sentence(1),
     })),
+    tutorialDraftId: index % 2 === 0 ? faker.string.uuid() : null,
   };
 }
 const FAKE_PROD_TUTORIALS = new Array(faker.number.int({ min: 3, max: 5 }))
@@ -32,7 +33,7 @@ const FAKE_DRAFT_TUTORIALS = new Array(faker.number.int({ min: 3, max: 5 }))
 
 vi.mock('src/api', () => {
   class TutorialService {
-    static async getMyTutorials() {
+    static async getMyTutorialsForApplication() {
       return new Promise((resolve) => {
         setTimeout(() => resolve(FAKE_PROD_TUTORIALS), 500);
       });
@@ -66,7 +67,10 @@ test('Returns prod tutorials if in prod env', async () => {
 
   expect(
     result.current.data?.every((tutorial) =>
-      FAKE_PROD_TUTORIALS.some((item) => item.id === tutorial.id)
+      FAKE_PROD_TUTORIALS.some(
+        (item) =>
+          item.id === tutorial.id || item.tutorialDraftId === tutorial.id
+      )
     )
   ).toBeTruthy();
   expect(result.current.data?.length).toBe(FAKE_PROD_TUTORIALS.length);

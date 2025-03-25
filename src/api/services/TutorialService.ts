@@ -35,21 +35,24 @@ export class TutorialService {
       url: '/api/v1/Tutorial/SASToken',
     });
   }
-  // TODO: Replace this endpoint with the proper one when backend is ready
   /**
-   * Gets all tutorials for Application
+   * Gets My tutorials filtered on my Roles and Groups
    * @param applicationName
    * @param includeDrafts
-   * @returns TutorialDto OK
+   * @returns MyTutorialDto OK
    * @throws ApiError
    */
-  public static getMyTutorials(
-    applicationName: string
+  public static getMyTutorialsForApplication(
+    applicationName?: string,
+    includeDrafts: boolean = true
   ): CancelablePromise<Array<MyTutorialDto>> {
     return __request(OpenAPI_SAM_Prod, {
       method: 'GET',
-      url: '/api/v1/Tutorial/{applicationName}/false',
+      url: '/api/v1/Tutorial/me/{includeDrafts}',
       path: {
+        includeDrafts: includeDrafts,
+      },
+      query: {
         applicationName: applicationName,
       },
     });
