@@ -34,6 +34,16 @@ const hookList = [
     goToPreviousStep,
 } = useTutorials();`,
   },
+  {
+    name: 'useSignalRMessages',
+    body: 'Returns service bus messages with wss given a topic',
+    code: `const {
+     messages,
+     hasUnreadMessages,
+     setMessageAsRead,
+     setAllMessagesAsRead,
+     deleteMessage } = useSignalRMessages<MessageDto>('recap_notifications')`,
+  },
 ] as const;
 
 const Container = styled.div`
