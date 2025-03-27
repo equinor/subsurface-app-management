@@ -30,7 +30,7 @@ const APPLICATION_INSIGHTS_CONNECTION_STRING =
     import.meta.env.VITE_APPLICATION_INSIGHTS_CONNECTION_STRING
   );
 
-const appInsights = APPLICATION_INSIGHTS_CONNECTION_STRING
+export const appInsights = APPLICATION_INSIGHTS_CONNECTION_STRING
   ? new ApplicationInsights({
       config: {
         connectionString: APPLICATION_INSIGHTS_CONNECTION_STRING,
