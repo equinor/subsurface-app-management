@@ -37,28 +37,6 @@ export class TokenService {
    * @returns string Success
    * @throws ApiError
    */
-  public static getAmplifyPortalToken(): CancelablePromise<string> {
-    return __request(OpenAPI_APP, {
-      method: 'GET',
-      url: '/api/v1/Token/AmplifyPortal',
-    });
-  }
-
-  /**
-   * @returns string Success
-   * @throws ApiError
-   */
-  public static getAmplifyPortalProductionToken(): CancelablePromise<string> {
-    return __request(OpenAPI_APP, {
-      method: 'GET',
-      url: '/api/v1/Token/AmplifyPortal/Production',
-    });
-  }
-
-  /**
-   * @returns string Success
-   * @throws ApiError
-   */
   public static getSamPortalToken(): CancelablePromise<string> {
     return __request(OpenAPI_APP, {
       method: 'GET',
@@ -106,25 +84,6 @@ const getToken = async (
   return requestToken;
 };
 
-export const getJSEmbarkToken = async (): Promise<string> => {
-  return getToken(
-    `amplify-portal-${environmentName}`,
-    TokenService.getAmplifyPortalToken
-  );
-};
-
-/**
- * @deprecated - Use getJSEmbarkToken instead
- */
-export const getPortalToken = () => getJSEmbarkToken();
-
-const getJSEmbarkProdToken = async () => {
-  return getToken(
-    `amplify-portal-production`,
-    TokenService.getAmplifyPortalProductionToken
-  );
-};
-
 export const getSAMToken = async (): Promise<string> => {
   return getToken(`sam-${environmentName}`, TokenService.getSamPortalToken);
 };
@@ -139,30 +98,6 @@ export const OpenAPI_APP: OpenAPIConfig = {
   WITH_CREDENTIALS: false,
   CREDENTIALS: 'include',
   TOKEN: undefined,
-  USERNAME: undefined,
-  PASSWORD: undefined,
-  HEADERS: undefined,
-  ENCODE_PATH: undefined,
-};
-
-export const OpenAPI_JSEMBARK: OpenAPIConfig = {
-  BASE: `https://api-amplify-portal-${noLocalhostEnvironmentName}.radix.equinor.com`,
-  VERSION: '1.0',
-  WITH_CREDENTIALS: false,
-  CREDENTIALS: 'include',
-  TOKEN: getJSEmbarkToken,
-  USERNAME: undefined,
-  PASSWORD: undefined,
-  HEADERS: undefined,
-  ENCODE_PATH: undefined,
-};
-
-export const OpenAPI_JSEMBARK_Prod: OpenAPIConfig = {
-  BASE: `https://api-amplify-portal-production.radix.equinor.com`,
-  VERSION: '1.0',
-  WITH_CREDENTIALS: false,
-  CREDENTIALS: 'include',
-  TOKEN: getJSEmbarkProdToken,
   USERNAME: undefined,
   PASSWORD: undefined,
   HEADERS: undefined,

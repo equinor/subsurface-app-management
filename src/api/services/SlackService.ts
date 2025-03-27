@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CancelablePromise } from 'src/api';
-import { OpenAPI_JSEMBARK, OpenAPI_SAM } from '../core/OpenAPI';
+import { OpenAPI_SAM } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class SlackService {
   /**
