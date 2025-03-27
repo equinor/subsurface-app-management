@@ -2,39 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import { CancelablePromise, Tutorial } from 'src/api';
-import { OpenAPI_JSEMBARK_Prod, OpenAPI_SAM_Prod } from '../core/OpenAPI';
+import { CancelablePromise } from 'src/api';
+import { OpenAPI_SAM_Prod } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import { MyTutorialDto } from 'src/api/models/MyTutorialDto';
 export class TutorialService {
-  /**
-   * Gets all tutorials for Application
-   * @param applicationName
-   * @returns Tutorial Success
-   * @throws ApiError
-   */
-  public static getTutorialsForApplication(
-    applicationName: string
-  ): CancelablePromise<Array<Tutorial>> {
-    return __request(OpenAPI_JSEMBARK_Prod, {
-      method: 'GET',
-      url: '/api/v1/Tutorial/{applicationName}',
-      path: {
-        applicationName: applicationName,
-      },
-    });
-  }
-  /**
-   * Get A SAS token for Tutorial image container
-   * @returns string Success
-   * @throws ApiError
-   */
-  public static getTutorialSasToken(): CancelablePromise<string> {
-    return __request(OpenAPI_JSEMBARK_Prod, {
-      method: 'GET',
-      url: '/api/v1/Tutorial/SASToken',
-    });
-  }
   /**
    * Gets My tutorials filtered on my Roles and Groups
    * @param applicationName
