@@ -1,6 +1,6 @@
 {
   "name": "@equinor/subsurface-app-management",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "React Typescript components/hooks to communicate with equinor/sam",
   "types": "dist/index.d.ts",
   "type": "module",

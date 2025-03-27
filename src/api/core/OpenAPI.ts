@@ -34,6 +34,18 @@ export type OpenAPIConfig = {
 
 export class TokenService {
   /**
+   * @deprecated
+   * @returns string Success
+   * @throws ApiError
+   */
+  public static getAmplifyPortalToken(): CancelablePromise<string> {
+    return __request(OpenAPI_APP, {
+      method: 'GET',
+
+      url: '/api/v1/Token/AmplifyPortal',
+    });
+  }
+  /**
    * @returns string Success
    * @throws ApiError
    */
@@ -83,6 +95,17 @@ const getToken = async (
 
   return requestToken;
 };
+export const getJSEmbarkToken = async (): Promise<string> => {
+  return getToken(
+    `amplify-portal-${environmentName}`,
+    TokenService.getAmplifyPortalToken
+  );
+};
+
+/**
+ * @deprecated - Use getJSEmbarkToken instead
+ */
+export const getPortalToken = () => getJSEmbarkToken();
 
 export const getSAMToken = async (): Promise<string> => {
   return getToken(`sam-${environmentName}`, TokenService.getSamPortalToken);

@@ -5,7 +5,12 @@
 
 export { ApiError } from './core/ApiError';
 export { CancelablePromise, CancelError } from './core/CancelablePromise';
-export { OpenAPI_APP, getSAMToken } from './core/OpenAPI';
+export {
+  OpenAPI_APP,
+  getSAMToken,
+  getJSEmbarkToken,
+  getPortalToken,
+} from './core/OpenAPI';
 export { request } from './core/request';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
