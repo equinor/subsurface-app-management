@@ -9,4 +9,5 @@ export type StepDto = {
   imgUrl?: string | null;
   highlightElement?: boolean | null;
   custom?: boolean | null;
+  orderBy?: number | null;
 };

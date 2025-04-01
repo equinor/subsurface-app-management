@@ -22,6 +22,11 @@ export function useTutorialsQuery() {
         return myTutorials.map((tutorial) => ({
           ...tutorial,
           id: tutorial.tutorialDraftId ? tutorial.tutorialDraftId : tutorial.id,
+          steps: tutorial.steps.sort((a, b) => {
+            const first = a.orderBy ?? 0;
+            const second = b.orderBy ?? 0;
+            return first - second;
+          }),
         }));
       }
 
