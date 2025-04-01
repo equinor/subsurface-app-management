@@ -33,6 +33,8 @@ export type { MyTutorialDto } from './models/MyTutorialDto';
 export type { StepDto } from './models/StepDto';
 export { TutorialPosition } from './models/TutorialPosition';
 export type { MyFeatureDto } from './models/MyFeatureDto';
+export type { Faq } from './models/Faq';
+export type { FaqCategory } from './models/FaqCategory';
 
 export { AmplifyApplicationService } from './services/AmplifyApplicationService';
 export { FeatureToggleService } from './services/FeatureToggleService';
@@ -41,3 +43,4 @@ export { ReleaseNotesService } from './services/ReleaseNotesService';
 export { ServiceNowService } from './services/ServiceNowService';
 export { SlackService } from './services/SlackService';
 export { TutorialService } from './services/TutorialService';
+export { FaqService } from './services/FaqService';
