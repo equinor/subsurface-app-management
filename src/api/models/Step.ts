@@ -10,4 +10,5 @@ export type Step = {
   key?: string | null;
   position?: TutorialPosition;
   imgUrl?: string | null;
+  orderBy?: number | null;
 };

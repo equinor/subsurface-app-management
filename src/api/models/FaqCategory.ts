@@ -2,9 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import { Faq } from 'src/api';
 export type FaqCategory = {
   id: number;
   categoryName: string;
   orderBy?: number | null;
   applicationId: string;
+  faqs: Array<Faq>;
+  updatedDate?: string | null;
+  createdDate?: string | null;
 };

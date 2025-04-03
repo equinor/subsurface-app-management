@@ -9,6 +9,23 @@ import { OpenAPI_SAM_Prod } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class FaqService {
   /**
+   * Get FAQ categories and related FAQs based on application id
+   * @param applicationId
+   * @returns FaqCategory OK
+   * @throws ApiError
+   */
+  public static getCategoriesWithFaqsFromApplicationName(
+    applicationName: string
+  ): CancelablePromise<Array<FaqCategory>> {
+    return __request(OpenAPI_SAM_Prod, {
+      method: 'GET',
+      url: '/api/v1/Faq/faqcategorieswithfaqs/{applicationName}',
+      path: {
+        applicationName: applicationName,
+      },
+    });
+  }
+  /**
    * Get FAQ image
    * @param path
    * @returns string OK
