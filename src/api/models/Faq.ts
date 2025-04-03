@@ -6,8 +6,8 @@ export type Faq = {
   id: number;
   question: string;
   answer: string;
-  visible: boolean;
   orderBy?: number | null;
-  roles?: Array<string> | null;
   faqCategoryId: number;
+  updatedDate?: string | null;
+  createdDate?: string | null;
 };

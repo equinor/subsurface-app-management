@@ -9,4 +9,6 @@ export type FaqCategory = {
   orderBy?: number | null;
   applicationId: string;
   faqs: Array<Faq>;
+  updatedDate?: string | null;
+  createdDate?: string | null;
 };
