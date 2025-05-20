@@ -30,9 +30,19 @@ export function useTutorialsQuery() {
         }));
       }
 
-      return TutorialService.getDraftTutorialsForApplication(
-        getAppName(import.meta.env.VITE_NAME)
-      );
+      const draftTutorials =
+        await TutorialService.getDraftTutorialsForApplication(
+          getAppName(import.meta.env.VITE_NAME)
+        );
+
+      return draftTutorials.map((tutorial) => ({
+        ...tutorial,
+        steps: tutorial.steps.sort((a, b) => {
+          const first = a.orderBy ?? 0;
+          const second = b.orderBy ?? 0;
+          return first - second;
+        }),
+      }));
     },
   });
 }
