@@ -65,7 +65,7 @@ test('should return true for showContent when it is active in "myFeatures"', asy
   );
 });
 
-test('should return true for showContent when active = false in "myFeatures"', async () => {
+test('should return false for showContent when active = false in "myFeatures"', async () => {
   const { result } = renderHook(
     () =>
       useFeatureToggling({
@@ -100,7 +100,7 @@ test('Using string as param works as expected', async () => {
   );
 });
 
-test('should return false for showContent when uuid isnt in myFeatures', async () => {
+test('should return true for showContent when uuid isnt in myFeatures (Deleted feature toggles)', async () => {
   const { result } = renderHook(
     () => useFeatureToggling({ featureUuid: Scenarios.WITHOUT_FEATURES_KEY }),
     {
@@ -110,7 +110,7 @@ test('should return false for showContent when uuid isnt in myFeatures', async (
 
   await waitFor(
     () => {
-      expect(result.current.showContent).toBe(false);
+      expect(result.current.showContent).toBe(true);
     },
     { timeout: 600 }
   );
