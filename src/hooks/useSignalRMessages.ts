@@ -5,7 +5,7 @@ import { LogLevel } from '@microsoft/signalr';
 import { HubConnection } from '@microsoft/signalr/dist/esm/HubConnection';
 import { useQuery } from '@tanstack/react-query';
 
-import { getJSEmbarkToken } from 'src/api';
+import { getSAMToken } from 'src/api';
 import { EnvironmentType } from 'src/types/Environment';
 import { getEnvironmentName } from 'src/utils/environment';
 
@@ -26,8 +26,8 @@ export function useSignalRMessages<
   const previousToken = useRef<string | undefined>(undefined);
 
   const { data: token } = useQuery({
-    queryKey: ['get-amplify-portal-token'],
-    queryFn: () => getJSEmbarkToken(),
+    queryKey: ['get-sam-token'],
+    queryFn: () => getSAMToken(),
   });
 
   const host = useMemo(() => {
@@ -40,7 +40,7 @@ export function useSignalRMessages<
         ? EnvironmentType.DEVELOP
         : environmentName;
 
-    return `wss://api-amplify-portal-${environmentNameForUrl}.radix.equinor.com`;
+    return `wss://api-sam-backend-${environmentNameForUrl}.radix.equinor.com`;
   }, []);
 
   useEffect(() => {
