@@ -12,7 +12,7 @@ import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 
 import { environment } from 'src/utils';
 
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 
 const reactPlugin = new ReactPlugin();
 
@@ -84,6 +84,8 @@ export const ApplicationInsightsProvider: FC<
   }, []);
 
   return (
-    <AppInsightsContext value={reactPlugin}>{children}</AppInsightsContext>
+    <AppInsightsContext.Provider value={reactPlugin}>
+      {children}
+    </AppInsightsContext.Provider>
   );
 };
