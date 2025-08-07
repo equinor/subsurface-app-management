@@ -6,7 +6,8 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { matchPath, useLocation } from 'react-router';
+
+import { useMatchRoute } from '@tanstack/react-router';
 
 import { useSeenTutorials } from './useSeenTutorials';
 import { MyTutorialDto } from 'src/api/models/MyTutorialDto';
@@ -43,7 +44,6 @@ interface TutorialProviderProps {
 }
 
 export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
-  const { pathname } = useLocation();
   const { data: tutorials = [] } = useTutorialsQuery();
   const [activeTutorial, setActiveTutorial] = useState<
     MyTutorialDto | undefined
@@ -51,13 +51,16 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
   const [activeStep, setActiveStep] = useState<number | undefined>(undefined);
   const [seenTutorialIDs, setSeenTutorialIDs] = useSeenTutorials();
   usePrefetchTutorialStepImages();
+  const matchRoute = useMatchRoute();
 
   const tutorialsOnThisPage = useMemo(
     () =>
-      tutorials?.filter(
-        (tutorial) => matchPath(tutorial.path, pathname) !== null
-      ),
-    [pathname, tutorials]
+      tutorials?.filter((tutorial) => {
+        return matchRoute({
+          to: tutorial.path,
+        });
+      }),
+    [matchRoute, tutorials]
   );
   const unseenTutorialsOnThisPage = useMemo(
     () =>

@@ -1,5 +1,4 @@
-import { ReactNode } from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { ReactNode, useRef } from 'react';
 
 import { faker } from '@faker-js/faker';
 import {
@@ -7,6 +6,14 @@ import {
   QueryClientProvider,
   useQueryClient,
 } from '@tanstack/react-query';
+import {
+  createMemoryHistory,
+  createRootRoute,
+  createRoute,
+  createRouter,
+  Outlet,
+  RouterProvider,
+} from '@tanstack/react-router';
 import { act } from '@testing-library/react';
 
 import { TutorialProvider, useTutorials } from './TutorialProvider';
@@ -58,8 +65,38 @@ vi.mock('src/api/services/TutorialService', () => {
       });
     }
   }
+
   return { TutorialService };
 });
+
+function createTestRouter(children: ReactNode, initialEntry?: string) {
+  const rootRoute = createRootRoute({
+    component: () => (
+      <TutorialProvider>
+        <Outlet />
+      </TutorialProvider>
+    ),
+  });
+  const tutorialsRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/',
+    component: () => children,
+  });
+  const someOther = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/some-other-page',
+    component: () => children,
+  });
+  const routeTree = rootRoute.addChildren([tutorialsRoute, someOther]);
+  return createRouter({
+    routeTree: routeTree,
+    defaultPreload: 'intent',
+    defaultPreloadStaleTime: 0,
+    history: createMemoryHistory({
+      initialEntries: initialEntry ? [initialEntry] : ['/'],
+    }),
+  });
+}
 
 function Wrapper({
   initialEntry,
@@ -69,13 +106,12 @@ function Wrapper({
   children: ReactNode;
 }) {
   const queryClient = new QueryClient();
+  const router = useRef(createTestRouter(children, initialEntry));
 
   return (
-    <MemoryRouter initialEntries={initialEntry ? [initialEntry] : undefined}>
-      <QueryClientProvider client={queryClient}>
-        <TutorialProvider>{children}</TutorialProvider>
-      </QueryClientProvider>
-    </MemoryRouter>
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router.current} />
+    </QueryClientProvider>
   );
 }
 
@@ -231,13 +267,13 @@ test('Seen tutorials works as expected', async () => {
   );
 
   const { result } = renderHook(() => useTutorials(), {
-    wrapper: ({ children }: { children: ReactNode }) => (
-      <Wrapper initialEntry="/tutorials">{children}</Wrapper>
-    ),
+    wrapper: Wrapper,
   });
 
-  expect(result.current.unseenTutorialsOnThisPage).not.toContain(
-    randomTutorial
+  await waitFor(() =>
+    expect(result.current.unseenTutorialsOnThisPage).not.toContain(
+      randomTutorial
+    )
   );
 });
 
@@ -266,6 +302,9 @@ test('Skip tutorial works as expected', async () => {
   const randomTutorial = faker.helpers.arrayElement(FAKE_TUTORIALS);
 
   const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+
+  // Wait for init
+  await waitFor(() => result.current);
 
   act(() => result.current.skipTutorial(randomTutorial.id));
 
