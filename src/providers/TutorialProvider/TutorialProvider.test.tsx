@@ -79,7 +79,7 @@ function createTestRouter(children: ReactNode, initialEntry?: string) {
   });
   const tutorialsRoute = createRoute({
     getParentRoute: () => rootRoute,
-    path: '/',
+    path: '/tutorials',
     component: () => children,
   });
   const someOther = createRoute({
@@ -93,7 +93,7 @@ function createTestRouter(children: ReactNode, initialEntry?: string) {
     defaultPreload: 'intent',
     defaultPreloadStaleTime: 0,
     history: createMemoryHistory({
-      initialEntries: initialEntry ? [initialEntry] : ['/'],
+      initialEntries: initialEntry ? [initialEntry] : ['/tutorials'],
     }),
   });
 }
@@ -275,10 +275,14 @@ test('Seen tutorials works as expected', async () => {
 
   const { result } = await renderHookWithWrapper();
 
+  console.log(result.current);
   await waitFor(() =>
     expect(result.current.unseenTutorialsOnThisPage).not.toContain(
       randomTutorial
     )
+  );
+  await waitFor(() =>
+    expect(result.current.unseenTutorialsOnThisPage).not.toBe([])
   );
 });
 
