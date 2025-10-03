@@ -275,7 +275,6 @@ test('Seen tutorials works as expected', async () => {
 
   const { result } = await renderHookWithWrapper();
 
-  console.log(result.current);
   await waitFor(() =>
     expect(result.current.unseenTutorialsOnThisPage).not.toContain(
       randomTutorial
