@@ -1,7 +1,17 @@
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { act, ReactNode } from 'react';
+
+import {
+  createMemoryHistory,
+  createRootRoute,
+  createRoute,
+  createRouter,
+  Outlet,
+  RouterProvider,
+} from '@tanstack/react-router';
 
 import { FeatureRoute } from './FeatureRoute';
 import { CancelablePromise } from 'src/api';
+import { TutorialProvider } from 'src/providers';
 import { renderWithProviders, screen } from 'src/tests/test-utils';
 
 enum Scenarios {
@@ -22,89 +32,82 @@ vi.mock('src/api/services/FeatureToggleService', () => {
   return { FeatureToggleService };
 });
 
-test('Hides FeatureRoute as expected', () => {
-  renderWithProviders(
-    <MemoryRouter initialEntries={['/test']}>
-      <Routes>
-        <Route path="/" element={<p>home</p>} />
-        <Route
-          path="/test"
-          element={
-            <FeatureRoute
-              element={<div>Test</div>}
-              featureUuid={Scenarios.WITHOUT_FEATURES_KEY}
-            />
-          }
-        />
-      </Routes>
-    </MemoryRouter>
+function renderTestRouter(children: ReactNode) {
+  const rootRoute = createRootRoute({
+    component: () => (
+      <TutorialProvider>
+        <Outlet />
+      </TutorialProvider>
+    ),
+  });
+  const homeRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/',
+    component: () => <p>home</p>,
+  });
+  const otherRouter = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/other',
+    component: () => <p>other</p>,
+  });
+  const testRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/test',
+    component: () => children,
+  });
+  const routeTree = rootRoute.addChildren([homeRoute, otherRouter, testRoute]);
+  const router = createRouter({
+    routeTree: routeTree,
+    history: createMemoryHistory({
+      initialEntries: ['/test'],
+    }),
+  });
+
+  return act(() => renderWithProviders(<RouterProvider router={router} />));
+}
+
+test('Hides FeatureRoute as expected', async () => {
+  await renderTestRouter(
+    <FeatureRoute
+      element={<div>Test</div>}
+      featureUuid={Scenarios.WITHOUT_FEATURES_KEY}
+    />
   );
 
   expect(screen.getByText(/home/i)).toBeInTheDocument();
 });
 
-test('Shows FeatureRoute as expected', () => {
-  renderWithProviders(
-    <MemoryRouter initialEntries={['/test']}>
-      <Routes>
-        <Route path="/" element={<p>home</p>} />
-        <Route
-          path="/test"
-          element={
-            <FeatureRoute
-              element={<div>Test</div>}
-              featureUuid={Scenarios.WITH_FEATURES_KEY}
-              showIfIsLoading
-            />
-          }
-        />
-      </Routes>
-    </MemoryRouter>
+test('Shows FeatureRoute as expected', async () => {
+  await renderTestRouter(
+    <FeatureRoute
+      element={<div>Test</div>}
+      featureUuid={Scenarios.WITH_FEATURES_KEY}
+      showIfIsLoading
+    />
   );
 
   expect(screen.getByText(/test/i)).toBeInTheDocument();
 });
 
-test('Shows fallback as expected', () => {
-  renderWithProviders(
-    <MemoryRouter initialEntries={['/test']}>
-      <Routes>
-        <Route path="/" element={<p>home</p>} />
-        <Route
-          path="/test"
-          element={
-            <FeatureRoute
-              element={<div>Test</div>}
-              fallback={<div>Fallback</div>}
-              featureUuid={Scenarios.WITHOUT_FEATURES_KEY}
-            />
-          }
-        />
-      </Routes>
-    </MemoryRouter>
+test('Shows fallback as expected', async () => {
+  await renderTestRouter(
+    <FeatureRoute
+      element={<div>Test</div>}
+      fallback={<div>Fallback</div>}
+      featureUuid={Scenarios.WITHOUT_FEATURES_KEY}
+    />
   );
 
   expect(screen.getByText(/fallback/i)).toBeInTheDocument();
 });
 
-test('Redirects to set path', () => {
-  renderWithProviders(
-    <MemoryRouter initialEntries={['/test']}>
-      <Routes>
-        <Route path="/" element={<p>home</p>} />
-        <Route path="/other" element={<p>other</p>} />
-        <Route
-          path="/test"
-          element={
-            <FeatureRoute
-              element={<div>Test</div>}
-              redirectPath="/other"
-              featureUuid={Scenarios.WITHOUT_FEATURES_KEY}
-            />
-          }
-        />
-      </Routes>
-    </MemoryRouter>
+test('Redirects to set path', async () => {
+  await renderTestRouter(
+    <FeatureRoute
+      element={<div>Test</div>}
+      redirectPath="/other"
+      featureUuid={Scenarios.WITHOUT_FEATURES_KEY}
+    />
   );
 
   expect(screen.getByText(/other/i)).toBeInTheDocument();

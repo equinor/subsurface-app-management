@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { MemoryRouter } from 'react-router-dom';
 
 import { faker } from '@faker-js/faker';
 import {
@@ -7,6 +6,14 @@ import {
   QueryClientProvider,
   useQueryClient,
 } from '@tanstack/react-query';
+import {
+  createMemoryHistory,
+  createRootRoute,
+  createRoute,
+  createRouter,
+  Outlet,
+  RouterProvider,
+} from '@tanstack/react-router';
 import { act } from '@testing-library/react';
 
 import { TutorialProvider, useTutorials } from './TutorialProvider';
@@ -58,8 +65,38 @@ vi.mock('src/api/services/TutorialService', () => {
       });
     }
   }
+
   return { TutorialService };
 });
+
+function createTestRouter(children: ReactNode, initialEntry?: string) {
+  const rootRoute = createRootRoute({
+    component: () => (
+      <TutorialProvider>
+        <Outlet />
+      </TutorialProvider>
+    ),
+  });
+  const tutorialsRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/tutorials',
+    component: () => children,
+  });
+  const someOther = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/some-other-page',
+    component: () => children,
+  });
+  const routeTree = rootRoute.addChildren([tutorialsRoute, someOther]);
+  return createRouter({
+    routeTree: routeTree,
+    defaultPreload: 'intent',
+    defaultPreloadStaleTime: 0,
+    history: createMemoryHistory({
+      initialEntries: initialEntry ? [initialEntry] : ['/tutorials'],
+    }),
+  });
+}
 
 function Wrapper({
   initialEntry,
@@ -71,16 +108,20 @@ function Wrapper({
   const queryClient = new QueryClient();
 
   return (
-    <MemoryRouter initialEntries={initialEntry ? [initialEntry] : undefined}>
-      <QueryClientProvider client={queryClient}>
-        <TutorialProvider>{children}</TutorialProvider>
-      </QueryClientProvider>
-    </MemoryRouter>
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={createTestRouter(children, initialEntry)} />
+    </QueryClientProvider>
+  );
+}
+
+async function renderHookWithWrapper() {
+  return await act(() =>
+    renderHook(() => useTutorials(), { wrapper: Wrapper })
   );
 }
 
 test('Returns expected tutorials', async () => {
-  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+  const { result } = await renderHookWithWrapper();
 
   await waitFor(
     () => result.current.allTutorials.length === FAKE_TUTORIALS.length
@@ -92,7 +133,7 @@ test('Returns expected tutorials', async () => {
 });
 
 test('Pre-fetches images', async () => {
-  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+  const { result } = await renderHookWithWrapper();
 
   await waitFor(
     () => result.current.allTutorials.length === FAKE_TUTORIALS.length
@@ -106,11 +147,13 @@ test('Pre-fetches images', async () => {
 });
 
 test('Returns tutorials on this page as expected', async () => {
-  const { result } = renderHook(() => useTutorials(), {
-    wrapper: ({ children }: { children: ReactNode }) => (
-      <Wrapper initialEntry="/some-other-page">{children}</Wrapper>
-    ),
-  });
+  const { result } = await act(() =>
+    renderHook(() => useTutorials(), {
+      wrapper: ({ children }: { children: ReactNode }) => (
+        <Wrapper initialEntry="/some-other-page">{children}</Wrapper>
+      ),
+    })
+  );
 
   await waitFor(
     () => result.current.allTutorials.length === FAKE_TUTORIALS.length
@@ -120,7 +163,7 @@ test('Returns tutorials on this page as expected', async () => {
 });
 
 test('Should be able to set active tutorial', async () => {
-  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+  const { result } = await renderHookWithWrapper();
 
   await waitFor(
     () => result.current.allTutorials.length === FAKE_TUTORIALS.length
@@ -135,7 +178,7 @@ test('Should be able to set active tutorial', async () => {
 });
 
 test('Trying to set active tutorial to something that doesnt exist throws error', async () => {
-  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+  const { result } = await renderHookWithWrapper();
 
   await waitFor(
     () => result.current.allTutorials.length === FAKE_TUTORIALS.length
@@ -147,7 +190,7 @@ test('Trying to set active tutorial to something that doesnt exist throws error'
 });
 
 test('Trying to go to next/previous step without active tutorials throws error', async () => {
-  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+  const { result } = await renderHookWithWrapper();
 
   await waitFor(
     () => result.current.allTutorials.length === FAKE_TUTORIALS.length
@@ -158,7 +201,7 @@ test('Trying to go to next/previous step without active tutorials throws error',
 });
 
 test('Going to next step works as expected', async () => {
-  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+  const { result } = await renderHookWithWrapper();
 
   await waitFor(
     () => result.current.allTutorials.length === FAKE_TUTORIALS.length
@@ -190,7 +233,7 @@ test('Going to next step works as expected', async () => {
 });
 
 test('Going to previous step works as expected', async () => {
-  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+  const { result } = await renderHookWithWrapper();
 
   await waitFor(
     () => result.current.allTutorials.length === FAKE_TUTORIALS.length
@@ -230,14 +273,15 @@ test('Seen tutorials works as expected', async () => {
     JSON.stringify([randomTutorial.id])
   );
 
-  const { result } = renderHook(() => useTutorials(), {
-    wrapper: ({ children }: { children: ReactNode }) => (
-      <Wrapper initialEntry="/tutorials">{children}</Wrapper>
-    ),
-  });
+  const { result } = await renderHookWithWrapper();
 
-  expect(result.current.unseenTutorialsOnThisPage).not.toContain(
-    randomTutorial
+  await waitFor(() =>
+    expect(result.current.unseenTutorialsOnThisPage).not.toContain(
+      randomTutorial
+    )
+  );
+  await waitFor(() =>
+    expect(result.current.unseenTutorialsOnThisPage).not.toBe([])
   );
 });
 
@@ -265,7 +309,10 @@ test('Skip tutorial works as expected', async () => {
   vi.stubEnv('VITE_NAME', 'MyApp');
   const randomTutorial = faker.helpers.arrayElement(FAKE_TUTORIALS);
 
-  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+  const { result } = await renderHookWithWrapper();
+
+  // Wait for init
+  await waitFor(() => result.current);
 
   act(() => result.current.skipTutorial(randomTutorial.id));
 
@@ -281,7 +328,7 @@ test("'useTutorials' throws error if used outside provider", async () => {
 });
 
 test('Calling skipTutorial when a tutorial is active works as expected', async () => {
-  const { result } = renderHook(() => useTutorials(), { wrapper: Wrapper });
+  const { result } = await renderHookWithWrapper();
 
   await waitFor(
     () => result.current.allTutorials.length === FAKE_TUTORIALS.length
