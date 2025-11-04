@@ -3,11 +3,17 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Faq = {
+  updatedBy?: string | null;
+  updatedByName?: string | null;
+  updatedDate?: string | null;
+  createdBy: string;
+  createdByName: string;
+  createdDate: string;
   id: number;
   question: string;
   answer: string;
+  visible: boolean;
   orderBy?: number | null;
-  faqCategoryId: number;
-  updatedDate?: string | null;
-  createdDate?: string | null;
+  roles?: Array<string> | null;
+  categoryId: number;
 };

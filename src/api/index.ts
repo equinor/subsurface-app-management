@@ -29,7 +29,8 @@ export type { StepDto } from './models/StepDto';
 export { TutorialPosition } from './models/TutorialPosition';
 export type { MyFeatureDto } from './models/MyFeatureDto';
 export type { Faq } from './models/Faq';
-export type { FaqCategory } from './models/FaqCategory';
+export type { FaqDto } from './models/FaqDto';
+export type { FaqCategoriesWithFaqDto } from './models/FaqCategoriesWithFaqDto';
 
 export { AmplifyApplicationService } from './services/AmplifyApplicationService';
 export { FeatureToggleService } from './services/FeatureToggleService';

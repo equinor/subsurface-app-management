@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Faq } from '../models/Faq';
-import type { FaqCategory } from '../models/FaqCategory';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI_SAM_Prod } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
+import type { FaqCategoriesWithFaqDto } from '../models/FaqCategoriesWithFaqDto';
 export class FaqService {
   /**
    * Get FAQ categories and related FAQs based on application id
@@ -16,7 +16,7 @@ export class FaqService {
    */
   public static getCategoriesWithFaqsFromApplicationName(
     applicationName: string
-  ): CancelablePromise<Array<FaqCategory>> {
+  ): CancelablePromise<Array<FaqCategoriesWithFaqDto>> {
     return __request(OpenAPI_SAM_Prod, {
       method: 'GET',
       url: '/api/v1/Faq/faqcategorieswithfaqs/{applicationName}',
@@ -51,7 +51,7 @@ export class FaqService {
    */
   public static getFaqCategoriesFromApplicationId(
     applicationId: string
-  ): CancelablePromise<Array<FaqCategory>> {
+  ): CancelablePromise<Array<FaqCategoriesWithFaqDto>> {
     return __request(OpenAPI_SAM_Prod, {
       method: 'GET',
       url: '/api/v1/Faq/faqcategories/{applicationId}',
