@@ -19,7 +19,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build Components
-        run: bun run build-components
+        run: bun run build
 
       - uses: JS-DevTools/npm-publish@v4
         with:
