@@ -2,13 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import { Faq } from 'src/api';
-export type FaqCategory = {
+export type FaqDto = {
   id: number;
-  categoryName: string;
+  question?: string | null;
+  answer?: string | null;
+  visible?: boolean | null;
   orderBy?: number | null;
-  applicationId: string;
-  faqs: Array<Faq>;
+  roles?: Array<string> | null;
+  categoryId: number;
   updatedDate?: string | null;
   createdDate?: string | null;
 };
