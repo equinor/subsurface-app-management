@@ -27,15 +27,7 @@ jobs:
       - name: Build Components
         run: bun run build
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
-
-      # Ensure npm 11.5.1 or later is installed
-      - name: Update npm
-        run: npm install -g npm@latest
-      - run: npm publish
+      - uses: JS-DevTools/npm-publish@v4
 
   release:
     needs: [publish]
