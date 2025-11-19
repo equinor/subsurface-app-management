@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { BrowseImpactMetric } from '../models/BrowseImpactMetric';
 import type { BrowseImpactMetricDto } from '../models/BrowseImpactMetricDto';
-import type { CancelablePromise } from 'src/api';
+import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI_SAM } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class AppAnalyticsService {
