@@ -31,6 +31,7 @@ export type { MyFeatureDto } from './models/MyFeatureDto';
 export type { Faq } from './models/Faq';
 export type { FaqDto } from './models/FaqDto';
 export type { FaqCategoriesWithFaqDto } from './models/FaqCategoriesWithFaqDto';
+export type { BrowseImpactMetricDto } from './models/BrowseImpactMetricDto';
 
 export { AmplifyApplicationService } from './services/AmplifyApplicationService';
 export { FeatureToggleService } from './services/FeatureToggleService';
@@ -40,3 +41,4 @@ export { ServiceNowService } from './services/ServiceNowService';
 export { SlackService } from './services/SlackService';
 export { TutorialService } from './services/TutorialService';
 export { FaqService } from './services/FaqService';
+export { AppAnalyticsService } from './services/AppAnalyticsService';
