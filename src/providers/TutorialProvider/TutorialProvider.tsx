@@ -53,15 +53,13 @@ export const TutorialProvider: FC<TutorialProviderProps> = ({ children }) => {
   usePrefetchTutorialStepImages();
   const matchRoute = useMatchRoute();
 
-  const tutorialsOnThisPage = useMemo(
-    () =>
-      tutorials?.filter((tutorial) => {
-        return matchRoute({
-          to: tutorial.path,
-        });
-      }),
-    [matchRoute, tutorials]
+  const tutorialsOnThisPage = tutorials?.filter(
+    (tutorial) =>
+      !!matchRoute({
+        to: tutorial.path,
+      })
   );
+
   const unseenTutorialsOnThisPage = useMemo(
     () =>
       tutorialsOnThisPage?.filter(
