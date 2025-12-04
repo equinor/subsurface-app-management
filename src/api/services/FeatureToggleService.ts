@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CancelablePromise, MyFeatureDto } from 'src/api';
-import { OpenAPI_SAM_Prod } from '../core/OpenAPI';
+import { OpenAPI_SAM_FeatureToggle } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class FeatureToggleService {
   /**
@@ -17,7 +17,7 @@ export class FeatureToggleService {
     applicationName: string,
     currentEnvironment: string
   ): CancelablePromise<Array<MyFeatureDto>> {
-    return __request(OpenAPI_SAM_Prod, {
+    return __request(OpenAPI_SAM_FeatureToggle, {
       method: 'GET',
       url: '/api/v1/FeatureToggle/{applicationName}/{currentEnvironment}/myfeatures',
       path: {
