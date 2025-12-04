@@ -7,7 +7,8 @@ import { environment } from 'src/utils';
 import { CancelablePromise } from 'src/api';
 import { request as __request } from 'src/api/core/request';
 import { getLocalStorage, updateLocalStorage } from 'src/utils/localStorage';
-import { JwtPayload, jwtDecode } from 'jwt-decode';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { EnvironmentType, PointToProdFeaturesLocalStorageKey } from 'src/types';
 
 const { getEnvironmentName, getApiUrl } = environment;
 
@@ -116,12 +117,120 @@ export const OpenAPI_SAM: OpenAPIConfig = {
   ENCODE_PATH: undefined,
 };
 
-export const OpenAPI_SAM_Prod: OpenAPIConfig = {
-  BASE: `https://api-sam-backend-production.radix.equinor.com`,
+interface CustomEnvironment {
+  //feature: string;
+  environment: string;
+  token?: Resolver<string>;
+}
+
+function getCustomEnvironmentConfig(
+  feature: PointToProdFeaturesLocalStorageKey
+): CustomEnvironment {
+  const environment = getFeatureEnvironment(feature);
+
+  if (environment === EnvironmentType.LOCALHOST) {
+    return {
+      environment: 'development',
+      token: getSAMToken,
+    };
+  }
+
+  if (!environment || environment === EnvironmentType.PRODUCTION) {
+    return {
+      environment: 'production',
+      token: getSAMProdToken,
+    };
+  }
+
+  return {
+    environment: environment,
+    token: getSAMToken,
+  };
+}
+
+const getFeatureEnvironment = (
+  feature?: PointToProdFeaturesLocalStorageKey
+): EnvironmentType | null => {
+  if (feature) {
+    return localStorage.getItem(feature) === 'true'
+      ? getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME)
+      : null;
+  }
+
+  const features = Object.values(PointToProdFeaturesLocalStorageKey);
+  const hasEnabledFeature = features.find((feature) => {
+    console.log('feature: ', feature);
+    console.log(localStorage.getItem(feature));
+    console.log(localStorage.getItem(feature) === 'true');
+    return localStorage.getItem(feature) === 'true';
+  });
+  if (hasEnabledFeature) {
+    return getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME);
+  }
+
+  return null;
+};
+
+const featureToggleConfig = getCustomEnvironmentConfig(
+  PointToProdFeaturesLocalStorageKey.FEATURE_TOGGLE
+);
+
+export const OpenAPI_SAM_FeatureToggle: OpenAPIConfig = {
+  BASE: `https://api-sam-backend-${featureToggleConfig.environment}.radix.equinor.com`,
   VERSION: '1.0',
   WITH_CREDENTIALS: false,
   CREDENTIALS: 'include',
-  TOKEN: getSAMProdToken,
+  TOKEN: featureToggleConfig.token,
+  USERNAME: undefined,
+  PASSWORD: undefined,
+  HEADERS: undefined,
+  ENCODE_PATH: undefined,
+};
+
+console.table(OpenAPI_SAM_FeatureToggle);
+
+const tutorialConfig = getCustomEnvironmentConfig(
+  PointToProdFeaturesLocalStorageKey.TUTORIAL
+);
+
+export const OpenAPI_SAM_Tutorial: OpenAPIConfig = {
+  BASE: `https://api-sam-backend-${tutorialConfig.environment}.radix.equinor.com`,
+  VERSION: '1.0',
+  WITH_CREDENTIALS: false,
+  CREDENTIALS: 'include',
+  TOKEN: tutorialConfig.token,
+  USERNAME: undefined,
+  PASSWORD: undefined,
+  HEADERS: undefined,
+  ENCODE_PATH: undefined,
+};
+
+const impersonateUserConfig = getCustomEnvironmentConfig(
+  PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER
+);
+
+export const OpenAPI_SAM_ImpersonateUser: OpenAPIConfig = {
+  BASE: `https://api-sam-backend-${impersonateUserConfig.environment}.radix.equinor.com`,
+  VERSION: '1.0',
+  WITH_CREDENTIALS: false,
+  CREDENTIALS: 'include',
+  TOKEN: impersonateUserConfig.token,
+  USERNAME: undefined,
+  PASSWORD: undefined,
+  HEADERS: undefined,
+  ENCODE_PATH: undefined,
+};
+
+const faqConfig = getCustomEnvironmentConfig(
+  PointToProdFeaturesLocalStorageKey.FAQ
+);
+
+export const OpenAPI_SAM_Faq: OpenAPIConfig = {
+  BASE: `https://api-sam-backend-${faqConfig.environment}.radix.equinor.com`,
+  VERSION: '1.0',
+  WITH_CREDENTIALS: false,
+  CREDENTIALS: 'include',
+  TOKEN: faqConfig.token,
   USERNAME: undefined,
   PASSWORD: undefined,
   HEADERS: undefined,
