@@ -118,7 +118,6 @@ export const OpenAPI_SAM: OpenAPIConfig = {
 };
 
 interface CustomEnvironment {
-  //feature: string;
   environment: string;
   token?: Resolver<string>;
 }
@@ -159,9 +158,6 @@ const getFeatureEnvironment = (
 
   const features = Object.values(PointToProdFeaturesLocalStorageKey);
   const hasEnabledFeature = features.find((feature) => {
-    console.log('feature: ', feature);
-    console.log(localStorage.getItem(feature));
-    console.log(localStorage.getItem(feature) === 'true');
     return localStorage.getItem(feature) === 'true';
   });
   if (hasEnabledFeature) {
@@ -186,8 +182,6 @@ export const OpenAPI_SAM_FeatureToggle: OpenAPIConfig = {
   HEADERS: undefined,
   ENCODE_PATH: undefined,
 };
-
-console.table(OpenAPI_SAM_FeatureToggle);
 
 const tutorialConfig = getCustomEnvironmentConfig(
   PointToProdFeaturesLocalStorageKey.TUTORIAL
