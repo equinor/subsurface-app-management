@@ -9,6 +9,7 @@ import { request as __request } from 'src/api/core/request';
 import { getLocalStorage, updateLocalStorage } from 'src/utils/localStorage';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { EnvironmentType, PointToProdFeaturesLocalStorageKey } from 'src/types';
+import { ENVIRONMENT_TOGGLE_KEY } from 'src/constants';
 
 const { getEnvironmentName, getApiUrl } = environment;
 
@@ -147,86 +148,68 @@ function getCustomEnvironmentConfig(
   };
 }
 
+/**
+ * Determines the environment type for a given feature based on the localStorage configuration.
+ *
+ * This function checks the `ENVIRONMENT_TOGGLE_KEY` in localStorage to determine if a specific
+ * feature or any feature is enabled. If the feature is enabled, it returns the current environment
+ * name; otherwise, it returns `null`.
+ *
+ * @param {PointToProdFeaturesLocalStorageKey} [feature] - The feature key to check in the localStorage.
+ * If not provided, the function checks if any feature is enabled.
+ *
+ * @returns {EnvironmentType | null} - The environment type for the feature if enabled, or `null` if
+ * the feature is not enabled or the localStorage value is invalid.
+ */
 const getFeatureEnvironment = (
   feature?: PointToProdFeaturesLocalStorageKey
 ): EnvironmentType | null => {
-  if (feature) {
-    return localStorage.getItem(feature) === 'true'
-      ? getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME)
-      : null;
+  const environmentToggleValue = localStorage.getItem(ENVIRONMENT_TOGGLE_KEY);
+
+  if (!environmentToggleValue) return null;
+
+  try {
+    const enabledFeatures = JSON.parse(environmentToggleValue) as Array<{
+      value: string;
+      label: string;
+    }>;
+
+    if (feature) {
+      const isEnabledFeature = enabledFeatures.some((f) => f.value === feature);
+      return isEnabledFeature
+        ? getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME)
+        : null;
+    }
+
+    const features = Object.values(PointToProdFeaturesLocalStorageKey);
+    const hasEnabledFeature = features.some((f) =>
+      enabledFeatures.some((enabled) => enabled.value == f)
+    );
+
+    return hasEnabledFeature ? getEnvironmentName(feature) : null;
+  } catch (error) {
+    console.error(
+      'Failed to parse environment toggle value from localStorage:',
+      error
+    );
+    return null;
   }
-
-  const features = Object.values(PointToProdFeaturesLocalStorageKey);
-  const hasEnabledFeature = features.find((feature) => {
-    return localStorage.getItem(feature) === 'true';
-  });
-  if (hasEnabledFeature) {
-    return getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME);
-  }
-
-  return null;
 };
 
-const featureToggleConfig = getCustomEnvironmentConfig(
-  PointToProdFeaturesLocalStorageKey.FEATURE_TOGGLE
-);
+export const getOpenAPIConfig = (
+  feature: PointToProdFeaturesLocalStorageKey
+): OpenAPIConfig => {
+  const config = getCustomEnvironmentConfig(feature);
 
-export const OpenAPI_SAM_FeatureToggle: OpenAPIConfig = {
-  BASE: `https://api-sam-backend-${featureToggleConfig.environment}.radix.equinor.com`,
-  VERSION: '1.0',
-  WITH_CREDENTIALS: false,
-  CREDENTIALS: 'include',
-  TOKEN: featureToggleConfig.token,
-  USERNAME: undefined,
-  PASSWORD: undefined,
-  HEADERS: undefined,
-  ENCODE_PATH: undefined,
-};
-
-const tutorialConfig = getCustomEnvironmentConfig(
-  PointToProdFeaturesLocalStorageKey.TUTORIAL
-);
-
-export const OpenAPI_SAM_Tutorial: OpenAPIConfig = {
-  BASE: `https://api-sam-backend-${tutorialConfig.environment}.radix.equinor.com`,
-  VERSION: '1.0',
-  WITH_CREDENTIALS: false,
-  CREDENTIALS: 'include',
-  TOKEN: tutorialConfig.token,
-  USERNAME: undefined,
-  PASSWORD: undefined,
-  HEADERS: undefined,
-  ENCODE_PATH: undefined,
-};
-
-const impersonateUserConfig = getCustomEnvironmentConfig(
-  PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER
-);
-
-export const OpenAPI_SAM_ImpersonateUser: OpenAPIConfig = {
-  BASE: `https://api-sam-backend-${impersonateUserConfig.environment}.radix.equinor.com`,
-  VERSION: '1.0',
-  WITH_CREDENTIALS: false,
-  CREDENTIALS: 'include',
-  TOKEN: impersonateUserConfig.token,
-  USERNAME: undefined,
-  PASSWORD: undefined,
-  HEADERS: undefined,
-  ENCODE_PATH: undefined,
-};
-
-const faqConfig = getCustomEnvironmentConfig(
-  PointToProdFeaturesLocalStorageKey.FAQ
-);
-
-export const OpenAPI_SAM_Faq: OpenAPIConfig = {
-  BASE: `https://api-sam-backend-${faqConfig.environment}.radix.equinor.com`,
-  VERSION: '1.0',
-  WITH_CREDENTIALS: false,
-  CREDENTIALS: 'include',
-  TOKEN: faqConfig.token,
-  USERNAME: undefined,
-  PASSWORD: undefined,
-  HEADERS: undefined,
-  ENCODE_PATH: undefined,
+  return {
+    BASE: `https://api-sam-backend-${config.environment}.radix.equinor.com`,
+    VERSION: '1.0',
+    WITH_CREDENTIALS: false,
+    CREDENTIALS: 'include',
+    TOKEN: config.token,
+    USERNAME: undefined,
+    PASSWORD: undefined,
+    HEADERS: undefined,
+    ENCODE_PATH: undefined,
+  };
 };

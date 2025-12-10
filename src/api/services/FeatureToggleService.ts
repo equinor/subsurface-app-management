@@ -3,8 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CancelablePromise, MyFeatureDto } from 'src/api';
-import { OpenAPI_SAM_FeatureToggle } from '../core/OpenAPI';
+import { getOpenAPIConfig } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
+import { PointToProdFeaturesLocalStorageKey } from 'src/types';
+
 export class FeatureToggleService {
   /**
    * Get my features
@@ -17,18 +19,21 @@ export class FeatureToggleService {
     applicationName: string,
     currentEnvironment: string
   ): CancelablePromise<Array<MyFeatureDto>> {
-    return __request(OpenAPI_SAM_FeatureToggle, {
-      method: 'GET',
-      url: '/api/v1/FeatureToggle/{applicationName}/{currentEnvironment}/myfeatures',
-      path: {
-        applicationName: applicationName,
-        currentEnvironment: currentEnvironment,
-      },
-      errors: {
-        400: `Bad Request`,
-        404: `Not Found`,
-        500: `Internal Server Error`,
-      },
-    });
+    return __request(
+      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.FEATURE_TOGGLE),
+      {
+        method: 'GET',
+        url: '/api/v1/FeatureToggle/{applicationName}/{currentEnvironment}/myfeatures',
+        path: {
+          applicationName: applicationName,
+          currentEnvironment: currentEnvironment,
+        },
+        errors: {
+          400: `Bad Request`,
+          404: `Not Found`,
+          500: `Internal Server Error`,
+        },
+      }
+    );
   }
 }
