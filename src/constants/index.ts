@@ -1,2 +1,2 @@
 export * from './queryKeys';
-export * from './enviromentToggle.constant';
+export * from './environmentToggle';

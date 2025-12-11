@@ -119,7 +119,7 @@ export const OpenAPI_SAM: OpenAPIConfig = {
 };
 
 interface CustomEnvironment {
-  environment: string;
+  environment: EnvironmentType;
   token?: Resolver<string>;
 }
 
@@ -130,14 +130,14 @@ function getCustomEnvironmentConfig(
 
   if (environment === EnvironmentType.LOCALHOST) {
     return {
-      environment: 'development',
+      environment: EnvironmentType.DEVELOP,
       token: getSAMToken,
     };
   }
 
   if (!environment || environment === EnvironmentType.PRODUCTION) {
     return {
-      environment: 'production',
+      environment: EnvironmentType.PRODUCTION,
       token: getSAMProdToken,
     };
   }
@@ -162,7 +162,7 @@ function getCustomEnvironmentConfig(
  * the feature is not enabled or the localStorage value is invalid.
  */
 const getFeatureEnvironment = (
-  feature?: PointToProdFeaturesLocalStorageKey
+  feature: PointToProdFeaturesLocalStorageKey
 ): EnvironmentType | null => {
   const environmentToggleValue = localStorage.getItem(ENVIRONMENT_TOGGLE_KEY);
 
@@ -174,19 +174,10 @@ const getFeatureEnvironment = (
       label: string;
     }>;
 
-    if (feature) {
-      const isEnabledFeature = enabledFeatures.some((f) => f.value === feature);
-      return isEnabledFeature
-        ? getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME)
-        : null;
-    }
-
-    const features = Object.values(PointToProdFeaturesLocalStorageKey);
-    const hasEnabledFeature = features.some((f) =>
-      enabledFeatures.some((enabled) => enabled.value == f)
-    );
-
-    return hasEnabledFeature ? getEnvironmentName(feature) : null;
+    const isEnabledFeature = enabledFeatures.some((f) => f.value === feature);
+    return isEnabledFeature
+      ? getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME)
+      : null;
   } catch (error) {
     console.error(
       'Failed to parse environment toggle value from localStorage:',
