@@ -8,7 +8,7 @@ import { CancelablePromise } from 'src/api';
 import { request as __request } from 'src/api/core/request';
 import { getLocalStorage, updateLocalStorage } from 'src/utils/localStorage';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
-import { EnvironmentType, PointToProdFeaturesLocalStorageKey } from 'src/types';
+import { EnvironmentType, EnvironmentToggleFeatures } from 'src/types';
 import { ENVIRONMENT_TOGGLE_KEY } from 'src/constants';
 
 const { getEnvironmentName, getApiUrl } = environment;
@@ -124,18 +124,18 @@ interface CustomEnvironment {
 }
 
 export function getCustomEnvironmentConfig(
-  feature: PointToProdFeaturesLocalStorageKey
+  feature: EnvironmentToggleFeatures
 ): CustomEnvironment {
-  const environment = getFeatureEnvironment(feature);
+  const targetEnvironment = getFeatureEnvironment(feature);
 
-  if (environment === EnvironmentType.LOCALHOST) {
+  if (targetEnvironment === EnvironmentType.LOCALHOST) {
     return {
       environment: EnvironmentType.DEVELOP,
       token: getSAMToken,
     };
   }
 
-  if (!environment || environment === EnvironmentType.PRODUCTION) {
+  if (!targetEnvironment || targetEnvironment === EnvironmentType.PRODUCTION) {
     return {
       environment: EnvironmentType.PRODUCTION,
       token: getSAMProdToken,
@@ -143,7 +143,7 @@ export function getCustomEnvironmentConfig(
   }
 
   return {
-    environment: environment,
+    environment: targetEnvironment,
     token: getSAMToken,
   };
 }
@@ -155,14 +155,14 @@ export function getCustomEnvironmentConfig(
  * feature is enabled. If the feature is enabled, it returns the current environment
  * name; otherwise, it returns `null`.
  *
- * @param {PointToProdFeaturesLocalStorageKey} feature - The feature key to check in the localStorage.
+ * @param {EnvironmentToggleFeatures} feature - The feature key to check in the localStorage.
  *
  *
  * @returns {EnvironmentType | null} - The environment type for the feature if enabled, or `null` if
  * the feature is not enabled or the localStorage value is invalid.
  */
 export const getFeatureEnvironment = (
-  feature: PointToProdFeaturesLocalStorageKey
+  feature: EnvironmentToggleFeatures
 ): EnvironmentType | null => {
   const environmentToggleValue = localStorage.getItem(ENVIRONMENT_TOGGLE_KEY);
 
@@ -188,7 +188,7 @@ export const getFeatureEnvironment = (
 };
 
 export const getOpenAPIConfig = (
-  feature: PointToProdFeaturesLocalStorageKey
+  feature: EnvironmentToggleFeatures
 ): OpenAPIConfig => {
   const config = getCustomEnvironmentConfig(feature);
 
