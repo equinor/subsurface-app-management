@@ -3,9 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 import { CancelablePromise } from 'src/api';
-import { OpenAPI_SAM_Prod } from '../core/OpenAPI';
+import { getOpenAPIConfig } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import { MyTutorialDto } from 'src/api/models/MyTutorialDto';
+import { EnvironmentToggleFeatures } from 'src/types';
 export class TutorialService {
   /**
    * Gets My tutorials filtered on my Roles and Groups
@@ -18,7 +19,7 @@ export class TutorialService {
     applicationName?: string,
     includeDrafts: boolean = true
   ): CancelablePromise<Array<MyTutorialDto>> {
-    return __request(OpenAPI_SAM_Prod, {
+    return __request(getOpenAPIConfig(EnvironmentToggleFeatures.TUTORIAL), {
       method: 'GET',
       url: '/api/v1/Tutorial/me/{includeDrafts}',
       path: {
@@ -38,7 +39,7 @@ export class TutorialService {
   public static getDraftTutorialsForApplication(
     applicationName: string
   ): CancelablePromise<Array<MyTutorialDto>> {
-    return __request(OpenAPI_SAM_Prod, {
+    return __request(getOpenAPIConfig(EnvironmentToggleFeatures.TUTORIAL), {
       method: 'GET',
       url: '/api/v1/Tutorial/draft/{applicationName}',
       path: {
@@ -53,7 +54,7 @@ export class TutorialService {
    * @throws ApiError
    */
   public static getTutorialImage(path: string): CancelablePromise<string> {
-    return __request(OpenAPI_SAM_Prod, {
+    return __request(getOpenAPIConfig(EnvironmentToggleFeatures.TUTORIAL), {
       method: 'GET',
       url: '/api/v1/Tutorial/gettutorialimage/{path}',
       path: {
