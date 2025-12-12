@@ -6,7 +6,7 @@ import { CancelablePromise } from 'src/api';
 import { getOpenAPIConfig } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import { MyTutorialDto } from 'src/api/models/MyTutorialDto';
-import { PointToProdFeaturesLocalStorageKey } from 'src/types';
+import { EnvironmentToggleFeatures } from 'src/types';
 export class TutorialService {
   /**
    * Gets My tutorials filtered on my Roles and Groups
@@ -19,19 +19,16 @@ export class TutorialService {
     applicationName?: string,
     includeDrafts: boolean = true
   ): CancelablePromise<Array<MyTutorialDto>> {
-    return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.TUTORIAL),
-      {
-        method: 'GET',
-        url: '/api/v1/Tutorial/me/{includeDrafts}',
-        path: {
-          includeDrafts: includeDrafts,
-        },
-        query: {
-          applicationName: applicationName,
-        },
-      }
-    );
+    return __request(getOpenAPIConfig(EnvironmentToggleFeatures.TUTORIAL), {
+      method: 'GET',
+      url: '/api/v1/Tutorial/me/{includeDrafts}',
+      path: {
+        includeDrafts: includeDrafts,
+      },
+      query: {
+        applicationName: applicationName,
+      },
+    });
   }
   /**
    * Gets all draft tutorials for an application
@@ -42,16 +39,13 @@ export class TutorialService {
   public static getDraftTutorialsForApplication(
     applicationName: string
   ): CancelablePromise<Array<MyTutorialDto>> {
-    return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.TUTORIAL),
-      {
-        method: 'GET',
-        url: '/api/v1/Tutorial/draft/{applicationName}',
-        path: {
-          applicationName: applicationName,
-        },
-      }
-    );
+    return __request(getOpenAPIConfig(EnvironmentToggleFeatures.TUTORIAL), {
+      method: 'GET',
+      url: '/api/v1/Tutorial/draft/{applicationName}',
+      path: {
+        applicationName: applicationName,
+      },
+    });
   }
   /**
    * Get tutorial image
@@ -60,18 +54,15 @@ export class TutorialService {
    * @throws ApiError
    */
   public static getTutorialImage(path: string): CancelablePromise<string> {
-    return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.TUTORIAL),
-      {
-        method: 'GET',
-        url: '/api/v1/Tutorial/gettutorialimage/{path}',
-        path: {
-          path: path,
-        },
-        errors: {
-          404: `Not Found`,
-        },
-      }
-    );
+    return __request(getOpenAPIConfig(EnvironmentToggleFeatures.TUTORIAL), {
+      method: 'GET',
+      url: '/api/v1/Tutorial/gettutorialimage/{path}',
+      path: {
+        path: path,
+      },
+      errors: {
+        404: `Not Found`,
+      },
+    });
   }
 }

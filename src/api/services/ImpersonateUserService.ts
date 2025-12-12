@@ -8,7 +8,7 @@ import type { ObjectServiceResponse } from 'src/api/models/ObjectServiceResponse
 import type { CancelablePromise } from 'src/api';
 import { getOpenAPIConfig } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-import { PointToProdFeaturesLocalStorageKey } from 'src/types';
+import { EnvironmentToggleFeatures } from 'src/types';
 
 export class ImpersonateUserService {
   /**
@@ -20,7 +20,7 @@ export class ImpersonateUserService {
     Array<ImpersonateUserDto>
   > {
     return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER),
+      getOpenAPIConfig(EnvironmentToggleFeatures.IMPERSONATE_USER),
       {
         method: 'GET',
         url: '/api/v1/ImpersonateUser',
@@ -40,7 +40,7 @@ export class ImpersonateUserService {
     requestBody?: ImpersonateUserUpdateDto
   ): CancelablePromise<ImpersonateUserDto> {
     return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER),
+      getOpenAPIConfig(EnvironmentToggleFeatures.IMPERSONATE_USER),
       {
         method: 'POST',
         url: '/api/v1/ImpersonateUser',
@@ -64,7 +64,7 @@ export class ImpersonateUserService {
     requestBody?: ImpersonateUserDto
   ): CancelablePromise<ImpersonateUserDto> {
     return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER),
+      getOpenAPIConfig(EnvironmentToggleFeatures.IMPERSONATE_USER),
       {
         method: 'PUT',
         url: '/api/v1/ImpersonateUser',
@@ -86,7 +86,7 @@ export class ImpersonateUserService {
     appName: string
   ): CancelablePromise<Array<ImpersonateUserDto>> {
     return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER),
+      getOpenAPIConfig(EnvironmentToggleFeatures.IMPERSONATE_USER),
       {
         method: 'GET',
         url: '/api/v1/ImpersonateUser/GetImpersonateUserForApp/{appName}',
@@ -107,7 +107,7 @@ export class ImpersonateUserService {
    */
   public static getAllActiveUsers(): CancelablePromise<ImpersonateUserDto> {
     return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER),
+      getOpenAPIConfig(EnvironmentToggleFeatures.IMPERSONATE_USER),
       {
         method: 'GET',
         url: '/api/v1/ImpersonateUser/ActiveUsers',
@@ -125,7 +125,7 @@ export class ImpersonateUserService {
    */
   public static getActiveUser(): CancelablePromise<ImpersonateUserDto> {
     return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER),
+      getOpenAPIConfig(EnvironmentToggleFeatures.IMPERSONATE_USER),
       {
         method: 'GET',
         url: '/api/v1/ImpersonateUser/ActiveUser',
@@ -146,7 +146,7 @@ export class ImpersonateUserService {
     id?: string
   ): CancelablePromise<ImpersonateUserDto> {
     return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER),
+      getOpenAPIConfig(EnvironmentToggleFeatures.IMPERSONATE_USER),
       {
         method: 'GET',
         url: '/api/v1/ImpersonateUser/ImpersonateUser',
@@ -170,7 +170,7 @@ export class ImpersonateUserService {
     username?: string
   ): CancelablePromise<ImpersonateUserDto> {
     return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER),
+      getOpenAPIConfig(EnvironmentToggleFeatures.IMPERSONATE_USER),
       {
         method: 'GET',
         url: '/api/v1/ImpersonateUser/ImpersonateUserByUserName',
@@ -190,7 +190,7 @@ export class ImpersonateUserService {
    */
   public static canImpersonate(): CancelablePromise<boolean> {
     return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER),
+      getOpenAPIConfig(EnvironmentToggleFeatures.IMPERSONATE_USER),
       {
         method: 'GET',
         url: '/api/v1/ImpersonateUser/CanImpersonate',
@@ -211,7 +211,7 @@ export class ImpersonateUserService {
     username?: string
   ): CancelablePromise<ImpersonateUserDto> {
     return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER),
+      getOpenAPIConfig(EnvironmentToggleFeatures.IMPERSONATE_USER),
       {
         method: 'PUT',
         url: '/api/v1/ImpersonateUser/StartImpersonating',
@@ -232,7 +232,7 @@ export class ImpersonateUserService {
    */
   public static stopImpersonating(): CancelablePromise<ImpersonateUserDto> {
     return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER),
+      getOpenAPIConfig(EnvironmentToggleFeatures.IMPERSONATE_USER),
       {
         method: 'PUT',
         url: '/api/v1/ImpersonateUser/StopImpersonating',
@@ -254,7 +254,7 @@ export class ImpersonateUserService {
     impersonationUserId?: string
   ): CancelablePromise<ObjectServiceResponse> {
     return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER),
+      getOpenAPIConfig(EnvironmentToggleFeatures.IMPERSONATE_USER),
       {
         method: 'DELETE',
         url: '/api/v1/ImpersonateUser/DeleteImpersonationUser',

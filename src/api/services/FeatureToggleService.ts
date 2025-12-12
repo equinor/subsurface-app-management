@@ -5,7 +5,7 @@
 import type { CancelablePromise, MyFeatureDto } from 'src/api';
 import { getOpenAPIConfig } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-import { PointToProdFeaturesLocalStorageKey } from 'src/types';
+import { EnvironmentToggleFeatures } from 'src/types';
 
 export class FeatureToggleService {
   /**
@@ -20,7 +20,7 @@ export class FeatureToggleService {
     currentEnvironment: string
   ): CancelablePromise<Array<MyFeatureDto>> {
     return __request(
-      getOpenAPIConfig(PointToProdFeaturesLocalStorageKey.FEATURE_TOGGLE),
+      getOpenAPIConfig(EnvironmentToggleFeatures.FEATURE_TOGGLE),
       {
         method: 'GET',
         url: '/api/v1/FeatureToggle/{applicationName}/{currentEnvironment}/myfeatures',

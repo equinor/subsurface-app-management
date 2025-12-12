@@ -1,4 +1,4 @@
-import { EnvironmentType, PointToProdFeaturesLocalStorageKey } from 'src/types';
+import { EnvironmentType, EnvironmentToggleFeatures } from 'src/types';
 import { ENVIRONMENT_TOGGLE_KEY } from 'src/constants';
 
 // Mock the utils/environment module to avoid window dependency issues
@@ -36,7 +36,7 @@ describe('getFeatureEnvironment', () => {
   });
 
   test('returns correct EnvironmentType when feature is enabled in localStorage', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.FEATURE_TOGGLE;
+    const feature = EnvironmentToggleFeatures.FEATURE_TOGGLE;
     const enabledFeatures = [
       { value: feature, label: 'Feature Toggle' },
       { value: 'other-feature', label: 'Other Feature' },
@@ -55,10 +55,10 @@ describe('getFeatureEnvironment', () => {
   });
 
   test('returns null when feature is not in enabled features list', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.TUTORIAL;
+    const feature = EnvironmentToggleFeatures.TUTORIAL;
     const enabledFeatures = [
       {
-        value: PointToProdFeaturesLocalStorageKey.FEATURE_TOGGLE,
+        value: EnvironmentToggleFeatures.FEATURE_TOGGLE,
         label: 'Feature Toggle',
       },
     ];
@@ -74,7 +74,7 @@ describe('getFeatureEnvironment', () => {
   });
 
   test('returns null when localStorage is empty', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.FEATURE_TOGGLE;
+    const feature = EnvironmentToggleFeatures.FEATURE_TOGGLE;
 
     const result = getFeatureEnvironment(feature);
 
@@ -82,7 +82,7 @@ describe('getFeatureEnvironment', () => {
   });
 
   test('handles malformed JSON in localStorage and returns null', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER;
+    const feature = EnvironmentToggleFeatures.IMPERSONATE_USER;
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {});
@@ -101,7 +101,7 @@ describe('getFeatureEnvironment', () => {
   });
 
   test('handles empty array in localStorage', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.TUTORIAL;
+    const feature = EnvironmentToggleFeatures.TUTORIAL;
 
     localStorage.setItem(ENVIRONMENT_TOGGLE_KEY, JSON.stringify([]));
 
@@ -111,7 +111,7 @@ describe('getFeatureEnvironment', () => {
   });
 
   test('returns correct environment for different VITE_ENVIRONMENT_NAME values', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.FEATURE_TOGGLE;
+    const feature = EnvironmentToggleFeatures.FEATURE_TOGGLE;
     const enabledFeatures = [{ value: feature, label: 'Feature Toggle' }];
 
     localStorage.setItem(
@@ -140,7 +140,7 @@ describe('getCustomEnvironmentConfig', () => {
   });
 
   test('returns development environment with getSAMToken when feature environment is localhost', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.FEATURE_TOGGLE;
+    const feature = EnvironmentToggleFeatures.FEATURE_TOGGLE;
     const enabledFeatures = [{ value: feature, label: 'Feature Toggle' }];
 
     localStorage.setItem(
@@ -158,7 +158,7 @@ describe('getCustomEnvironmentConfig', () => {
   });
 
   test('returns production environment with getSAMProdToken when feature environment is null', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.TUTORIAL;
+    const feature = EnvironmentToggleFeatures.TUTORIAL;
 
     const result = getCustomEnvironmentConfig(feature);
 
@@ -168,7 +168,7 @@ describe('getCustomEnvironmentConfig', () => {
   });
 
   test('returns production environment with getSAMProdToken when feature environment is production', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.FAQ;
+    const feature = EnvironmentToggleFeatures.FAQ;
     const enabledFeatures = [{ value: feature, label: 'FAQ' }];
 
     localStorage.setItem(
@@ -186,7 +186,7 @@ describe('getCustomEnvironmentConfig', () => {
   });
 
   test('returns development environment with getSAMToken when feature environment is development', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER;
+    const feature = EnvironmentToggleFeatures.IMPERSONATE_USER;
     const enabledFeatures = [{ value: feature, label: 'Impersonate User' }];
 
     localStorage.setItem(
@@ -204,7 +204,7 @@ describe('getCustomEnvironmentConfig', () => {
   });
 
   test('returns staging environment with getSAMToken when feature environment is staging', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.TUTORIAL;
+    const feature = EnvironmentToggleFeatures.TUTORIAL;
     const enabledFeatures = [{ value: feature, label: 'Tutorial' }];
 
     localStorage.setItem(
@@ -222,7 +222,7 @@ describe('getCustomEnvironmentConfig', () => {
   });
 
   test('handles feature environment with malformed localStorage', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.FEATURE_TOGGLE;
+    const feature = EnvironmentToggleFeatures.FEATURE_TOGGLE;
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {});
@@ -246,7 +246,7 @@ describe('getOpenAPIConfig', () => {
   });
 
   test('returns correct OpenAPIConfig with production BASE URL when feature is not enabled', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.FEATURE_TOGGLE;
+    const feature = EnvironmentToggleFeatures.FEATURE_TOGGLE;
 
     const config = getOpenAPIConfig(feature);
 
@@ -264,7 +264,7 @@ describe('getOpenAPIConfig', () => {
   });
 
   test('returns correct OpenAPIConfig with development BASE URL when feature is enabled in development', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.TUTORIAL;
+    const feature = EnvironmentToggleFeatures.TUTORIAL;
     const enabledFeatures = [{ value: feature, label: 'Tutorial' }];
 
     localStorage.setItem(
@@ -291,7 +291,7 @@ describe('getOpenAPIConfig', () => {
   });
 
   test('returns correct OpenAPIConfig with staging BASE URL when feature is enabled in staging', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.FAQ;
+    const feature = EnvironmentToggleFeatures.FAQ;
     const enabledFeatures = [{ value: feature, label: 'FAQ' }];
 
     localStorage.setItem(
@@ -318,7 +318,7 @@ describe('getOpenAPIConfig', () => {
   });
 
   test('returns development BASE URL when feature is enabled in localhost', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER;
+    const feature = EnvironmentToggleFeatures.IMPERSONATE_USER;
     const enabledFeatures = [{ value: feature, label: 'Impersonate User' }];
 
     localStorage.setItem(
@@ -339,7 +339,7 @@ describe('getOpenAPIConfig', () => {
   });
 
   test('returns production BASE URL and token when feature is enabled in production', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.FEATURE_TOGGLE;
+    const feature = EnvironmentToggleFeatures.FEATURE_TOGGLE;
     const enabledFeatures = [{ value: feature, label: 'Feature Toggle' }];
 
     localStorage.setItem(
@@ -359,7 +359,7 @@ describe('getOpenAPIConfig', () => {
   });
 
   test('has correct static properties in OpenAPIConfig', () => {
-    const feature = PointToProdFeaturesLocalStorageKey.TUTORIAL;
+    const feature = EnvironmentToggleFeatures.TUTORIAL;
 
     const config = getOpenAPIConfig(feature);
 
@@ -372,12 +372,12 @@ describe('getOpenAPIConfig', () => {
     expect(config.ENCODE_PATH).toBeUndefined();
   });
 
-  test('handles all PointToProdFeaturesLocalStorageKey enum values', () => {
+  test('handles all EnvironmentToggleFeatures enum values', () => {
     const features = [
-      PointToProdFeaturesLocalStorageKey.FEATURE_TOGGLE,
-      PointToProdFeaturesLocalStorageKey.TUTORIAL,
-      PointToProdFeaturesLocalStorageKey.IMPERSONATE_USER,
-      PointToProdFeaturesLocalStorageKey.FAQ,
+      EnvironmentToggleFeatures.FEATURE_TOGGLE,
+      EnvironmentToggleFeatures.TUTORIAL,
+      EnvironmentToggleFeatures.IMPERSONATE_USER,
+      EnvironmentToggleFeatures.FAQ,
     ];
 
     features.forEach((feature) => {
