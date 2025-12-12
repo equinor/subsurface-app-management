@@ -22,12 +22,8 @@ vi.mock('./OpenAPI', async (importOriginal) => {
 });
 
 // Now import after mocks are set up
-const {
-  getOpenAPIConfig,
-  getCustomEnvironmentConfig,
-  getFeatureEnvironment,
-  getSAMToken,
-} = await import('./OpenAPI');
+const { getOpenAPIConfig, getCustomEnvironmentConfig, getFeatureEnvironment } =
+  await import('./OpenAPI');
 
 describe('getFeatureEnvironment', () => {
   beforeEach(() => {
