@@ -151,12 +151,12 @@ export function getCustomEnvironmentConfig(
 /**
  * Determines the environment type for a given feature based on the localStorage configuration.
  *
- * This function checks the `ENVIRONMENT_TOGGLE_KEY` in localStorage to determine if a specific
- * feature or any feature is enabled. If the feature is enabled, it returns the current environment
+ * This function checks the `ENVIRONMENT_TOGGLE_KEY` in localStorage to determine if the specified
+ * feature is enabled. If the feature is enabled, it returns the current environment
  * name; otherwise, it returns `null`.
  *
- * @param {PointToProdFeaturesLocalStorageKey} [feature] - The feature key to check in the localStorage.
- * If not provided, the function checks if any feature is enabled.
+ * @param {PointToProdFeaturesLocalStorageKey} feature - The feature key to check in the localStorage.
+ *
  *
  * @returns {EnvironmentType | null} - The environment type for the feature if enabled, or `null` if
  * the feature is not enabled or the localStorage value is invalid.
