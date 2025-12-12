@@ -123,7 +123,7 @@ interface CustomEnvironment {
   token?: Resolver<string>;
 }
 
-function getCustomEnvironmentConfig(
+export function getCustomEnvironmentConfig(
   feature: PointToProdFeaturesLocalStorageKey
 ): CustomEnvironment {
   const environment = getFeatureEnvironment(feature);
@@ -161,7 +161,7 @@ function getCustomEnvironmentConfig(
  * @returns {EnvironmentType | null} - The environment type for the feature if enabled, or `null` if
  * the feature is not enabled or the localStorage value is invalid.
  */
-const getFeatureEnvironment = (
+export const getFeatureEnvironment = (
   feature: PointToProdFeaturesLocalStorageKey
 ): EnvironmentType | null => {
   const environmentToggleValue = localStorage.getItem(ENVIRONMENT_TOGGLE_KEY);
