@@ -7,7 +7,9 @@ import { environment } from 'src/utils';
 import { CancelablePromise } from 'src/api';
 import { request as __request } from 'src/api/core/request';
 import { getLocalStorage, updateLocalStorage } from 'src/utils/localStorage';
-import { JwtPayload, jwtDecode } from 'jwt-decode';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { EnvironmentType, EnvironmentToggleFeatures } from 'src/types';
+import { ENVIRONMENT_TOGGLE_KEY } from 'src/constants';
 
 const { getEnvironmentName, getApiUrl } = environment;
 
@@ -116,14 +118,89 @@ export const OpenAPI_SAM: OpenAPIConfig = {
   ENCODE_PATH: undefined,
 };
 
-export const OpenAPI_SAM_Prod: OpenAPIConfig = {
-  BASE: `https://api-sam-backend-production.radix.equinor.com`,
-  VERSION: '1.0',
-  WITH_CREDENTIALS: false,
-  CREDENTIALS: 'include',
-  TOKEN: getSAMProdToken,
-  USERNAME: undefined,
-  PASSWORD: undefined,
-  HEADERS: undefined,
-  ENCODE_PATH: undefined,
+interface CustomEnvironment {
+  environment: EnvironmentType;
+  token?: Resolver<string>;
+}
+
+export function getCustomEnvironmentConfig(
+  feature: EnvironmentToggleFeatures
+): CustomEnvironment {
+  const targetEnvironment = getFeatureEnvironment(feature);
+
+  if (targetEnvironment === EnvironmentType.LOCALHOST) {
+    return {
+      environment: EnvironmentType.DEVELOP,
+      token: getSAMToken,
+    };
+  }
+
+  if (!targetEnvironment || targetEnvironment === EnvironmentType.PRODUCTION) {
+    return {
+      environment: EnvironmentType.PRODUCTION,
+      token: getSAMProdToken,
+    };
+  }
+
+  return {
+    environment: targetEnvironment,
+    token: getSAMToken,
+  };
+}
+
+/**
+ * Determines the environment type for a given feature based on the localStorage configuration.
+ *
+ * This function checks the `ENVIRONMENT_TOGGLE_KEY` in localStorage to determine if the specified
+ * feature is enabled. If the feature is enabled, it returns the current environment
+ * name; otherwise, it returns `null`.
+ *
+ * @param {EnvironmentToggleFeatures} feature - The feature key to check in the localStorage.
+ *
+ *
+ * @returns {EnvironmentType | null} - The environment type for the feature if enabled, or `null` if
+ * the feature is not enabled or the localStorage value is invalid.
+ */
+export const getFeatureEnvironment = (
+  feature: EnvironmentToggleFeatures
+): EnvironmentType | null => {
+  const environmentToggleValue = localStorage.getItem(ENVIRONMENT_TOGGLE_KEY);
+
+  if (!environmentToggleValue) return null;
+
+  try {
+    const enabledFeatures = JSON.parse(environmentToggleValue) as Array<{
+      value: string;
+      label: string;
+    }>;
+
+    const isEnabledFeature = enabledFeatures.some((f) => f.value === feature);
+    return isEnabledFeature
+      ? getEnvironmentName(import.meta.env.VITE_ENVIRONMENT_NAME)
+      : null;
+  } catch (error) {
+    console.error(
+      'Failed to parse environment toggle value from localStorage:',
+      error
+    );
+    return null;
+  }
+};
+
+export const getOpenAPIConfig = (
+  feature: EnvironmentToggleFeatures
+): OpenAPIConfig => {
+  const config = getCustomEnvironmentConfig(feature);
+
+  return {
+    BASE: `https://api-sam-backend-${config.environment}.radix.equinor.com`,
+    VERSION: '1.0',
+    WITH_CREDENTIALS: false,
+    CREDENTIALS: 'include',
+    TOKEN: config.token,
+    USERNAME: undefined,
+    PASSWORD: undefined,
+    HEADERS: undefined,
+    ENCODE_PATH: undefined,
+  };
 };

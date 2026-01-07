@@ -4,9 +4,10 @@
 /* eslint-disable */
 import type { Faq } from '../models/Faq';
 import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI_SAM_Prod } from '../core/OpenAPI';
+import { getOpenAPIConfig } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 import type { FaqCategoriesWithFaqDto } from '../models/FaqCategoriesWithFaqDto';
+import { EnvironmentToggleFeatures } from 'src/types';
 export class FaqService {
   /**
    * Get FAQ categories and related FAQs based on application id
@@ -17,7 +18,7 @@ export class FaqService {
   public static getCategoriesWithFaqsFromApplicationName(
     applicationName: string
   ): CancelablePromise<Array<FaqCategoriesWithFaqDto>> {
-    return __request(OpenAPI_SAM_Prod, {
+    return __request(getOpenAPIConfig(EnvironmentToggleFeatures.FAQ), {
       method: 'GET',
       url: '/api/v1/Faq/faqcategorieswithfaqs/{applicationName}',
       path: {
@@ -32,7 +33,7 @@ export class FaqService {
    * @throws ApiError
    */
   public static getFaqImage(path: string): CancelablePromise<string> {
-    return __request(OpenAPI_SAM_Prod, {
+    return __request(getOpenAPIConfig(EnvironmentToggleFeatures.FAQ), {
       method: 'GET',
       url: '/api/v1/Faq/getfaqimage/{path}',
       path: {
@@ -52,7 +53,7 @@ export class FaqService {
   public static getFaqCategoriesFromApplicationId(
     applicationId: string
   ): CancelablePromise<Array<FaqCategoriesWithFaqDto>> {
-    return __request(OpenAPI_SAM_Prod, {
+    return __request(getOpenAPIConfig(EnvironmentToggleFeatures.FAQ), {
       method: 'GET',
       url: '/api/v1/Faq/faqcategories/{applicationId}',
       path: {
@@ -69,7 +70,7 @@ export class FaqService {
   public static getFaqsFromCategoryId(
     categoryId: number
   ): CancelablePromise<Array<Faq>> {
-    return __request(OpenAPI_SAM_Prod, {
+    return __request(getOpenAPIConfig(EnvironmentToggleFeatures.FAQ), {
       method: 'GET',
       url: '/api/v1/Faq/faqs/{categoryId}',
       path: {
@@ -84,7 +85,7 @@ export class FaqService {
    * @throws ApiError
    */
   public static getFaqById(id: number): CancelablePromise<Faq> {
-    return __request(OpenAPI_SAM_Prod, {
+    return __request(getOpenAPIConfig(EnvironmentToggleFeatures.FAQ), {
       method: 'GET',
       url: '/api/v1/Faq/faq/{id}',
       path: {
