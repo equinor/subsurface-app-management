@@ -107,7 +107,7 @@ export const OpenAPI_APP: OpenAPIConfig = {
 };
 
 export const OpenAPI_SAM: OpenAPIConfig = {
-  BASE: `http://localhost:5000`,
+  BASE: `https://api-sam-backend-${noLocalhostEnvironmentName}.radix.equinor.com`,
   VERSION: '1.0',
   WITH_CREDENTIALS: false,
   CREDENTIALS: 'include',
