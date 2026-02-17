@@ -4,3 +4,6 @@ export { useReleaseNotesQuery } from './useReleaseNotesQuery';
 export { useTutorialsQuery } from './useTutorialsQuery';
 export { useTutorialStepImage } from './useTutorialStepImage';
 export { useSignalRMessages } from './useSignalRMessages';
+export { useActiveSurvey } from './useActiveSurvey';
+export { useRespondActiveSurvey } from './useRespondActiveSurvey';
+export { useAnswerQuestionActiveSurvey } from './useAnswerQuestionActiveSurvey';
