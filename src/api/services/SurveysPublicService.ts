@@ -24,7 +24,7 @@ export class SurveysPublicService {
   ): CancelablePromise<SurveyResponseId> {
     return __request(OpenAPI_SAM, {
       method: 'POST',
-      url: '/api/v1/applications/surveys/{surveyId}/survey/me',
+      url: '/api/v1/surveys/{surveyId}/survey/me',
       path: {
         surveyId: surveyId,
       },
@@ -49,7 +49,7 @@ export class SurveysPublicService {
   ): CancelablePromise<UserSurveyVm> {
     return __request(OpenAPI_SAM, {
       method: 'GET',
-      url: '/api/v1/applications/{applicationName}/surveys/me',
+      url: '/api/v1/surveys/applications/{applicationName}/me',
       path: {
         applicationName: applicationName,
       },
@@ -70,13 +70,13 @@ export class SurveysPublicService {
    * @returns AnswerId The updated answer.
    * @throws ApiError
    */
-  public static updateSurveyResponse(
+  public static upsertSurveyResponse(
     surveyResponseId: string,
     requestBody?: AnswerQuestionCommandDto
   ): CancelablePromise<AnswerId> {
     return __request(OpenAPI_SAM, {
       method: 'PUT',
-      url: '/api/v1/applications/surveys/{surveyResponseId}/responses/me',
+      url: '/api/v1/surveys/{surveyResponseId}/responses/me',
       path: {
         surveyResponseId: surveyResponseId,
       },

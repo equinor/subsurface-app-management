@@ -8,7 +8,7 @@ export function useAnswerQuestionActiveSurvey() {
 
   return useMutation({
     mutationFn: (body: AnswerQuestionCommandDto) =>
-      SurveysPublicService.updateSurveyResponse(
+      SurveysPublicService.upsertSurveyResponse(
         activeSurvey?.surveyResponseId?.value ?? '',
         body
       ),
