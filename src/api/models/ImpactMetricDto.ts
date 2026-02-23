@@ -2,11 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { BrowseImpactUrlDto } from './BrowseImpactUrlDto';
-export type BrowseImpactMetricDto = {
+import type { ImpactUrlDto } from './ImpactUrlDto';
+export type ImpactMetricDto = {
   startTimeStamp: string;
   endTimeStamp: string;
-  listUrlIds?: Array<BrowseImpactUrlDto> | null;
+  listUrlIds?: Array<ImpactUrlDto> | null;
   userId: string;
   isSuccessful: boolean;
 };

@@ -2,13 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { BrowseImpactUrl } from './BrowseImpactUrl';
-export type BrowseImpactMetric = {
+import type { ImpactUrl } from './ImpactUrl';
+export type ImpactMetric = {
   id: string;
   startTimeStamp: string;
   endTimeStamp: string;
   clickCount: number;
-  listUrlIds?: Array<BrowseImpactUrl> | null;
+  listUrlIds?: Array<ImpactUrl> | null;
   userId: string;
   isSuccessful?: boolean | null;
 };
