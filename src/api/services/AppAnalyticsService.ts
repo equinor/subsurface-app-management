@@ -3,8 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ImpactMetric } from '../models/ImpactMetric';
-import type { ImpactMetricDto } from 'src/api';
-import type { CancelablePromise } from 'src/api';
+import type { ImpactMetricDto } from '../models/ImpactMetricDto';
+import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI_SAM } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class AppAnalyticsService {
