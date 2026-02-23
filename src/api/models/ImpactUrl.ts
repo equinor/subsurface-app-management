@@ -6,5 +6,5 @@ export type ImpactUrl = {
   id: number;
   urlId: string;
   timeStamp: string;
-  fkBrowseImpactMetricId: string;
+  FkImpactMetricId: string;
 };

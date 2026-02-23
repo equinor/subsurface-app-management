@@ -4,9 +4,11 @@
 /* eslint-disable */
 import type { ImpactUrlDto } from './ImpactUrlDto';
 export type ImpactMetricDto = {
-  startTimeStamp: string;
-  endTimeStamp: string;
+  featureName: string;
+  userType: string;
+  startTimeStamp?: string;
+  endTimeStamp?: string;
   listUrlIds?: Array<ImpactUrlDto> | null;
   userId: string;
-  isSuccessful: boolean;
+  isSuccessful?: boolean;
 };
