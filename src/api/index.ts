@@ -31,7 +31,10 @@ export type { MyFeatureDto } from './models/MyFeatureDto';
 export type { Faq } from './models/Faq';
 export type { FaqDto } from './models/FaqDto';
 export type { FaqCategoriesWithFaqDto } from './models/FaqCategoriesWithFaqDto';
-export type { BrowseImpactMetricDto } from './models/BrowseImpactMetricDto';
+export type { ImpactMetric } from './models/ImpactMetric';
+export type { ImpactMetricDto } from './models/ImpactMetricDto';
+export type { ImpactUrl } from './models/ImpactUrl';
+export type { ImpactUrlDto } from './models/ImpactUrlDto';
 
 export { AmplifyApplicationService } from './services/AmplifyApplicationService';
 export { FeatureToggleService } from './services/FeatureToggleService';

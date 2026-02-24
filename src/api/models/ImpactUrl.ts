@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type BrowseImpactUrl = {
+export type ImpactUrl = {
   id: number;
   urlId: string;
   timeStamp: string;
-  fkBrowseImpactMetricId: string;
+  fkImpactMetricId: string;
 };
