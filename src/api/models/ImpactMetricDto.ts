@@ -5,7 +5,7 @@
 import type { ImpactUrlDto } from './ImpactUrlDto';
 export type ImpactMetricDto = {
   featureName: string;
-  userType: string;
+  userType?: string;
   startTimeStamp?: string;
   endTimeStamp?: string;
   listUrlIds?: Array<ImpactUrlDto> | null;
