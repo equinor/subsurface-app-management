@@ -6,7 +6,7 @@ import type { ImpactUrl } from './ImpactUrl';
 export type ImpactMetric = {
   applicationName: string;
   featureName: string;
-  userType: string;
+  userType?: string;
   id: string;
   startTimeStamp?: string;
   endTimeStamp?: string;
