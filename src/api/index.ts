@@ -39,6 +39,7 @@ export type { WorkItem } from './models/WorkItem';
 export type { WorkItemAttachment } from './models/WorkItemAttachment';
 export type { WorkItemType } from './models/WorkItemType';
 export type { BugSeverity } from './models/BugSeverity';
+export type { SamWorkItemState } from './models/SamWorkItemState';
 
 export { AmplifyApplicationService } from './services/AmplifyApplicationService';
 export { FeatureToggleService } from './services/FeatureToggleService';
