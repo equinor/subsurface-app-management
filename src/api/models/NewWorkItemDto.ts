@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { BugSeverityNullable } from './BugSeverityNullable';
+import type { BugSeverity } from './BugSeverity';
 import type { WorkItemType } from './WorkItemType';
 export type NewWorkItemDto = {
   title: string;
@@ -10,6 +10,6 @@ export type NewWorkItemDto = {
   applicationName: string;
   browser?: string | null;
   field?: string | null;
-  severity?: BugSeverityNullable;
+  severity?: BugSeverity;
   workItemType: WorkItemType;
 };

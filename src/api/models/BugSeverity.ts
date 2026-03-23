@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export enum BugSeverityNullable {
+export enum BugSeverity {
   UNABLE_TO_WORK = 'UnableToWork',
   DOES_NOT_AFFECT_ME = 'DoesNotAffectMe',
   IMPEDES_MY_PROGRESS = 'ImpedesMyProgress',
