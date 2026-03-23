@@ -35,6 +35,10 @@ export type { ImpactMetric } from './models/ImpactMetric';
 export type { ImpactMetricDto } from './models/ImpactMetricDto';
 export type { ImpactUrl } from './models/ImpactUrl';
 export type { ImpactUrlDto } from './models/ImpactUrlDto';
+export type { WorkItem } from './models/WorkItem';
+export type { WorkItemAttachment } from './models/WorkItemAttachment';
+export type { WorkItemType } from './models/WorkItemType';
+export type { BugSeverity } from './models/BugSeverity';
 
 export { AmplifyApplicationService } from './services/AmplifyApplicationService';
 export { FeatureToggleService } from './services/FeatureToggleService';
@@ -45,3 +49,4 @@ export { SlackService } from './services/SlackService';
 export { TutorialService } from './services/TutorialService';
 export { FaqService } from './services/FaqService';
 export { AppAnalyticsService } from './services/AppAnalyticsService';
+export { WorkItemsService } from './services/WorkItemsService';
