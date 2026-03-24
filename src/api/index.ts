@@ -37,9 +37,9 @@ export type { ImpactUrl } from './models/ImpactUrl';
 export type { ImpactUrlDto } from './models/ImpactUrlDto';
 export type { WorkItem } from './models/WorkItem';
 export type { WorkItemAttachment } from './models/WorkItemAttachment';
-export type { WorkItemType } from './models/WorkItemType';
-export type { BugSeverity } from './models/BugSeverity';
-export type { SamWorkItemState } from './models/SamWorkItemState';
+export { WorkItemType } from './models/WorkItemType';
+export { BugSeverity } from './models/BugSeverity';
+export { SamWorkItemState } from './models/SamWorkItemState';
 
 export { AmplifyApplicationService } from './services/AmplifyApplicationService';
 export { FeatureToggleService } from './services/FeatureToggleService';
