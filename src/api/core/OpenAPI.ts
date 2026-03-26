@@ -193,7 +193,7 @@ export const getOpenAPIConfig = (
   const config = getCustomEnvironmentConfig(feature);
 
   return {
-    BASE: `http://localhost:5000`,
+    BASE: `https://api-sam-backend-${config.environment}.radix.equinor.com`,
     VERSION: '1.0',
     WITH_CREDENTIALS: false,
     CREDENTIALS: 'include',
