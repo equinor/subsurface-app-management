@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ImpactUrl } from './ImpactUrl';
+import type { ImpactInteraction } from 'src/api';
 export type ImpactMetric = {
   applicationName: string;
   featureName: string;
@@ -11,7 +11,7 @@ export type ImpactMetric = {
   startTimeStamp?: string;
   endTimeStamp?: string;
   clickCount: number;
-  listUrlIds?: Array<ImpactUrl> | null;
+  Interactions?: Array<ImpactInteraction> | null;
   userId: string;
   isSuccessful?: boolean | null;
 };
