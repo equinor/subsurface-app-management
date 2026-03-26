@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type ImpactInteractionDto = {
-  InteractionId: string;
+  interactionId: string;
   timeStamp: string;
 };

@@ -2,13 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ImpactInteractionDto } from 'src/api';
+import type { ImpactInteractionDto } from './ImpactInteractionDto';
 export type ImpactMetricDto = {
   featureName: string;
   userType?: string;
   startTimeStamp?: string;
   endTimeStamp?: string;
-  Interactions?: Array<ImpactInteractionDto> | null;
+  interactions?: Array<ImpactInteractionDto> | null;
   userId: string;
   isSuccessful?: boolean;
 };

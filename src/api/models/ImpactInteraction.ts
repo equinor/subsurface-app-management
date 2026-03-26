@@ -4,7 +4,7 @@
 /* eslint-disable */
 export type ImpactInteraction = {
   id: number;
-  InteractionId: string;
+  interactionId: string;
   timeStamp: string;
   fkImpactMetricId: string;
 };
