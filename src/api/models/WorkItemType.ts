@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type BrowseImpactUrlDto = {
-  urlId: string;
-  timeStamp: string;
-};
+export enum WorkItemType {
+  SUGGESTION = 'Suggestion',
+  BUG = 'Bug',
+}
