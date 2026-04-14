@@ -46,7 +46,7 @@ export class SurveysPublicService {
    */
   public static getActiveSurveyForApplication(
     applicationName: string
-  ): CancelablePromise<UserSurveyVm> {
+  ): CancelablePromise<UserSurveyVm | null> {
     return __request(OpenAPI_SAM, {
       method: 'GET',
       url: '/api/v1/surveys/applications/{applicationName}/me',

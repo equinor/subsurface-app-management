@@ -106,6 +106,27 @@ test('updates cache with new surveyResponseId and IN_PROGRESS status', async () 
 });
 
 
+test('calls createSurveyResponse and succeeds when optOut is true', async () => {
+  const newResponseId = { value: faker.string.uuid() };
+  mockCreateSurveyResponse.mockResolvedValue(newResponseId);
+
+  const queryClient = makeQueryClient(fakeExistingSurvey);
+  const body: StartSurveyDto = { surveyId: fakeSurveyId, optOut: true };
+
+  const { result } = renderHook(() => useRespondActiveSurvey(), {
+    wrapper: makeWrapper(queryClient),
+  });
+
+  act(() => {
+    result.current.mutate(body);
+  });
+
+  await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+  expect(mockCreateSurveyResponse).toHaveBeenCalledWith(fakeSurveyId.value, body);
+  expect(result.current.data).toEqual(newResponseId);
+});
+
 test('does not modify cache when no existing survey data is present', async () => {
   const newResponseId = { value: faker.string.uuid() };
   mockCreateSurveyResponse.mockResolvedValue(newResponseId);

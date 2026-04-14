@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { SurveysPublicService, type UserSurveyVm } from 'src/api';
+import { SurveysPublicService } from 'src/api';
 import { GET_SURVEY_FOR_APP } from 'src/constants';
 import { getAppName } from 'src/utils/environment';
 
 export function useActiveSurvey() {
-  return useQuery<UserSurveyVm | null, Error, UserSurveyVm | null>({
+  return useQuery({
     queryKey: [GET_SURVEY_FOR_APP],
     queryFn: () =>
       SurveysPublicService.getActiveSurveyForApplication(
