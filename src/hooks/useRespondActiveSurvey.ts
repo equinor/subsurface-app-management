@@ -14,17 +14,16 @@ export function useRespondActiveSurvey() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (body: StartSurveyDto) =>
-      SurveysPublicService.createSurveyResponse(
+    mutationFn: async (body: StartSurveyDto) => {
+      const data = await SurveysPublicService.createSurveyResponse(
         activeSurvey?.surveyId.value ?? '',
         body
-      ),
-    onSuccess: (data, context) => {
+      );
       queryClient.setQueryData<UserSurveyVm>(
         [GET_SURVEY_FOR_APP],
         (oldData) => {
           if (!oldData) return oldData;
-          if (context.optOut) return undefined;
+          if (body.optOut) return undefined;
 
           return {
             ...oldData,
@@ -33,6 +32,8 @@ export function useRespondActiveSurvey() {
           };
         }
       );
+
+      return data;
     },
   });
 }
