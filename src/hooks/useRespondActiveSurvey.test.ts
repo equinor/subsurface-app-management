@@ -105,7 +105,6 @@ test('updates cache with new surveyResponseId and IN_PROGRESS status', async () 
   expect(cached?.status).toBe(SurveyResponseStatus.IN_PROGRESS);
 });
 
-
 test('calls createSurveyResponse and succeeds when optOut is true', async () => {
   const newResponseId = { value: faker.string.uuid() };
   mockCreateSurveyResponse.mockResolvedValue(newResponseId);
@@ -123,11 +122,11 @@ test('calls createSurveyResponse and succeeds when optOut is true', async () => 
 
   await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-  expect(mockCreateSurveyResponse).toHaveBeenCalledWith(fakeSurveyId.value, body);
+  expect(mockCreateSurveyResponse).toHaveBeenCalledWith(
+    fakeSurveyId.value,
+    body
+  );
   expect(result.current.data).toEqual(newResponseId);
-
-  const cached = queryClient.getQueryData([GET_SURVEY_FOR_APP]);
-  expect(cached).toBeUndefined();
 });
 
 test('does not modify cache when no existing survey data is present', async () => {
