@@ -2,9 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type BrowseImpactUrl = {
-  id: number;
-  urlId: string;
-  timeStamp: string;
-  fkBrowseImpactMetricId: string;
-};
+export enum WorkItemType {
+  SUGGESTION = 'Suggestion',
+  BUG = 'Bug',
+}

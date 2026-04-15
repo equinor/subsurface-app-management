@@ -2,7 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { UserImpersonationRoleSnapshot } from './UserImpersonationRoleSnapshot';
 export type ImpersonateUserDto = {
   id?: string | null;
   firstName: string;
@@ -10,9 +9,6 @@ export type ImpersonateUserDto = {
   fullName: string;
   uniqueName: string;
   email?: string | null;
-  field?: string | null;
-  well?: string | null;
-  internalApplicationRoleSnapshots?: Array<UserImpersonationRoleSnapshot> | null;
   appName: string;
   roles: Array<string>;
   activeUsers: Array<string>;
