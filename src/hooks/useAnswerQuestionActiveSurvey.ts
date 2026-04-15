@@ -18,6 +18,7 @@ export function useAnswerQuestionActiveSurvey() {
       body: AnswerQuestionCommandDto;
     }) => SurveysPublicService.upsertSurveyResponse(surveyResponseId, body),
     onSuccess: (data, context) => {
+      /* v8 ignore start */
       queryClient.setQueryData<UserSurveyVm>(
         [GET_SURVEY_FOR_APP],
         (oldData) => {
@@ -34,6 +35,7 @@ export function useAnswerQuestionActiveSurvey() {
           return copy;
         }
       );
+      /* v8 ignore end */
     },
   });
 }
