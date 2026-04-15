@@ -44,6 +44,11 @@ const hookList = [
      setAllMessagesAsRead,
      deleteMessage } = useSignalRMessages<MessageDto>('recap_notifications')`,
   },
+  {
+    name: 'useActiveSurvey',
+    body: 'Returns active survey for the app',
+    code: 'const { data } = useActiveSurvey()',
+  },
 ] as const;
 
 const Container = styled.div`
