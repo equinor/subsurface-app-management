@@ -2,9 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ImpactUrl = {
-  id: number;
-  urlId: string;
+export type ImpactInteractionDto = {
+  interactionId: string;
   timeStamp: string;
-  fkImpactMetricId: string;
 };
