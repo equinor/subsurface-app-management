@@ -21,11 +21,11 @@ export type QuestionVm = {
    */
   options?: Array<QuestionOptionDto> | null;
   maxSelections?: number | null;
-  linearScaleConfig?: {
-    min: number;
-    max: number;
-    minLabel: string;
+  linearScaleVm?: {
     maxLabel: string;
+    maxValue: number;
+    minLabel: string;
+    minValue: number;
   };
   answer?: AnswerVm;
 };
