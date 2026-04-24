@@ -22,9 +22,15 @@ export function useActiveSurvey() {
           .toSorted((a, b) => a.order - b.order)
           .map((question) => ({
             ...question,
-            options: question.multipleChoiceVm?.options.toSorted(
-              (a, b) => a.order - b.order
-            ),
+            multipleChoiceVm: question.multipleChoiceVm
+              ? {
+                  maxSelectableOptions:
+                    question.multipleChoiceVm.maxSelectableOptions,
+                  options: question.multipleChoiceVm?.options.toSorted(
+                    (a, b) => a.order - b.order
+                  ),
+                }
+              : undefined,
           })),
       };
     },
