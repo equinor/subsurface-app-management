@@ -107,9 +107,9 @@ test('sorts options within each question by order', async () => {
         multipleChoiceVm: {
           maxSelectableOptions: 1,
           options: [
+            { id: { value: faker.string.uuid() }, optionText: 'C', order: 3 },
             { id: { value: faker.string.uuid() }, optionText: 'A', order: 1 },
             { id: { value: faker.string.uuid() }, optionText: 'B', order: 2 },
-            { id: { value: faker.string.uuid() }, optionText: 'C', order: 3 },
           ],
         },
       },
@@ -122,9 +122,10 @@ test('sorts options within each question by order', async () => {
 
   await waitFor(() => expect(result.current.data).not.toBeUndefined());
 
-  const optionOrders = result.current.data!.questions[0].options!.map(
-    (o) => o.order
-  );
+  const optionOrders =
+    result.current.data!.questions[0].multipleChoiceVm!.options.map(
+      (o) => o.order
+    );
   expect(optionOrders).toEqual([1, 2, 3]);
 });
 
