@@ -22,7 +22,9 @@ export function useActiveSurvey() {
           .toSorted((a, b) => a.order - b.order)
           .map((question) => ({
             ...question,
-            options: question.options?.toSorted((a, b) => a.order - b.order),
+            options: question.multipleChoiceVm?.options.toSorted(
+              (a, b) => a.order - b.order
+            ),
           })),
       };
     },
