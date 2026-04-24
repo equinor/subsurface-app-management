@@ -13,6 +13,7 @@ package-lock.json
 
 # Webstorm user specific settings
 .idea/workspace.xml
+.idea/vcs.xml
 
 # production
 /build
