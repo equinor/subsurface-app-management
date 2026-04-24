@@ -14,18 +14,18 @@ export type QuestionVm = {
    * The text answer provided for text questions.
    * Only populated if the question type is Text.
    */
-  text: string;
+  questionText: string;
   /**
    * The list of selected option IDs for choice questions.
    * Only populated if the question type is MultipleChoice.
    */
   options?: Array<QuestionOptionDto> | null;
   maxSelections?: number | null;
-  linearScaleConfig?: {
-    min: number;
-    max: number;
-    minLabel: string;
+  linearScaleVm?: {
     maxLabel: string;
+    maxValue: number;
+    minLabel: string;
+    minValue: number;
   };
   answer?: AnswerVm;
 };
