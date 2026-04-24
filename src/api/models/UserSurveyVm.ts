@@ -6,7 +6,7 @@ import type { QuestionVm } from './QuestionVm';
 import type { SurveyId } from './SurveyId';
 import type { SurveyResponseId } from './SurveyResponseId';
 import type { SurveyResponseStatus } from './SurveyResponseStatus';
-import { SurveyType } from './SurveyType';
+import type { SurveyType } from './SurveyType';
 export type UserSurveyVm = {
   surveyId: SurveyId;
   surveyResponseId?: SurveyResponseId;
