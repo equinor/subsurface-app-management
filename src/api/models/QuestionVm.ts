@@ -3,29 +3,19 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AnswerVm } from './AnswerVm';
+import type { LinearScaleVm } from './LinearScaleVm';
+import type { MultipleChoiceVm } from './MultipleChoiceVm';
 import type { QuestionId } from './QuestionId';
-import type { QuestionOptionDto } from './QuestionOptionDto';
 import type { QuestionType } from './QuestionType';
 export type QuestionVm = {
   questionId: QuestionId;
   type: QuestionType;
-  order: number;
   /**
    * The text answer provided for text questions.
-   * Only populated if the question type is Text.
    */
   questionText: string;
-  /**
-   * The list of selected option IDs for choice questions.
-   * Only populated if the question type is MultipleChoice.
-   */
-  options?: Array<QuestionOptionDto> | null;
-  maxSelections?: number | null;
-  linearScaleVm?: {
-    maxLabel: string;
-    maxValue: number;
-    minLabel: string;
-    minValue: number;
-  };
+  linearScaleVm?: LinearScaleVm;
+  multipleChoiceVm?: MultipleChoiceVm;
+  order: number;
   answer?: AnswerVm;
 };
