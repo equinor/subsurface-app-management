@@ -69,19 +69,19 @@ test('sorts questions by order', async () => {
         questionId: { value: faker.string.uuid() },
         type: 'Text' as never,
         order: 3,
-        text: 'Third',
+        questionText: 'Third',
       },
       {
         questionId: { value: faker.string.uuid() },
         type: 'Text' as never,
         order: 1,
-        text: 'First',
+        questionText: 'First',
       },
       {
         questionId: { value: faker.string.uuid() },
         type: 'Text' as never,
         order: 2,
-        text: 'Second',
+        questionText: 'Second',
       },
     ],
   });
@@ -103,12 +103,15 @@ test('sorts options within each question by order', async () => {
         questionId: { value: faker.string.uuid() },
         type: 'MultipleChoice' as never,
         order: 1,
-        text: 'Pick one',
-        options: [
-          { id: { value: faker.string.uuid() }, optionText: 'C', order: 3 },
-          { id: { value: faker.string.uuid() }, optionText: 'A', order: 1 },
-          { id: { value: faker.string.uuid() }, optionText: 'B', order: 2 },
-        ],
+        questionText: 'Pick one',
+        multipleChoiceVm: {
+          maxSelectableOptions: 1,
+          options: [
+            { id: { value: faker.string.uuid() }, optionText: 'A', order: 1 },
+            { id: { value: faker.string.uuid() }, optionText: 'B', order: 2 },
+            { id: { value: faker.string.uuid() }, optionText: 'C', order: 3 },
+          ],
+        },
       },
     ],
   });
@@ -132,8 +135,11 @@ test('handles questions without options gracefully', async () => {
         questionId: { value: faker.string.uuid() },
         type: 'Text' as never,
         order: 1,
-        text: 'Open ended',
-        options: undefined,
+        questionText: 'Open ended',
+        multipleChoiceVm: {
+          maxSelectableOptions: 1,
+          options: [],
+        },
       },
     ],
   });
@@ -144,5 +150,7 @@ test('handles questions without options gracefully', async () => {
 
   await waitFor(() => expect(result.current.data).not.toBeUndefined());
 
-  expect(result.current.data!.questions[0].options).toBeUndefined();
+  expect(
+    result.current.data!.questions[0].multipleChoiceVm?.options
+  ).toStrictEqual([]);
 });
