@@ -89,4 +89,27 @@ export class SurveysPublicService {
       },
     });
   }
+  /**
+   * Finalizes the survey response
+   * ## Business Rules:
+   * All questions must be answered before finalizing
+   * @param surveyResponseId
+   * @returns void
+   * @throws ApiError
+   */
+  public static finalizeSurveyResponse(
+    surveyResponseId: string
+  ): CancelablePromise<void> {
+    return __request(OpenAPI_SAM, {
+      method: 'PUT',
+      url: '/api/v1/surveys/{surveyResponseId}/responses/me/finalize',
+      path: {
+        surveyResponseId: surveyResponseId,
+      },
+      errors: {
+        404: `Survey or question with the specified ID was not found or survey is not active.`,
+        409: `Conflict`,
+      },
+    });
+  }
 }
