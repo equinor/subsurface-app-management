@@ -1,1 +1,12 @@
-* @amplify-sam
+* @aslakihle @equinor/amplify-frontend
+
+# Dependabot reviewers
+/action.yaml @aslakihle
+/action.yml @aslakihle
+/bun.lockb @aslakihle
+/bun.lock @aslakihle
+/package.json @aslakihle
+/.github/workflows/*.yaml @aslakihle
+/.github/workflows/*.yml @aslakihle
+/**/.github/workflows/*.yaml @aslakihle
+/**/.github/workflows/*.yml @aslakihle
