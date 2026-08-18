@@ -20,8 +20,8 @@ export class ReleaseNotesService {
     });
   }
   /**
-   @deprecated
-   Get release note image
+   * @deprecated
+   * Get release note image
    * @param path
    * @returns string OK
    * @throws ApiError
