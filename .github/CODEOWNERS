@@ -1,12 +1,12 @@
-* @aslakihle @equinor/amplify-frontend
+* @mariush2 @equinor/amplify-frontend
 
 # Dependabot reviewers
-/action.yaml @aslakihle
-/action.yml @aslakihle
-/bun.lockb @aslakihle
-/bun.lock @aslakihle
-/package.json @aslakihle
-/.github/workflows/*.yaml @aslakihle
-/.github/workflows/*.yml @aslakihle
-/**/.github/workflows/*.yaml @aslakihle
-/**/.github/workflows/*.yml @aslakihle
+/action.yaml @mariush2
+/action.yml @mariush2
+/bun.lockb @mariush2
+/bun.lock @mariush2
+/package.json @mariush2
+/.github/workflows/*.yaml @mariush2
+/.github/workflows/*.yml @mariush2
+/**/.github/workflows/*.yaml @mariush2
+/**/.github/workflows/*.yml @mariush2
