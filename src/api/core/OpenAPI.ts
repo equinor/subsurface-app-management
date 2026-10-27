@@ -11,7 +11,7 @@ import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { EnvironmentType, EnvironmentToggleFeatures } from 'src/types';
 import { ENVIRONMENT_TOGGLE_KEY } from 'src/constants';
 
-const { getEnvironmentName, getApiUrl } = environment;
+const { getEnvironmentName, getApiUrl, getSamApiUrl } = environment;
 
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 type Headers = Record<string, string>;
@@ -107,7 +107,10 @@ export const OpenAPI_APP: OpenAPIConfig = {
 };
 
 export const OpenAPI_SAM: OpenAPIConfig = {
-  BASE: `https://api-sam-backend-${noLocalhostEnvironmentName}.radix.equinor.com`,
+  BASE: getSamApiUrl(
+    import.meta.env.VITE_SAM_API_URL,
+    noLocalhostEnvironmentName
+  ),
   VERSION: '1.0',
   WITH_CREDENTIALS: false,
   CREDENTIALS: 'include',
@@ -193,7 +196,7 @@ export const getOpenAPIConfig = (
   const config = getCustomEnvironmentConfig(feature);
 
   return {
-    BASE: `https://api-sam-backend-${config.environment}.radix.equinor.com`,
+    BASE: getSamApiUrl(import.meta.env.VITE_SAM_API_URL, config.environment),
     VERSION: '1.0',
     WITH_CREDENTIALS: false,
     CREDENTIALS: 'include',
