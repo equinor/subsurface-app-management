@@ -2,15 +2,22 @@ import { EnvironmentType, EnvironmentToggleFeatures } from 'src/types';
 import { ENVIRONMENT_TOGGLE_KEY } from 'src/constants';
 
 // Mock the utils/environment module to avoid window dependency issues
-vi.mock('src/utils', () => ({
-  environment: {
-    getEnvironmentName: (env?: string) => env || 'development',
-    getApiUrl: () => 'https://api.test.com',
-    getAppName: () => 'test-app',
-    getConfig: () => '',
-    getApplicationInsightsConnectionString: () => undefined,
-  },
-}));
+vi.mock('src/utils', async () => {
+  const { getSamApiUrl } = await vi.importActual<
+    typeof import('src/utils/environment')
+  >('src/utils/environment');
+
+  return {
+    environment: {
+      getEnvironmentName: (env?: string) => env || 'development',
+      getApiUrl: () => 'https://api.test.com',
+      getAppName: () => 'test-app',
+      getConfig: () => '',
+      getApplicationInsightsConnectionString: () => undefined,
+      getSamApiUrl,
+    },
+  };
+});
 
 // Mock the token functions to avoid API call dependencies
 vi.mock('./OpenAPI', async (importOriginal) => {
@@ -385,5 +392,35 @@ describe('getOpenAPIConfig', () => {
       expect(config.VERSION).toBe('1.0');
       expect(config.TOKEN).toBeDefined();
     });
+  });
+});
+
+describe('getOpenAPIConfig with VITE_SAM_API_URL', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  test('fills {environment} with the SAM environment resolved for the feature', () => {
+    vi.stubEnv('VITE_SAM_API_URL', '/sam-api/{environment}');
+
+    expect(
+      getOpenAPIConfig(EnvironmentToggleFeatures.FEATURE_TOGGLE).BASE
+    ).toBe('/sam-api/production');
+
+    localStorage.setItem(
+      ENVIRONMENT_TOGGLE_KEY,
+      JSON.stringify([
+        { value: EnvironmentToggleFeatures.TUTORIAL, label: 'Tutorial' },
+      ])
+    );
+    vi.stubEnv('VITE_ENVIRONMENT_NAME', 'localhost');
+
+    expect(getOpenAPIConfig(EnvironmentToggleFeatures.TUTORIAL).BASE).toBe(
+      '/sam-api/development'
+    );
   });
 });
