@@ -30,10 +30,14 @@ const APPLICATION_INSIGHTS_CONNECTION_STRING =
     import.meta.env.VITE_APPLICATION_INSIGHTS_CONNECTION_STRING
   );
 
+// Telemetry is always sent via this same-origin path, which nginx must forward to https://<region>.in.applicationinsights.azure.com/v2/track
+export const APPLICATION_INSIGHTS_PROXY_PATH = '/ai/v2/track';
+
 export const appInsights = APPLICATION_INSIGHTS_CONNECTION_STRING
   ? new ApplicationInsights({
       config: {
         connectionString: APPLICATION_INSIGHTS_CONNECTION_STRING,
+        userOverrideEndpointUrl: APPLICATION_INSIGHTS_PROXY_PATH,
         extensions: [reactPlugin, clickPluginInstance],
         extensionConfig: {
           // *** Add the Click Analytics plug-in. ***
