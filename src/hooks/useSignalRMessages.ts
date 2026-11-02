@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { getSAMToken } from 'src/api';
 import { EnvironmentType } from 'src/types/Environment';
-import { getEnvironmentName } from 'src/utils/environment';
+import { getEnvironmentName, getSamApiUrl } from 'src/utils/environment';
 
 /* v8 ignore start */
 export function useSignalRMessages<
@@ -40,7 +40,11 @@ export function useSignalRMessages<
         ? EnvironmentType.DEVELOP
         : environmentName;
 
-    return `wss://api-sam-backend-${environmentNameForUrl}.radix.equinor.com`;
+    // SignalR resolves relative URLs and switches http(s) to ws(s) for the WebSockets transport
+    return getSamApiUrl(
+      import.meta.env.VITE_SAM_API_URL,
+      environmentNameForUrl
+    );
   }, []);
 
   useEffect(() => {

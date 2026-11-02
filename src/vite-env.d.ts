@@ -21,4 +21,5 @@ interface ImportMetaEnv {
   VITE_ALLOWED_PARENT_DOMAINS: string;
   ALLOWED_PARENT_DOMAINS: string;
   VITE_IS_MOCK?: string;
+  VITE_SAM_API_URL?: string;
 }

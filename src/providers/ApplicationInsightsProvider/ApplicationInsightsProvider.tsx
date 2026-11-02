@@ -66,6 +66,25 @@ const handleCollectScreenSize = debounce(() => {
   });
 }, 5000); // 5s debounce,
 
+const THEME_ATTRIBUTE = 'data-theme';
+
+const handleCollectTheme = debounce(() => {
+  if (!appInsights) {
+    console.warn(
+      '[SAM]: ApplicationInsightsProvider - "appInsights" is undefined, did you set APPLICATION_INSIGHTS_CONNECTION_STRING?'
+    );
+    return;
+  }
+
+  appInsights.trackEvent({
+    name: 'Theme',
+    properties: {
+      Theme:
+        document.documentElement.getAttribute(THEME_ATTRIBUTE) ?? 'unknown',
+    },
+  });
+}, 5000); // 5s debounce,
+
 interface ApplicationInsightsProviderProps {
   children: ReactNode;
 }
@@ -77,9 +96,18 @@ export const ApplicationInsightsProvider: FC<
     window.addEventListener('load', handleCollectScreenSize);
     window.addEventListener('resize', handleCollectScreenSize);
 
+    handleCollectTheme();
+    const themeObserver = new MutationObserver(handleCollectTheme);
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: [THEME_ATTRIBUTE],
+    });
+
     return () => {
       window.removeEventListener('resize', handleCollectScreenSize);
       window.removeEventListener('load', handleCollectScreenSize);
+      themeObserver.disconnect();
+      handleCollectTheme.cancel();
     };
   }, []);
 

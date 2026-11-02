@@ -20,6 +20,7 @@ export class ReleaseNotesService {
     });
   }
   /**
+   * @deprecated
    * Get release note image
    * @param path
    * @returns string OK
@@ -37,6 +38,31 @@ export class ReleaseNotesService {
       },
     });
   }
+
+  /**
+   * Get release note image
+   * @param applicationName
+   * @param path
+   * @returns string OK
+   * @throws ApiError
+   */
+  public static getReleaseNoteImageForApp(
+    applicationName: string,
+    path: string
+  ): CancelablePromise<string> {
+    return __request(OpenAPI_SAM, {
+      method: 'GET',
+      url: '/api/v1/ReleaseNotes/{applicationName}/releasenoteimages/{path}',
+      path: {
+        applicationName: applicationName,
+        path: path,
+      },
+      errors: {
+        404: `Not Found`,
+      },
+    });
+  }
+
   /**
    * Get published release notes
    * @param applicationName

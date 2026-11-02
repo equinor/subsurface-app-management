@@ -1,1 +1,12 @@
-* @amplify-sam
+* @mariush2 @equinor/amplify-frontend
+
+# Dependabot reviewers
+/action.yaml @mariush2
+/action.yml @mariush2
+/bun.lockb @mariush2
+/bun.lock @mariush2
+/package.json @mariush2
+/.github/workflows/*.yaml @mariush2
+/.github/workflows/*.yml @mariush2
+/**/.github/workflows/*.yaml @mariush2
+/**/.github/workflows/*.yml @mariush2
