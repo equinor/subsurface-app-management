@@ -37,7 +37,7 @@ export const appInsights = APPLICATION_INSIGHTS_CONNECTION_STRING
   ? new ApplicationInsights({
       config: {
         connectionString: APPLICATION_INSIGHTS_CONNECTION_STRING,
-        endpointUrl: APPLICATION_INSIGHTS_PROXY_PATH,
+        userOverrideEndpointUrl: APPLICATION_INSIGHTS_PROXY_PATH,
         extensions: [reactPlugin, clickPluginInstance],
         extensionConfig: {
           // *** Add the Click Analytics plug-in. ***
