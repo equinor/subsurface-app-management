@@ -15,6 +15,7 @@ vi.mock('@microsoft/applicationinsights-web', () => {
 vi.mock('src/utils', () => ({
   environment: {
     getApplicationInsightsConnectionString: () => 'connection-string',
+    getApplicationInsightsProxyEnabled: () => true,
   },
 }));
 

@@ -5,11 +5,13 @@ interface EnvVariables {
   ENVIRONMENT_NAME: string;
   API_URL: string;
   APPLICATION_INSIGHTS_CONNECTION_STRING?: string;
+  APPLICATION_INSIGHTS_PROXY?: string;
   SAM_API_URL?: string;
 }
 
 const OPTIONAL_ENV_VARIABLES: (keyof EnvVariables)[] = [
   'APPLICATION_INSIGHTS_CONNECTION_STRING',
+  'APPLICATION_INSIGHTS_PROXY',
   'SAM_API_URL',
 ] as const;
 
@@ -77,7 +79,20 @@ const getApplicationInsightsConnectionString = (
   return instrumentationKey;
 };
 
+/**
+ * Whether Application Insights telemetry should be sent through the same-origin proxy
+ * (see `APPLICATION_INSIGHTS_PROXY_PATH`) to avoid being blocked by ad blockers.
+ * Enable with `VITE_APPLICATION_INSIGHTS_PROXY=true` or runtime `APPLICATION_INSIGHTS_PROXY=true`.
+ */
+const getApplicationInsightsProxyEnabled = (
+  proxy: string | undefined
+): boolean =>
+  (proxy || getConfig('APPLICATION_INSIGHTS_PROXY') || '')
+    .toString()
+    .toLowerCase() === 'true';
+
 export {
+  getApplicationInsightsProxyEnabled,
   getApplicationInsightsConnectionString,
   getConfig,
   getAppName,
