@@ -1,10 +1,10 @@
 import { act, render } from '@testing-library/react';
 
-import { ApplicationInsightsProvider } from './ApplicationInsightsProvider';
+import { ApplicationInsightsProvider } from 'src/providers';
 import {
   samClearAuthenticatedUser,
   samSetAuthenticatedUser,
-} from './ApplicationInsightsProvider.utils';
+} from 'src/providers';
 
 const {
   trackEvent,
