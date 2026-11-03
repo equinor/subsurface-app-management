@@ -1,13 +1,27 @@
 import { act, render } from '@testing-library/react';
 
 import { ApplicationInsightsProvider } from './ApplicationInsightsProvider';
+import {
+  samClearAuthenticatedUser,
+  samSetAuthenticatedUser,
+} from './ApplicationInsightsProvider.utils';
 
-const { trackEvent } = vi.hoisted(() => ({ trackEvent: vi.fn() }));
+const {
+  trackEvent,
+  setAuthenticatedUserContext,
+  clearAuthenticatedUserContext,
+} = vi.hoisted(() => ({
+  trackEvent: vi.fn(),
+  setAuthenticatedUserContext: vi.fn(),
+  clearAuthenticatedUserContext: vi.fn(),
+}));
 
 vi.mock('@microsoft/applicationinsights-web', () => {
   class ApplicationInsights {
     loadAppInsights() {}
     trackEvent = trackEvent;
+    setAuthenticatedUserContext = setAuthenticatedUserContext;
+    clearAuthenticatedUserContext = clearAuthenticatedUserContext;
   }
   return { ApplicationInsights };
 });
@@ -54,4 +68,16 @@ test('Tracks theme from data-theme on mount and when it changes', async () => {
     name: 'Theme',
     properties: { Theme: 'dark' },
   });
+});
+
+test('Keeps the signed-in user in a cookie for later telemetry until they sign out', () => {
+  samSetAuthenticatedUser('ABC@equinor.com');
+  expect(setAuthenticatedUserContext).toHaveBeenCalledWith(
+    'ABC@equinor.com',
+    undefined,
+    true
+  );
+
+  samClearAuthenticatedUser();
+  expect(clearAuthenticatedUserContext).toHaveBeenCalledOnce();
 });
