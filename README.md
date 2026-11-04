@@ -16,69 +16,205 @@ Build and publish is done automatically when code is merged into `main` branch, 
 
 # Proxying Application Insights through nginx
 
-Ad blockers block requests to `*.in.applicationinsights.azure.com`. `ApplicationInsightsProvider` always sends telemetry to the same-origin path `/ai/v2/track` instead, and nginx
-forwards it to the real ingestion endpoint.
+Ad blockers block requests to `*.in.applicationinsights.azure.com`, so `ApplicationInsightsProvider` sends telemetry to the
+same-origin path `/ai/v2/track` and nginx forwards it to Azure. Tracking is optional: without
+`APPLICATION_INSIGHTS_CONNECTION_STRING` the app tracks nothing, and without `APPLICATION_INSIGHTS_INGESTION_HOST` nginx
+doesn't expose the proxy path.
 
-## 1. Radix config (`radixconfig.yaml`)
+Copy the files below into your app repo, replacing the existing ones (examples are taken from `equinor/sam-frontend`, so
+keep any app-specific parts of yours, such as the port, runtime variables and build steps). Lines related to Application
+Insights are marked in the notes above each file.
 
-The ingestion host differs between environments (it is the `IngestionEndpoint` in the connection string),
-so pass it to nginx as an env variable.
-
-```yaml
-environmentConfig:
-  - environment: development
-    variables:
-      APPLICATION_INSIGHTS_CONNECTION_STRING: 'InstrumentationKey=...;IngestionEndpoint=https://northeurope-2.in.applicationinsights.azure.com/;...'
-      APPLICATION_INSIGHTS_INGESTION_HOST: 'northeurope-2.in.applicationinsights.azure.com'
-
-  - environment: staging
-    variables:
-      APPLICATION_INSIGHTS_CONNECTION_STRING: 'InstrumentationKey=...;IngestionEndpoint=https://northeurope-4.in.applicationinsights.azure.com/;...'
-      APPLICATION_INSIGHTS_INGESTION_HOST: 'northeurope-4.in.applicationinsights.azure.com'
-
-  - environment: production
-    variables:
-      APPLICATION_INSIGHTS_CONNECTION_STRING: 'InstrumentationKey=...;IngestionEndpoint=https://northeurope-4.in.applicationinsights.azure.com/;...'
-      APPLICATION_INSIGHTS_INGESTION_HOST: 'northeurope-4.in.applicationinsights.azure.com'
-```
-
-## 2. nginx config
-
-Add to the nginx template (`nginx.conf`). `${APPLICATION_INSIGHTS_INGESTION_HOST}` is substituted by
-`envsubst` at container start (see step 3). nginx's own variables (`$remote_addr` etc.) are left alone because
-`envsubst` only replaces the variables it is explicitly given.
+## 1. Create `proxy/ai-proxy.conf.template`
 
 ```nginx
-# Outside `server {}` (the template is included in the http context)
+location = /ai/v2/track {
+    limit_req zone=ai burst=20 nodelay;
+    limit_req_status 429;
+    client_max_body_size 1m;
+
+    proxy_pass https://${APPLICATION_INSIGHTS_INGESTION_HOST}/v2/track;
+    proxy_ssl_server_name on;
+    proxy_ssl_verify on;
+    proxy_ssl_verify_depth 3;
+    proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+    proxy_set_header Host ${APPLICATION_INSIGHTS_INGESTION_HOST};
+    proxy_set_header X-Forwarded-For $remote_addr;
+}
+```
+
+## 2. Replace `proxy/nginx.conf`
+
+Replace the file with the one below. Changes vs. a standard setup: the `limit_req_zone` line and the
+`include /etc/nginx/ai-proxy.conf;` line. Adjust `listen`, the `/api/` proxy and other app-specific parts if yours differ.
+
+```nginx
 limit_req_zone $binary_remote_addr zone=ai:10m rate=5r/s;
 
 server {
-    # ...existing config...
+    listen       5001;
+    server_name  localhost;
 
-    location = /ai/v2/track {
-        limit_req zone=ai burst=20 nodelay;
-        limit_req_status 429;
-        client_max_body_size 1m;
+    root   /usr/share/nginx/html;
 
-        proxy_pass https://${APPLICATION_INSIGHTS_INGESTION_HOST}/v2/track;
-        proxy_ssl_server_name on;
-        proxy_set_header Host ${APPLICATION_INSIGHTS_INGESTION_HOST};
-        proxy_set_header X-Forwarded-For $remote_addr;
+    include /etc/nginx/conf.d/securityheaders.conf;
+
+    # Application Insights proxy (empty file when APPLICATION_INSIGHTS_INGESTION_HOST isn't set)
+    include /etc/nginx/ai-proxy.conf;
+
+    location /api/ {
+        client_max_body_size 100M;
+        proxy_pass ${API_URL};
+    }
+
+    location / {
+        index  index.html index.htm;
+        try_files $uri /index.html;
+    }
+
+    location /env-config.js {
+        add_header Cache-Control "no-cache";
+        proxy_cache_bypass $http_pragma;
+        proxy_cache_revalidate on;
+        expires off;
+        access_log off;
+    }
+
+    location /env.sh {
+        deny all;
+    }
+
+    location ~ \.html$ {
+        add_header Cache-Control "no-cache";
+        proxy_cache_bypass $http_pragma;
+        proxy_cache_revalidate on;
+        expires off;
+        access_log off;
+
+        include /etc/nginx/conf.d/securityheaders.conf;
     }
 }
 ```
 
-## 3. Container startup script (`env.sh`)
+> `ai-proxy.conf` must live in `/etc/nginx/`, not `/etc/nginx/conf.d/`. nginx auto-includes everything in `conf.d/*.conf`
+> in the `http` context, where `location` is invalid, and fails to start.
 
-The startup script runs `envsubst` on the nginx templates.
-One change is needed:
+## 3. Replace `env.sh`
+
+Replace the file with the one below. Changes vs. a standard setup: the `if` block at the bottom. Keep your own
+`value=...` lines (one per runtime variable, matching `radixconfig.yaml`) if they differ.
 
 ```sh
-# Let envsubst fill in the ingestion host. Variables not listed here are left untouched.
-envsubst '${API_URL} ${APPLICATION_INSIGHTS_INGESTION_HOST}' </etc/nginx/conf.d/default.conf.template >/etc/nginx/conf.d/default.conf
+#!/bin/sh
+
+# Add assignment
+echo "window._env_ = {" >>./env-config.js
+
+# For all the environment variables we want to have at
+# runtime (one to one with Radixconfig)
+
+value=$(printf '%s\n' "${CLIENT_ID}")
+echo "  CLIENT_ID: \"$value\"," >>./env-config.js
+
+value=$(printf '%s\n' "${API_CLIENT_ID}")
+echo "  API_CLIENT_ID: \"$value\"," >>./env-config.js
+
+value=$(printf '%s\n' "${NAME}")
+echo "  NAME: \"$value\"," >>./env-config.js
+
+value=$(printf '%s\n' "${API_URL}")
+echo "  API_URL: \"$value\"," >>./env-config.js
+
+value=$(printf '%s\n' "${API_SCOPE}")
+echo "  API_SCOPE: \"$value\"," >>./env-config.js
+
+value=$(printf '%s\n' "${ENVIRONMENT_NAME}")
+echo "  ENVIRONMENT_NAME: \"$value\"," >>./env-config.js
+
+value=$(printf '%s\n' "${APPLICATION_INSIGHTS_CONNECTION_STRING}")
+echo "  APPLICATION_INSIGHTS_CONNECTION_STRING: \"$value\"," >>./env-config.js
+
+echo "}" >>./env-config.js
+
+# Application Insights proxy (optional): only render the location when an ingestion host is set
+if [ -n "${APPLICATION_INSIGHTS_INGESTION_HOST}" ]; then
+  envsubst '${APPLICATION_INSIGHTS_INGESTION_HOST}' </etc/nginx/ai-proxy.conf.template >/etc/nginx/ai-proxy.conf
+else
+  : >/etc/nginx/ai-proxy.conf
+fi
+
+# Update nginx.conf and securityheaders.conf with relevant environment variables
+envsubst '${API_URL}' </etc/nginx/conf.d/default.conf.template >/etc/nginx/conf.d/default.conf
 envsubst '${API_URL}' </etc/nginx/conf.d/securityheaders.conf.template >/etc/nginx/conf.d/securityheaders.conf
 ```
 
-`APPLICATION_INSIGHTS_INGESTION_HOST` is only used by nginx, so it does not need to be written to `env-config.js`.
-If it is missing from the `envsubst` list, nginx receives the literal `${APPLICATION_INSIGHTS_INGESTION_HOST}` and
-fails to start.
+## 4. Replace the `Dockerfile`
+
+Replace the file with the one below. Changes vs. a standard setup: the `ai-proxy.conf.template` `COPY` and the two
+`ai-proxy.conf` lines in the `RUN`. Adjust the build stage and `EXPOSE` port to your app.
+
+```dockerfile
+# Base
+FROM imbios/bun-node:22-alpine AS base
+WORKDIR /app
+COPY package.json ./
+COPY bun.lock ./
+COPY tsconfig.json ./
+COPY vite.config.ts ./
+COPY index.html ./
+COPY src ./src
+COPY public ./public
+
+# Install dependencies and build
+RUN bun install --frozen-lockfile && bun run build
+
+# STAGE 2 => SETUP NGINX and Run
+FROM nginxinc/nginx-unprivileged:alpine
+USER 0
+# Clear default nginx html file
+RUN rm -rf /usr/share/nginx/html/*
+COPY --from=base /app/dist /usr/share/nginx/html
+COPY proxy/nginx.conf /etc/nginx/conf.d/default.conf.template
+COPY proxy/securityheaders.conf /etc/nginx/conf.d/securityheaders.conf.template
+COPY proxy/ai-proxy.conf.template /etc/nginx/ai-proxy.conf.template
+
+EXPOSE 5001
+
+# Copy shell script to container to handle runtime environment variables
+WORKDIR /usr/share/nginx/html
+COPY ./env.sh .
+
+RUN rm -rf ./env-config.js \
+  && touch ./env-config.js \
+  && touch /etc/nginx/ai-proxy.conf \
+  && chown nginx ./env-config.js /etc/nginx/ai-proxy.conf \
+  && chown -R nginx /etc/nginx/conf.d \
+  && chown -R nginx /usr/share/nginx/html \
+  && chmod +x ./env.sh
+
+USER 101
+
+CMD ["/bin/sh", "-c", "./env.sh && nginx -g \"daemon off;\""]
+```
+
+## 5. Update `radixconfig.yaml`
+
+For each environment that should track, add both variables. The host is the `IngestionEndpoint` from the connection
+string (hostname only, no `https://` or trailing `/`). For environments without tracking, set the connection string to
+`''` or leave both out.
+
+```yaml
+APPLICATION_INSIGHTS_CONNECTION_STRING: 'InstrumentationKey=...;IngestionEndpoint=https://northeurope-4.in.applicationinsights.azure.com/;...'
+APPLICATION_INSIGHTS_INGESTION_HOST: 'northeurope-4.in.applicationinsights.azure.com'
+```
+
+## 6. Verify
+
+```sh
+docker build -t app .
+docker run --rm -p 5001:5001 -e APPLICATION_INSIGHTS_INGESTION_HOST=northeurope-4.in.applicationinsights.azure.com app
+curl -i -X POST http://localhost:5001/ai/v2/track -d '[]'   # reaches Azure (200/400), not 404/502
+docker run --rm -p 5001:5001 app                            # no host set: nginx still starts
+```
+
+Replace `5001` with the port your `nginx.conf` listens on, and add the app's other required variables (`NAME`, `ENVIRONMENT_NAME`, `API_URL`, ...) if needed.
