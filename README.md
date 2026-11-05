@@ -18,8 +18,9 @@ Build and publish is done automatically when code is merged into `main` branch, 
 
 Ad blockers block requests to `*.in.applicationinsights.azure.com`, so `ApplicationInsightsProvider` sends telemetry to the
 same-origin path `/ai/v2/track` and nginx forwards it to Azure. Tracking is optional: without
-`APPLICATION_INSIGHTS_CONNECTION_STRING` the app tracks nothing, and without `APPLICATION_INSIGHTS_INGESTION_HOST` nginx
-doesn't expose the proxy path.
+`APPLICATION_INSIGHTS_CONNECTION_STRING` the app tracks nothing and nginx doesn't expose the proxy path. The ingestion
+host is read from the `IngestionEndpoint` in the connection string, falling back to the Application Insights default
+(`dc.services.visualstudio.com`) when it has none, so no separate host variable is needed.
 
 Copy the files below into your app repo, replacing the existing ones (examples are taken from `equinor/sam-frontend`, so
 keep any app-specific parts of yours, such as the port, runtime variables and build steps). Lines related to Application
@@ -59,7 +60,7 @@ server {
 
     include /etc/nginx/conf.d/securityheaders.conf;
 
-    # Application Insights proxy (empty file when APPLICATION_INSIGHTS_INGESTION_HOST isn't set)
+    # Application Insights proxy (empty file when APPLICATION_INSIGHTS_CONNECTION_STRING isn't set)
     include /etc/nginx/ai-proxy.conf;
 
     location /api/ {
@@ -136,8 +137,11 @@ echo "  APPLICATION_INSIGHTS_CONNECTION_STRING: \"$value\"," >>./env-config.js
 
 echo "}" >>./env-config.js
 
-# Application Insights proxy (optional): only render the location when an ingestion host is set
-if [ -n "${APPLICATION_INSIGHTS_INGESTION_HOST}" ]; then
+# Application Insights proxy (optional): only render the location when a connection string is set.
+# The host comes from its IngestionEndpoint, falling back to the Application Insights default.
+if [ -n "${APPLICATION_INSIGHTS_CONNECTION_STRING}" ]; then
+  APPLICATION_INSIGHTS_INGESTION_HOST=$(printf '%s' "${APPLICATION_INSIGHTS_CONNECTION_STRING}" | tr ';' '\n' | sed -n 's/^IngestionEndpoint=https\{0,1\}:\/\/\([^/]*\).*/\1/p' | head -n 1)
+  export APPLICATION_INSIGHTS_INGESTION_HOST="${APPLICATION_INSIGHTS_INGESTION_HOST:-dc.services.visualstudio.com}"
   envsubst '${APPLICATION_INSIGHTS_INGESTION_HOST}' </etc/nginx/ai-proxy.conf.template >/etc/nginx/ai-proxy.conf
 else
   : >/etc/nginx/ai-proxy.conf
@@ -199,24 +203,23 @@ CMD ["/bin/sh", "-c", "./env.sh && nginx -g \"daemon off;\""]
 
 ## 5. Update `radixconfig.yaml`
 
-For each environment that should track, add both variables. The host is the `IngestionEndpoint` from the connection
-string (hostname only, no `https://` or trailing `/`). For environments without tracking, set the connection string to
-`''` or leave both out.
+For each environment that should track, set the connection string. The proxy target is taken from its
+`IngestionEndpoint` automatically (or the Application Insights default if it has none). For environments without
+tracking, set it to `''` or leave it out.
 
 ```yaml
 APPLICATION_INSIGHTS_CONNECTION_STRING: 'InstrumentationKey=...;IngestionEndpoint=https://northeurope-4.in.applicationinsights.azure.com/;...'
-APPLICATION_INSIGHTS_INGESTION_HOST: 'northeurope-4.in.applicationinsights.azure.com'
 ```
 
 ## 6. Verify
 
 ```sh
 docker build -t app .
-docker run --rm -d --name app-test -p 5001:5001 -e APPLICATION_INSIGHTS_INGESTION_HOST=northeurope-4.in.applicationinsights.azure.com app
+docker run --rm -d --name app-test -p 5001:5001 -e APPLICATION_INSIGHTS_CONNECTION_STRING='InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://northeurope-4.in.applicationinsights.azure.com/' app
 curl -i -X POST http://localhost:5001/ai/v2/track -d '[]'   # reaches Azure (200/400), not 404/502
 docker stop app-test
 
-# No host set: nginx still starts
+# No connection string set: nginx still starts without the proxy path
 docker run --rm -d --name app-test -p 5001:5001 app
 docker logs app-test
 docker stop app-test
