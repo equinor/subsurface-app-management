@@ -81,3 +81,32 @@ test('Keeps the signed-in user in a cookie for later telemetry until they sign o
   samClearAuthenticatedUser();
   expect(clearAuthenticatedUserContext).toHaveBeenCalledOnce();
 });
+
+test('Renders children without registering listeners or observers when no connection string is set', async () => {
+  vi.resetModules();
+  vi.doMock('src/utils', () => ({
+    environment: { getApplicationInsightsConnectionString: () => '' },
+  }));
+  const addListener = vi.spyOn(window, 'addEventListener');
+  const observe = vi.spyOn(MutationObserver.prototype, 'observe');
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+  const { ApplicationInsightsProvider: DisabledProvider } = await import(
+    'src/providers/ApplicationInsightsProvider/ApplicationInsightsProvider'
+  );
+  const { getByText } = render(
+    <DisabledProvider>
+      <p>child</p>
+    </DisabledProvider>
+  );
+
+  expect(getByText('child')).toBeInTheDocument();
+  expect(addListener).not.toHaveBeenCalledWith('load', expect.anything());
+  expect(addListener).not.toHaveBeenCalledWith('resize', expect.anything());
+  expect(observe).not.toHaveBeenCalled();
+  expect(trackEvent).not.toHaveBeenCalled();
+
+  vi.doUnmock('src/utils');
+  vi.restoreAllMocks();
+  warn.mockRestore();
+});

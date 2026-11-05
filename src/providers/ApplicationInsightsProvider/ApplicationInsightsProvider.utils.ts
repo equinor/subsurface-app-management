@@ -16,6 +16,7 @@ export function samTrackEvent(
     );
     return;
   }
+
   appInsights.trackEvent(event, customProperties);
 }
 
@@ -29,6 +30,7 @@ export function samTrackMetric(
     );
     return;
   }
+
   appInsights.trackMetric(metric, customProperties);
 }
 
