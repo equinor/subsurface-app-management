@@ -54,7 +54,12 @@ export const appInsights = APPLICATION_INSIGHTS_CONNECTION_STRING
 appInsights?.loadAppInsights();
 
 const handleCollectScreenSize = debounce(() => {
-  if (!appInsights) return;
+  if (!appInsights) {
+    console.warn(
+      '[SAM]: ApplicationInsightsProvider - "appInsights" is undefined, did you set APPLICATION_INSIGHTS_CONNECTION_STRING?'
+    );
+    return;
+  }
 
   appInsights.trackEvent({
     name: 'Resolution',
@@ -68,7 +73,12 @@ const handleCollectScreenSize = debounce(() => {
 const THEME_ATTRIBUTE = 'data-theme';
 
 const handleCollectTheme = debounce(() => {
-  if (!appInsights) return;
+  if (!appInsights) {
+    console.warn(
+      '[SAM]: ApplicationInsightsProvider - "appInsights" is undefined, did you set APPLICATION_INSIGHTS_CONNECTION_STRING?'
+    );
+    return;
+  }
 
   appInsights.trackEvent({
     name: 'Theme',
@@ -87,7 +97,12 @@ export const ApplicationInsightsProvider: FC<
   ApplicationInsightsProviderProps
 > = ({ children }) => {
   useEffect(() => {
-    if (!appInsights) return;
+    if (!appInsights) {
+      console.warn(
+        '[SAM]: ApplicationInsightsProvider - "appInsights" is undefined, did you set APPLICATION_INSIGHTS_CONNECTION_STRING?'
+      );
+      return;
+    }
 
     window.addEventListener('load', handleCollectScreenSize);
     window.addEventListener('resize', handleCollectScreenSize);
