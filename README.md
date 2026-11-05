@@ -212,9 +212,14 @@ APPLICATION_INSIGHTS_INGESTION_HOST: 'northeurope-4.in.applicationinsights.azure
 
 ```sh
 docker build -t app .
-docker run --rm -p 5001:5001 -e APPLICATION_INSIGHTS_INGESTION_HOST=northeurope-4.in.applicationinsights.azure.com app
+docker run --rm -d --name app-test -p 5001:5001 -e APPLICATION_INSIGHTS_INGESTION_HOST=northeurope-4.in.applicationinsights.azure.com app
 curl -i -X POST http://localhost:5001/ai/v2/track -d '[]'   # reaches Azure (200/400), not 404/502
-docker run --rm -p 5001:5001 app                            # no host set: nginx still starts
+docker stop app-test
+
+# No host set: nginx still starts
+docker run --rm -d --name app-test -p 5001:5001 app
+docker logs app-test
+docker stop app-test
 ```
 
 Replace `5001` with the port your `nginx.conf` listens on, and add the app's other required variables (`NAME`, `ENVIRONMENT_NAME`, `API_URL`, ...) if needed.
