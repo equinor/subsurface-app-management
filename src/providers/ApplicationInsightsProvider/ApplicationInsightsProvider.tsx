@@ -97,6 +97,13 @@ export const ApplicationInsightsProvider: FC<
   ApplicationInsightsProviderProps
 > = ({ children }) => {
   useEffect(() => {
+    if (!appInsights) {
+      console.warn(
+        '[SAM]: ApplicationInsightsProvider - "appInsights" is undefined, did you set APPLICATION_INSIGHTS_CONNECTION_STRING?'
+      );
+      return;
+    }
+
     window.addEventListener('load', handleCollectScreenSize);
     window.addEventListener('resize', handleCollectScreenSize);
 
